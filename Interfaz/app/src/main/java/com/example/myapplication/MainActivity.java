@@ -16,5 +16,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Button botonRegistro = (Button)findViewById(R.id.registrar);
+
+        botonRegistro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentLista = new Intent(v.getContext(), RegistrarseActivity.class);
+                startActivity(intentLista);
+            }
+        });
+
     }
 }
