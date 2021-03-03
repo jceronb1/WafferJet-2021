@@ -10,7 +10,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UVallet">
-<<<<<<< HEAD
         <activity android:name=".Activity_CrearViaje">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,13 +21,7 @@
         <activity android:name=".Activity_Registrarse" />
         <activity android:name=".Activity_ExplorarViaje" />
         <activity android:name=".Activity_EditarPerfil" />
-=======
-        <activity android:name=".Activity_CrearViaje"></activity>
-        <activity android:name=".Activity_Roles"></activity>
-        <activity android:name=".Activity_Registrarse" ></activity>
-        <activity android:name=".Activity_ExplorarViaje" ></activity>
-        <activity android:name=".Activity_EditarPerfil"></activity>
->>>>>>> 0f2e2d4dce71f08a363824df55ee7e791f43b078
+
         <activity android:name=".Activity_Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
