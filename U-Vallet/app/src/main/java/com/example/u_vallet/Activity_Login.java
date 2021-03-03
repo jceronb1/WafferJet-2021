@@ -2,7 +2,10 @@ package com.example.u_vallet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+
 
 public class Activity_Login extends AppCompatActivity {
 
@@ -10,5 +13,7 @@ public class Activity_Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
     }
 }

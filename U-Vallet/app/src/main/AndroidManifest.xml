@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.u_vallet">
 
-   <!-- Esto es una prueba           --> 
 
     <application
         android:allowBackup="true"
@@ -11,7 +10,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UVallet">
-        <activity android:name=".Activity_CrearViaje"></activity>
+        <activity android:name=".Activity_CrearViaje">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".Activity_Roles" />
         <activity android:name=".Activity_Registrarse" />
         <activity android:name=".Activity_ExplorarViaje" />
