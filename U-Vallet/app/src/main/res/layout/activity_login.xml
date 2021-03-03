@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -30,7 +29,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/bienvenido"
+        android:id="@+id/registrarse"
         android:layout_width="166dp"
         android:layout_height="42dp"
         android:layout_below="@+id/Uvallet"
@@ -48,10 +47,10 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/porfavor"
+        android:id="@+id/agregarFoto"
         android:layout_width="254dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/bienvenido"
+        android:layout_below="@+id/registrarse"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
@@ -66,10 +65,10 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/nombreusu"
+        android:id="@+id/nombreUsuarioView"
         android:layout_width="215dp"
         android:layout_height="30dp"
-        android:layout_below="@+id/porfavor"
+        android:layout_below="@+id/agregarFoto"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
@@ -82,10 +81,10 @@
         android:text="Nombre de usuario" />
 
     <EditText
-        android:id="@+id/nombreusuario"
+        android:id="@+id/nombreUsuarioText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/nombreusu"
+        android:layout_below="@+id/nombreUsuarioView"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
@@ -103,7 +102,7 @@
         android:id="@+id/contra"
         android:layout_width="93dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/nombreusuario"
+        android:layout_below="@+id/nombreUsuarioText"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
