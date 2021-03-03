@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UVallet">
-        <activity android:name=".Activity_Roles"></activity>
+        <activity android:name=".Activity_CrearViaje"></activity>
+        <activity android:name=".Activity_Roles" />
         <activity android:name=".Activity_Registrarse" />
         <activity android:name=".Activity_ExplorarViaje" />
         <activity android:name=".Activity_EditarPerfil" />
