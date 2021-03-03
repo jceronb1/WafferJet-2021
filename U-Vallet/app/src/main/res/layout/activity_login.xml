@@ -43,7 +43,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="169dp"
         android:layout_marginRight="169dp"
-        android:text="¡Bienvenido !"
+        android:text="¡Bienvenido!"
         android:textSize="25sp"
         android:textStyle="bold" />
 
@@ -62,7 +62,7 @@
         android:layout_marginEnd="85dp"
         android:layout_marginRight="85dp"
         android:layout_marginBottom="25dp"
-        android:text="Por favor, inicie sesion"
+        android:text="Por favor, inicia sesión para continuar"
         android:textStyle="bold" />
 
     <TextView
