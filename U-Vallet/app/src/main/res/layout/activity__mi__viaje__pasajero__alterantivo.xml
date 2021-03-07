@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity_Mi_Viaje_Condcutor_Alternativo"
+    tools:context=".Activity_Mi_Viaje_Pasajero_Alterantivo"
     android:layout_margin="25dp"
     android:background="@drawable/fondo">
 
@@ -50,7 +50,7 @@
     <TextView
         android:id="@+id/miViajeInformacion"
         android:layout_width="match_parent"
-        android:layout_height="148dp"
+        android:layout_height="181dp"
         android:layout_below="@+id/miViaje"
         android:layout_marginTop="28dp"
         android:background="#D5F5E3"
@@ -65,7 +65,7 @@
         android:layout_below="@+id/miViaje"
         android:layout_marginLeft="80dp"
         android:layout_marginTop="70dp"
-        android:text="Usted no tiene viajes activos"
+        android:text="Usted no tiene ningun viaje reservado"
         android:textSize="30dp"
         android:textStyle="bold" />
 
