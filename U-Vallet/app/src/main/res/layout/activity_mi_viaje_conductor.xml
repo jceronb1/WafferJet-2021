@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity_Login"
+    tools:context=".Activity_Mi_Viaje_Conductor"
     android:layout_margin="25dp"
     android:background="@drawable/fondo">
 
@@ -216,7 +216,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginStart="127dp"
         android:layout_marginLeft="127dp"
-        android:layout_marginTop="146dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="39dp"
         android:layout_marginRight="39dp"
         android:layout_marginBottom="15dp"
