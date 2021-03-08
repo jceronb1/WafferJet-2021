@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity_Mi_Viaje_Conductor"
+    tools:context=".Activity_Mi_Viaje_Pasajero"
     android:layout_margin="25dp"
     android:background="@drawable/fondo">
 
@@ -37,17 +37,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="121dp"
-        android:layout_marginLeft="121dp"
-        android:layout_marginTop="13dp"
-        android:layout_marginEnd="78dp"
-        android:layout_marginRight="78dp"
+        android:layout_marginStart="131dp"
+        android:layout_marginLeft="131dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginEnd="68dp"
+        android:layout_marginRight="68dp"
         android:text="Mi Viaje"
         android:textSize="25sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/miViajeSubtitulo"
+        android:id="@+id/miViajeID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/miViaje"
@@ -60,54 +60,37 @@
         android:layout_marginTop="0dp"
         android:layout_marginEnd="135dp"
         android:layout_marginRight="135dp"
-        android:text="Información sobre mi viaje activo" />
+        android:text="ID Viaje: " />
+
+    <EditText
+        android:id="@+id/miViajeIDText"
+        android:layout_width="55dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/miViaje"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="-18dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="" />
 
     <TextView
         android:id="@+id/miViajeInformacion"
-        android:layout_width="350dp"
-        android:layout_height="302dp"
-        android:layout_below="@+id/miViajeSubtitulo"
+        android:layout_width="339dp"
+        android:layout_height="142dp"
+        android:layout_below="@+id/miViajeID"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="11dp"
-        android:layout_marginRight="11dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginRight="18dp"
         android:background="#D5F5E3"
         android:text=""
         android:textStyle="bold"
         app:backgroundTint="#D5F5E3" />
 
-    <TextView
-        android:id="@+id/miViajeID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/miViajeInformacion"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="-272dp"
-        android:text="ID:"
-        android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/viajeIDText"
-        android:layout_width="58dp"
-        android:layout_height="30dp"
-        android:layout_below="@+id/miViajeSubtitulo"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="13dp"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="55dp"
-        android:layout_marginEnd="243dp"
-        android:layout_marginRight="243dp"
-        android:layout_marginBottom="-25dp"
-        android:layout_toEndOf="@+id/miViajeID"
-        android:layout_toRightOf="@+id/miViajeID"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="" />
+
+
 
     <TextView
         android:id="@+id/miViajeOrigen"
@@ -116,9 +99,9 @@
         android:layout_below="@+id/miViajeID"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginLeft="26dp"
+        android:layout_marginTop="17dp"
         android:text="Origen:"
         android:textStyle="bold" />
 
@@ -126,12 +109,12 @@
         android:id="@+id/viajeOrigenText"
         android:layout_width="88dp"
         android:layout_height="29dp"
-        android:layout_below="@+id/viajeIDText"
+        android:layout_Right="@+id/miViajeOrigen"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="80dp"
         android:layout_marginLeft="200dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="210dp"
         android:layout_marginEnd="193dp"
         android:layout_marginRight="193dp"
         android:layout_marginBottom="-25dp"
@@ -169,18 +152,7 @@
         android:inputType="textPersonName"
         android:text="" />
 
-    <TextView
-        android:id="@+id/miViajePasajerosConfirmados"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/miViajeDestino"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="22dp"
-        android:text="Pasajeros Confirmados:"
-        android:textStyle="bold" />
+
 
 
 
@@ -188,7 +160,7 @@
         android:id="@+id/miViajeHoraPartida"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/miViajePasajerosConfirmados"
+        android:layout_below="@+id/miViajeDestinoText"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="22dp"
         android:text="Hora Partida:"
@@ -198,7 +170,7 @@
         android:id="@+id/horaPartidaText"
         android:layout_width="88dp"
         android:layout_height="29dp"
-        android:layout_below="@+id/miViajePasajerosConfirmados"
+        android:layout_below="@+id/miViajeDestinoText"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="20dp"
@@ -215,9 +187,9 @@
         android:id="@+id/miViajePuntoPartida"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/miViajeHoraPartida"
+        android:layout_below="@+id/horaPartidaText"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="35dp"
         android:text="Punto de partida:"
         android:textStyle="bold"/>
 
@@ -228,7 +200,7 @@
         android:layout_below="@+id/horaPartidaText"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="33dp"
         android:layout_marginEnd="-25dp"
         android:layout_marginRight="-25dp"
         android:layout_marginBottom="-25dp"
@@ -237,6 +209,16 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="" />
+
+    <ImageView
+        android:id="@+id/mapaViaje"
+        android:layout_width="match_parent"
+        android:layout_height="274dp"
+        android:layout_below="@+id/miViajeInformacion"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="110dp"
+        app:srcCompat="@drawable/mapa" />
+
 
     <Button
         android:id="@+id/botonCancelarViaje"
@@ -247,19 +229,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="127dp"
-        android:layout_marginLeft="127dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="39dp"
-        android:layout_marginRight="39dp"
+        android:layout_marginStart="156dp"
+        android:layout_marginLeft="156dp"
+        android:layout_marginTop="277dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginBottom="15dp"
         android:background="#FFC107"
         android:text="Cancelar Viaje"
         android:textColor="#FFFFFF"
         android:textColorHighlight="#FFC107"
         android:textColorHint="#FFC107"
-        app:backgroundTint="#EEBC0B"
-        />
-
-
+        app:backgroundTint="#EEBC0B" />
+    
 </RelativeLayout>
