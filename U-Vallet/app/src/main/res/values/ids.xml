@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="miViaje" type="id">miViaje</item>
-    <item name="miViajeSubtitulo" type="id">miViajeSubtitulo</item>
-    <item name="miViajeInformacion" type="id">miViajeInformacion</item>
-    <item name="miViajeID" type="id">miViajeID</item>
-    <item name="viajeIDText" type="id">viajeIDText</item>
-    <item name="miViajeOrigen" type="id">miViajeOrigen</item>
-    <item name="viajeOrigenText" type="id">viajeOrigenText</item>
-    <item name="miViajeDestino" type="id">miViajeDestino</item>
-    <item name="miViajeDestinoText" type="id">miViajeDestinoText</item>
-    <item name="miViajePasajerosConfirmados" type="id">miViajePasajerosConfirmados</item>
-    <item name="miViajeHoraPartida" type="id">miViajeHoraPartida</item>
-    <item name="horaPartidaText" type="id">horaPartidaText</item>
-    <item name="miViajePuntoPartida" type="id">miViajePuntoPartida</item>
-    <item name="puntoEncuentroText" type="id">puntoEncuentroText</item>
+    <item name="miViaje" type="id" />
+    <item name="miViajeSubtitulo" type="id" />
+    <item name="miViajeInformacion" type="id" />
+    <item name="miViajeID" type="id" />
+    <item name="viajeIDText" type="id" />
+    <item name="miViajeOrigen" type="id" />
+    <item name="viajeOrigenText" type="id" />
+    <item name="miViajeDestino" type="id" />
+    <item name="miViajeDestinoText" type="id" />
+    <item name="miViajePasajerosConfirmados" type="id" />
+    <item name="miViajeHoraPartida" type="id" />
+    <item name="horaPartidaText" type="id" />
+    <item name="miViajePuntoPartida" type="id" />
+    <item name="puntoEncuentroText" type="id" />
 </resources>
