@@ -109,7 +109,6 @@
         android:id="@+id/viajeOrigenText"
         android:layout_width="88dp"
         android:layout_height="29dp"
-        android:layout_Right="@+id/miViajeOrigen"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="80dp"
