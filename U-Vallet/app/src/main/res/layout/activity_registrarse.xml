@@ -25,7 +25,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/editar_perfil"
+        android:id="@+id/registrarse"
         android:layout_width="138dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/Uvallet"
@@ -47,7 +47,7 @@
         android:id="@+id/floatingActionButton2"
         android:layout_width="101dp"
         android:layout_height="119dp"
-        android:layout_below="@+id/editar_perfil"
+        android:layout_below="@+id/registrarse"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="-11dp"
@@ -58,7 +58,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/editarFotoPerfilText"
+        android:id="@+id/fotoPerfilText"
         android:layout_width="215dp"
         android:layout_height="30dp"
         android:layout_alignTop="@+id/floatingActionButton2"
@@ -77,7 +77,7 @@
         android:id="@+id/nombreUsuarioView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editarFotoPerfilText"
+        android:layout_below="@+id/fotoPerfilText"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"

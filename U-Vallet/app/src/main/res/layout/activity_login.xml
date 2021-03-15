@@ -39,7 +39,7 @@
                 app:autoSizeTextType="uniform" />
 
             <TextView
-                android:id="@+id/editar_perfil"
+                android:id="@+id/bienvenidoView"
                 android:layout_width="166dp"
                 android:layout_height="42dp"
                 android:layout_below="@+id/Uvallet"
@@ -58,10 +58,10 @@
                 app:autoSizeTextType="uniform" />
 
             <TextView
-                android:id="@+id/agregarFoto"
+                android:id="@+id/descripcionView"
                 android:layout_width="254dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/editar_perfil"
+                android:layout_below="@+id/bienvenidoView"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentEnd="true"
@@ -79,8 +79,8 @@
             <TextView
                 android:id="@+id/nombreUsuarioView"
                 android:layout_width="215dp"
-                android:layout_height="30dp"
-                android:layout_below="@+id/agregarFoto"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/descripcionView"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentEnd="true"
