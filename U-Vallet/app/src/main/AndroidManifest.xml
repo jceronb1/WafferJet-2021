@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UVallet">
-        <activity android:name=".Activity_Mi_Viaje_Pasajero"></activity>
+        <activity android:name=".Activity_Agregar_Vehiculo"/>
+        <activity android:name=".Activity_Mi_Viaje_Pasajero" />
         <activity android:name=".Activity_MisCarros" />
         <activity android:name=".Activity_ExplorarViajes" />
         <activity android:name=".Activity_Mi_Viaje_Pasajero_Alterantivo" />

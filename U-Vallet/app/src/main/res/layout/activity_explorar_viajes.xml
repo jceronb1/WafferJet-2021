@@ -169,7 +169,7 @@
             android:layout_marginBottom="16dp"
             android:text="Ver ruta"
             android:textSize="10sp"
-            app:backgroundTint="#E91E63"
+            app:backgroundTint="#EE0B0B"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.516"
