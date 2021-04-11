@@ -12,10 +12,10 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".Activity_Login"
+            android:layout_height="700dp"
             android:layout_margin="25dp"
-            android:background="@drawable/fondo">
+            android:background="@drawable/fondo"
+            tools:context=".Activity_Login">
 
             <TextView
                 android:id="@+id/Uvallet"
@@ -162,9 +162,10 @@
                 android:layout_marginBottom="15dp"
                 android:background="#FFC107"
                 android:text="Ingresar"
-                android:textColor="#FFFFFF"
+                android:textColor="#000000"
                 android:textColorHighlight="#FFC107"
-                android:textColorHint="#FFC107" />
+                android:textColorHint="#FFC107"
+                app:backgroundTint="#EEBC0B" />
 
             <TextView
                 android:id="@+id/registro"
@@ -198,7 +199,46 @@
                 android:layout_marginEnd="86dp"
                 android:layout_marginRight="86dp"
                 android:background="#FFC107"
-                android:text="Registrarse" />
+                android:text="Registrarse"
+                android:textColor="#000000"
+                app:backgroundTint="#EEBC0B" />
+
+            <ImageView
+                android:id="@+id/imageViewFacebook"
+                android:layout_width="29dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/registrar"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="9dp"
+                android:layout_marginEnd="314dp"
+                android:layout_marginRight="314dp"
+                app:srcCompat="@drawable/logo_facebook" />
+
+            <Button
+                android:id="@+id/loginFacebook"
+                android:layout_width="277dp"
+                android:layout_height="31dp"
+                android:layout_below="@+id/registro"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginStart="47dp"
+                android:layout_marginLeft="47dp"
+                android:layout_marginTop="63dp"
+                android:layout_marginEnd="37dp"
+                android:layout_marginRight="37dp"
+                android:background="#FFC107"
+                android:singleLine="false"
+                android:text="Ingresar con Facebook"
+                android:textColor="#000000"
+                android:textSize="10sp"
+                app:backgroundTint="#FFFFFF" />
 
         </RelativeLayout>
 

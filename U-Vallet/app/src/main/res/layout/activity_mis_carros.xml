@@ -24,11 +24,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/Uvalle_Mis_Carros"
         app:layout_constraintVertical_bias="0.044" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/Uvalle_Mis_Carros"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="U-Vallet"
@@ -73,7 +73,9 @@
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:text="Cambiar foto"
+            android:textColor="#000000"
             android:textSize="10sp"
+            app:backgroundTint="#EEBC0B"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
@@ -199,4 +201,67 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.167"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="417dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="264dp"
+        android:background="#2B3BD2"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <Button
+        android:id="@+id/buttonMiViajeMC"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="4dp"
+        android:text="Mi Viaje"
+        android:textColor="#BDFFFFFF"
+        android:textSize="13sp"
+        app:backgroundTint="#2B3BD2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonCrearViajeMC"
+        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonCrearViajeMC"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="4dp"
+        android:text="Crear Viejae"
+        android:textColor="#BDFFFFFF"
+        android:textSize="13sp"
+        app:backgroundTint="#2B3BD2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/toolbar"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="@+id/toolbar" />
+
+    <Button
+        android:id="@+id/buttonMisCarrosMC"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="4dp"
+        android:text="Mis Carros"
+        android:textSize="13sp"
+        app:backgroundTint="#2B3BD2"
+        app:iconTint="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/toolbar" />
+
+    <Button
+        android:id="@+id/button10"
+        android:layout_width="129dp"
+        android:layout_height="20dp"
+        app:backgroundTint="#EEBC0B"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/buttonMisCarrosMC"
+        app:layout_constraintVertical_bias="1.0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

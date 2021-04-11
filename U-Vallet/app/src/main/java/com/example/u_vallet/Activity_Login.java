@@ -17,6 +17,8 @@ public class Activity_Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         Button botonRegistrarse = (Button) findViewById(R.id.registrar);
+        Button botonIniciarSesion = (Button) findViewById(R.id.iniciar_sesion);
+
         botonRegistrarse.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -25,6 +27,13 @@ public class Activity_Login extends AppCompatActivity {
             }
         }));
 
+        botonIniciarSesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentIniciarSesion = new Intent (v.getContext(), Activity_Roles.class);
+                startActivity(intentIniciarSesion);
+            }
+        });
 
     }
 }
