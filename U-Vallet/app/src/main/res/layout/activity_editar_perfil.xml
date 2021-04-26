@@ -250,7 +250,7 @@
         android:layout_marginRight="31dp"
         android:background="#FFFFFF"
         android:ems="10"
-        android:inputType="date" />
+        android:inputType="date"/>
 
     <TextView
         android:id="@+id/telefonoView"

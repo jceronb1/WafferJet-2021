@@ -1,6 +1,9 @@
 package com.example.u_vallet;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 
@@ -34,12 +37,14 @@ public class Activity_Navegation extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        Log.i("CODE", String.valueOf(Activity_EditarPerfil.class.hashCode()));
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_rol, R.id.nav_editar_perfil)
+                R.id.nav_rol, Activity_EditarPerfil.class.hashCode())
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -47,12 +52,24 @@ public class Activity_Navegation extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.activity__navegation, menu);
         return true;
-    }*/
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int itemClicked = item.getItemId();
+        if(itemClicked == R.id.menuCambiarRol){
+            Intent intent = new Intent(this, Activity_Navegation.class);
+            startActivity(intent);
+        }else if(itemClicked == R.id.menuEditarPerfil){
+            Intent intent = new Intent(this, Activity_EditarPerfil.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public boolean onSupportNavigateUp() {

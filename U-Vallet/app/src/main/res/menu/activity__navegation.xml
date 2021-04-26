@@ -4,7 +4,10 @@
     <item
         android:id="@+id/menuCambiarRol" android:title="Cambiar Rol"/>
     <item
+        android:id="@+id/menuEditarPerfil" android:title="Editar Perfil"/>
+    <item
         android:id="@+id/menuLogOut" android:title="Cerrar Sesión"/>
+
     <!--<item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

@@ -2,15 +2,21 @@ package com.example.u_vallet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,11 +30,16 @@ public class Activity_EditarPerfil extends AppCompatActivity {
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_perfil);
+        permisosAndroid.requestPermission(this,  Manifest.permission.READ_EXTERNAL_STORAGE, "", IMAGE_PICKER_REQUEST);
         permisosAndroid.requestPermission(this, Manifest.permission.CAMERA, "", REQUEST_IMAGE_CAPTURE);
+        /*if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE != PackageManager.PERMISSION_GRANTED)){
+            if(ActivityCompat.)
+        }*/
         Button botonCambiarImagen = (Button) findViewById(R.id.botonCambiarImagen);
         botonCambiarImagen.setOnClickListener(new View.OnClickListener() {
             @Override
