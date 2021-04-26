@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    tools:context=".ui.rol.RolFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/Roles_botonPasajero"
+        android:id="@+id/Roles"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity_Roles">

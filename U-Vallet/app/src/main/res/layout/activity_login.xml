@@ -12,8 +12,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="700dp"
-            android:layout_margin="25dp"
+            android:layout_height="match_parent"
             android:background="@drawable/fondo"
             tools:context=".Activity_Login">
 
@@ -221,15 +220,15 @@
 
             <Button
                 android:id="@+id/loginFacebook"
-                android:layout_width="277dp"
-                android:layout_height="31dp"
+                android:layout_width="292dp"
+                android:layout_height="33dp"
                 android:layout_below="@+id/registro"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginStart="47dp"
-                android:layout_marginLeft="47dp"
+                android:layout_marginStart="83dp"
+                android:layout_marginLeft="83dp"
                 android:layout_marginTop="63dp"
                 android:layout_marginEnd="37dp"
                 android:layout_marginRight="37dp"

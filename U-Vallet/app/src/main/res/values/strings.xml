@@ -2,5 +2,19 @@
 
     <string name="app_name">U-Vallet</string>
     <string name="title_activity__registrarse">Activity_Registrarse</string>
+    <string name="title_activity__navegation">Activity_Navegation</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Waffer Jet</string>
+    <string name="nav_header_subtitle">Pasajero</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Elegir Rol</string>
+    <string name="menu_editar_perfil">Editar Perfil</string>
+    <string name="menu_cerrar_sesion">Cerrar Sesión</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity__crear_viaje__maps">Map</string>
 
 </resources>

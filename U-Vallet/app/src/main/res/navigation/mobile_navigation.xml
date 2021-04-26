@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_rol">
+
+    <fragment
+        android:id="@+id/nav_rol"
+        android:name="com.example.u_vallet.ui.rol.RolFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/activity_roles" />
+
+    <fragment
+        android:id="@+id/nav_editar_perfil"
+        android:name="com.example.u_vallet.ui.editar_perfil.EditarPerfilFragment"
+        android:label="@string/menu_editar_perfil"
+        tools:layout="@layout/activity_editar_perfil" />
+
+    <fragment
+        android:id="@+id/nav_mis_carros"
+        android:name="com.example.u_vallet.ui.mis_carros.MisCarrosFragment"
+        android:label="@string/menu_editar_perfil"
+        tools:layout="@layout/activity_mis_carros" />
+
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="com.example.u_vallet.ui.slideshow.SlideshowFragment"
+        android:label="@string/menu_editar_perfil"
+        tools:layout="@layout/fragment_slideshow" />
+</navigation>
