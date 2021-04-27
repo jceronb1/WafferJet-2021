@@ -35,7 +35,7 @@ public class Activity_Login extends AppCompatActivity {
         botonIniciarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentIniciarSesion = new Intent (v.getContext(), Activity_Navegation.class);
+                Intent intentIniciarSesion = new Intent (v.getContext(), Activity_Roles.class);
                 startActivity(intentIniciarSesion);
             }
         });

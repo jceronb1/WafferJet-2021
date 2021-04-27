@@ -38,10 +38,6 @@
         <activity
             android:name=".Activity_CrearViaje_Maps"
             android:label="@string/title_activity__crear_viaje__maps"></activity>
-        <activity
-            android:name=".Activity_Navegation"
-            android:label="@string/title_activity__navegation"
-            android:theme="@style/Theme.UVallet.NoActionBar" />
         <activity android:name=".Activity_Agregar_Vehiculo" />
         <activity android:name=".Activity_Mi_Viaje_Pasajero" />
         <activity android:name=".Activity_MisCarros" />

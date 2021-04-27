@@ -45,7 +45,10 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         int itemClicked = item.getItemId();
         if(itemClicked == R.id.menuCambiarRol){
-            Intent intent = new Intent(this, Activity_Navegation.class);
+            Intent intent = new Intent(this, Activity_Roles.class);
+            startActivity(intent);
+        }else if (itemClicked == R.id.menuEditarPerfil){
+            Intent intent = new Intent( this, Activity_EditarPerfil.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
