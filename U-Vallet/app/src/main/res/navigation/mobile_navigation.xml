@@ -11,9 +11,14 @@
         android:label="@string/menu_home"
         tools:layout="@layout/activity_roles" />
 
-    <fragment
+   <!-- <fragment
         android:id="@+id/nav_editar_perfil"
         android:name="com.example.u_vallet.ui.editar_perfil.EditarPerfilFragment"
+        android:label="@string/menu_editar_perfil"
+        tools:layout="@layout/activity_editar_perfil" />-->
+    <activity
+        android:id="@+id/nav_editar_perfil"
+        android:name="com.example.u_vallet.Activity_EditarPerfil"
         android:label="@string/menu_editar_perfil"
         tools:layout="@layout/activity_editar_perfil" />
 

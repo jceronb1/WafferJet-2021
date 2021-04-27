@@ -2,13 +2,9 @@ package com.example.u_vallet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Menu;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -40,11 +36,11 @@ public class Activity_Navegation extends AppCompatActivity {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        Log.i("CODE", String.valueOf(Activity_EditarPerfil.class.hashCode()));
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_rol, Activity_EditarPerfil.class.hashCode())
+                R.id.nav_rol, R.id.nav_editar_perfil)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -64,10 +60,10 @@ public class Activity_Navegation extends AppCompatActivity {
         if(itemClicked == R.id.menuCambiarRol){
             Intent intent = new Intent(this, Activity_Navegation.class);
             startActivity(intent);
-        }else if(itemClicked == R.id.menuEditarPerfil){
+        }/*else if(itemClicked == R.id.menuEditarPerfil){
             Intent intent = new Intent(this, Activity_EditarPerfil.class);
             startActivity(intent);
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 

@@ -4,8 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
 import android.app.Activity;
@@ -22,6 +28,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -29,12 +37,13 @@ public class Activity_EditarPerfil extends AppCompatActivity {
 
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
-
+    private AppBarConfiguration mAppBarConfiguration;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_perfil);
+
         permisosAndroid.requestPermission(this,  Manifest.permission.READ_EXTERNAL_STORAGE, "", IMAGE_PICKER_REQUEST);
         permisosAndroid.requestPermission(this, Manifest.permission.CAMERA, "", REQUEST_IMAGE_CAPTURE);
         /*if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE != PackageManager.PERMISSION_GRANTED)){
