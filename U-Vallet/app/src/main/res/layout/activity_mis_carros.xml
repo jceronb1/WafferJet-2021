@@ -1,267 +1,250 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondo"
-    tools:context=".Activity_MisCarros">
+    tools:context=".Activity_MisCarros"
+    android:background="@drawable/fondo">
 
     <TextView
-        android:id="@+id/miViaje2"
-        android:layout_width="160dp"
-        android:layout_height="43dp"
+        android:id="@+id/Uvallet"
+        android:layout_width="266dp"
+        android:layout_height="77dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="79dp"
+        android:layout_marginLeft="69dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="66dp"
+        android:layout_marginRight="66dp"
+        android:background="#000C0808"
+        android:text="U Vallet"
+        android:textColor="#3F51B5"
+        android:textSize="70sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/viewMisCarros"
+        android:layout_width="145dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/Uvallet"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="Mis carros"
+        android:layout_marginStart="138dp"
+        android:layout_marginLeft="138dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginRight="128dp"
+        android:text="Mis Carros"
+        android:textColor="#050505"
         android:textSize="25sp"
-        android:textStyle="bold"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Uvalle_Mis_Carros"
-        app:layout_constraintVertical_bias="0.044" />
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/Uvalle_Mis_Carros"
-        android:layout_width="wrap_content"
+        android:id="@+id/viewNumeroCarro"
+        android:layout_width="131dp"
         android:layout_height="wrap_content"
-        android:text="U-Vallet"
-        android:textColor="#3F51B5"
-        android:textSize="55sp"
-        android:textStyle="bold"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.085" />
+        android:layout_below="@+id/Uvallet"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="37dp"
+        android:layout_marginLeft="37dp"
+        android:layout_marginTop="81dp"
+        android:layout_marginEnd="243dp"
+        android:layout_marginRight="243dp"
+        android:text="Carro #1"
+        android:textColor="#050505"
+        android:textSize="18dp" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <TextView
+        android:id="@+id/viewFondoCarro"
         android:layout_width="316dp"
         android:layout_height="172dp"
+        android:layout_below="@+id/viewNumeroCarro"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="47dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="47dp"
+        android:layout_marginRight="49dp"
         android:layout_marginBottom="320dp"
-        android:background="#4D000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/miViaje2"
-        app:layout_constraintVertical_bias="1.0">
+        android:background="#4D000000" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="116dp"
-            android:layout_height="114dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_logo" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="116dp"
+        android:layout_height="114dp"
+        android:layout_alignStart="@+id/viewFondoCarro"
+        android:layout_alignLeft="@+id/viewFondoCarro"
+        android:layout_alignBottom="@+id/viewFondoCarro"
 
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="118dp"
-            android:layout_height="34dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:text="Cambiar foto"
-            android:textColor="#000000"
-            android:textSize="10sp"
-            app:backgroundTint="#EEBC0B"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/textView18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="152dp"
-            android:layout_marginLeft="152dp"
-            android:layout_marginTop="120dp"
-            android:text="Capacidad :"
-            android:textColor="#000000"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="152dp"
-            android:layout_marginLeft="152dp"
-            android:layout_marginTop="20dp"
-            android:text="Placa :"
-            android:textColor="#000000"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="152dp"
-            android:layout_marginLeft="152dp"
-            android:layout_marginTop="52dp"
-            android:text="Marca :"
-            android:textColor="#000000"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="152dp"
-            android:layout_marginLeft="152dp"
-            android:layout_marginTop="88dp"
-            android:text="Modelo :"
-            android:textColor="#000000"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView19"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="120dp"
-            android:layout_marginEnd="64dp"
-            android:layout_marginRight="64dp"
-            android:text="5"
-            android:textColor="#000000"
-            android:textStyle="normal|italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView20"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="88dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="Modelo Y"
-            android:textColor="#000000"
-            android:textStyle="normal|italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView21"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="52dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
-            android:text="Marca X"
-            android:textColor="#000000"
-            android:textStyle="normal|italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView22"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="XYZ - 123"
-            android:textColor="#000000"
-            android:textStyle="normal|italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="41dp"
+        app:srcCompat="@drawable/ic_logo" />
 
     <TextView
-        android:id="@+id/textView8"
-        android:layout_width="100dp"
-        android:layout_height="24dp"
-        android:text="Carro # 1  "
+        android:id="@+id/viewPlaca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewFondoCarro"
+        android:layout_marginStart="14dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="136dp"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toRightOf="@+id/imageView"
+        android:text="Placa :"
         android:textColor="#000000"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.167"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="417dp"
-        android:layout_height="58dp"
-        android:layout_marginTop="264dp"
-        android:background="#2B3BD2"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+    <TextView
+        android:id="@+id/viewPlacaCarro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewFondoCarro"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="134dp"
+        android:layout_toEndOf="@+id/viewPlaca"
+        android:layout_toRightOf="@+id/viewPlaca"
+        android:text="XYZ - 123"
+        android:textColor="#000000"
+        android:textStyle="normal|italic" />
 
+    <TextView
+        android:id="@+id/viewMarca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewFondoCarro"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="103dp"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toRightOf="@+id/imageView"
+        android:text="Marca :"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+
+
+
+    <TextView
+        android:id="@+id/viewMarcaCarro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewFondoCarro"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="103dp"
+        android:layout_toEndOf="@+id/viewPlaca"
+        android:layout_toRightOf="@+id/viewPlaca"
+        android:text="Marca D"
+        android:textColor="#000000"
+        android:textStyle="normal|italic" />
+
+
+    <TextView
+        android:id="@+id/viewModelo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewFondoCarro"
+        android:layout_marginStart="14dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="71dp"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toRightOf="@+id/imageView"
+        android:text="Modelo :"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/viewModeloCarro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewFondoCarro"
+        android:layout_marginStart="21dp"
+        android:layout_marginLeft="21dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="73dp"
+        android:layout_toEndOf="@+id/viewPlaca"
+        android:layout_toRightOf="@+id/viewPlaca"
+        android:text="Modelo A"
+        android:textColor="#000000"
+        android:textStyle="normal|italic" />
+
+
+
+    <TextView
+        android:id="@+id/viewCapacidad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewFondoCarro"
+        android:layout_marginStart="14dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="38dp"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toRightOf="@+id/imageView"
+        android:text="Capacidad :"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/viewCapacidadCarro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/viewFondoCarro"
+        android:layout_marginStart="41dp"
+        android:layout_marginLeft="41dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="38dp"
+        android:layout_toEndOf="@+id/viewPlaca"
+        android:layout_toRightOf="@+id/viewPlaca"
+        android:text="Modelo A"
+        android:textColor="#000000"
+        android:textStyle="normal|italic" />
     <Button
-        android:id="@+id/buttonMiViajeMC"
-        android:layout_width="130dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="4dp"
-        android:text="Mi Viaje"
-        android:textColor="#BDFFFFFF"
-        android:textSize="13sp"
-        app:backgroundTint="#2B3BD2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonCrearViajeMC"
-        app:layout_constraintHorizontal_bias="0.111"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/buttonCambiarFoto"
+        android:layout_width="118dp"
+        android:layout_height="34dp"
+        android:layout_alignStart="@+id/viewFondoCarro"
+        android:layout_alignLeft="@+id/viewFondoCarro"
+        android:layout_alignBottom="@+id/viewFondoCarro"
+        android:layout_marginStart="11dp"
+        android:layout_marginLeft="11dp"
+        android:layout_marginBottom="7dp"
+        android:text="Cambiar foto"
+        android:textColor="#000000"
+        android:textSize="10sp"
+        app:backgroundTint="#EEBC0B" />
 
-    <Button
-        android:id="@+id/buttonCrearViajeMC"
-        android:layout_width="130dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="4dp"
-        android:text="Crear Viejae"
-        android:textColor="#BDFFFFFF"
-        android:textSize="13sp"
-        app:backgroundTint="#2B3BD2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="@+id/toolbar" />
-
-    <Button
-        android:id="@+id/buttonMisCarrosMC"
-        android:layout_width="130dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="4dp"
-        android:text="Mis Carros"
-        android:textSize="13sp"
-        app:backgroundTint="#2B3BD2"
-        app:iconTint="#00FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar" />
-
-    <Button
-        android:id="@+id/button10"
-        android:layout_width="129dp"
-        android:layout_height="20dp"
-        app:backgroundTint="#EEBC0B"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonMisCarrosMC"
-        app:layout_constraintVertical_bias="1.0" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

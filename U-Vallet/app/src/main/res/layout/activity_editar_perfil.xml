@@ -5,39 +5,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity_EditarPerfil"
-    android:layout_margin="25dp"
+
     android:background="@drawable/fondo">
 
     <TextView
         android:id="@+id/Uvallet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="266dp"
+        android:layout_height="74dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="97dp"
-        android:layout_marginLeft="97dp"
-        android:layout_marginTop="3dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="79dp"
+        android:layout_marginLeft="69dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="66dp"
+        android:layout_marginRight="66dp"
         android:background="#000C0808"
-        android:text="U-Vallet"
+        android:text="U Vallet"
         android:textColor="#3F51B5"
-        android:textSize="30sp"
+        android:textSize="70sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/editar_perfil"
-        android:layout_width="138dp"
-        android:layout_height="wrap_content"
+        android:layout_width="143dp"
+        android:layout_height="38dp"
         android:layout_below="@+id/Uvallet"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="123dp"
-        android:layout_marginLeft="123dp"
-        android:layout_marginTop="-5dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
+        android:layout_marginStart="149dp"
+        android:layout_marginLeft="149dp"
+        android:layout_marginTop="-4dp"
+        android:layout_marginEnd="119dp"
+        android:layout_marginRight="119dp"
         android:text="Editar Perfil"
         android:textColor="#050505"
         android:textSize="20sp"
@@ -50,9 +54,9 @@
         android:layout_below="@+id/editar_perfil"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="-11dp"
-        android:layout_marginEnd="282dp"
-        android:layout_marginRight="282dp"
+        android:layout_marginTop="-8dp"
+        android:layout_marginEnd="302dp"
+        android:layout_marginRight="302dp"
         app:srcCompat="@drawable/ic_logo" />
 
     <Button
@@ -64,11 +68,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="84dp"
-        android:layout_marginLeft="84dp"
-        android:layout_marginTop="29dp"
-        android:layout_marginEnd="125dp"
-        android:layout_marginRight="125dp"
+        android:layout_marginStart="125dp"
+        android:layout_marginLeft="125dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="84dp"
+        android:layout_marginRight="84dp"
         android:text="Cambiar foto" />
 
     <TextView
@@ -103,7 +107,6 @@
         android:layout_marginTop="-2dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="" />
 
@@ -121,7 +124,6 @@
         android:layout_marginTop="56dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="" />
 
@@ -175,7 +177,6 @@
         android:layout_marginTop="116dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="textPassword" />
 
@@ -194,7 +195,6 @@
         android:layout_marginTop="174dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="textPassword" />
 
@@ -248,7 +248,6 @@
         android:layout_marginTop="231dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="date"/>
 
@@ -284,7 +283,6 @@
         android:layout_marginTop="290dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="phone" />
 
@@ -320,7 +318,6 @@
         android:layout_marginTop="350dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="" />
 
@@ -356,7 +353,6 @@
         android:layout_marginTop="408dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="textEmailAddress" />
 

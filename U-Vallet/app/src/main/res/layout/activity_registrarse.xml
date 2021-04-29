@@ -5,39 +5,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity_Login"
-    android:layout_margin="25dp"
+
     android:background="@drawable/fondo">
 
     <TextView
         android:id="@+id/Uvallet"
-        android:layout_width="wrap_content"
+        android:layout_width="271dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="97dp"
-        android:layout_marginLeft="97dp"
-        android:layout_marginTop="3dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="79dp"
+        android:layout_marginLeft="69dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="61dp"
+        android:layout_marginRight="61dp"
         android:background="#000C0808"
-        android:text="U-Vallet"
+        android:text="U Vallet"
         android:textColor="#3F51B5"
-        android:textSize="55sp"
+        android:textSize="70sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/registrarse"
-        android:layout_width="138dp"
+        android:layout_width="162dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/Uvallet"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="123dp"
-        android:layout_marginLeft="123dp"
-        android:layout_marginTop="-5dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
+        android:layout_marginStart="134dp"
+        android:layout_marginLeft="134dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="115dp"
+        android:layout_marginRight="115dp"
         android:text="Registrarse"
         android:textColor="#050505"
         android:textSize="25sp"
@@ -50,9 +54,9 @@
         android:layout_below="@+id/registrarse"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="-11dp"
-        android:layout_marginEnd="282dp"
-        android:layout_marginRight="282dp"
+        android:layout_marginTop="-16dp"
+        android:layout_marginEnd="319dp"
+        android:layout_marginRight="319dp"
         android:clickable="true"
         app:backgroundTint="#86847F"
         tools:srcCompat="@tools:sample/avatars" />
@@ -66,11 +70,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="91dp"
-        android:layout_marginLeft="91dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="58dp"
-        android:layout_marginRight="58dp"
+        android:layout_marginStart="116dp"
+        android:layout_marginLeft="116dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="33dp"
+        android:layout_marginRight="33dp"
         android:text="Agregue su foto de perfil" />
 
     <TextView
@@ -105,7 +109,6 @@
         android:layout_marginTop="-2dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="" />
 
@@ -123,7 +126,6 @@
         android:layout_marginTop="56dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="" />
 
@@ -177,7 +179,6 @@
         android:layout_marginTop="116dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="textPassword" />
 
@@ -196,7 +197,6 @@
         android:layout_marginTop="174dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="textPassword" />
 
@@ -250,7 +250,6 @@
         android:layout_marginTop="231dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="date" />
 
@@ -286,7 +285,6 @@
         android:layout_marginTop="290dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="phone" />
 
@@ -322,7 +320,6 @@
         android:layout_marginTop="350dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="" />
 
@@ -358,12 +355,11 @@
         android:layout_marginTop="408dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
-        android:background="#FFFFFF"
         android:ems="10"
         android:inputType="textEmailAddress" />
 
     <Button
-        android:id="@+id/registrar"
+        android:id="@+id/buttoRegistrar"
         android:layout_width="wrap_content"
         android:layout_height="38dp"
         android:layout_below="@+id/telefonoText"

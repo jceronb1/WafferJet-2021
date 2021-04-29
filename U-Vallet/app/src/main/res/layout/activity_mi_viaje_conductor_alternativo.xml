@@ -8,18 +8,18 @@
 
     <TextView
         android:id="@+id/Uvallet"
-        android:layout_width="293dp"
-        android:layout_height="wrap_content"
+        android:layout_width="266dp"
+        android:layout_height="80dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="49dp"
-        android:layout_marginLeft="49dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="19dp"
-        android:layout_marginRight="19dp"
+        android:layout_marginStart="79dp"
+        android:layout_marginLeft="69dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="66dp"
+        android:layout_marginRight="66dp"
         android:background="#000C0808"
         android:text="U Vallet"
         android:textColor="#3F51B5"
@@ -41,20 +41,28 @@
         android:layout_marginEnd="78dp"
         android:layout_marginRight="78dp"
         android:text="Mi Viaje"
+        android:textColor="#050505"
         android:textSize="25sp"
         android:textStyle="bold" />
 
 
     <TextView
         android:id="@+id/miViajeInformacion"
-        android:layout_width="match_parent"
-        android:layout_height="148dp"
+        android:layout_width="376dp"
+        android:layout_height="182dp"
         android:layout_below="@+id/miViaje"
-        android:layout_marginTop="28dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="17.5dp"
+        android:layout_marginLeft="19dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="17.5dp"
+        android:layout_marginRight="16dp"
         android:background="#D5F5E3"
         android:text=""
-        android:textStyle="bold"
-        app:backgroundTint="#D5F5E3" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/mensaje"

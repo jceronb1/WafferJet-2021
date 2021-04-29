@@ -16,7 +16,7 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mi_viaje_conductor);
 
-        Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViajeMV);
+        Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViajeMC);
         Button botonMisCarros = (Button) findViewById(R.id.buttonMisCarrosMV);
 
         botonCrearViaje.setOnClickListener(new View.OnClickListener() {

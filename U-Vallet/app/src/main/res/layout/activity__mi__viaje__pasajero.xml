@@ -5,23 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity_Mi_Viaje_Pasajero"
-    android:layout_margin="25dp"
+
     android:background="@drawable/fondo">
 
     <TextView
         android:id="@+id/Uvallet"
-        android:layout_width="293dp"
+        android:layout_width="266dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="49dp"
-        android:layout_marginLeft="49dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="19dp"
-        android:layout_marginRight="19dp"
+        android:layout_marginStart="79dp"
+        android:layout_marginLeft="69dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="66dp"
+        android:layout_marginRight="66dp"
         android:background="#000C0808"
         android:text="U Vallet"
         android:textColor="#3F51B5"
@@ -30,67 +30,55 @@
 
     <TextView
         android:id="@+id/miViaje"
-        android:layout_width="166dp"
-        android:layout_height="42dp"
+        android:layout_width="111dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/Uvallet"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="131dp"
-        android:layout_marginLeft="131dp"
-        android:layout_marginTop="-1dp"
-        android:layout_marginEnd="68dp"
-        android:layout_marginRight="68dp"
+        android:layout_marginStart="146dp"
+        android:layout_marginLeft="146dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="154dp"
+        android:layout_marginRight="154dp"
         android:text="Mi Viaje"
+        android:textColor="#050505"
         android:textSize="25sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/miViajeID"
-        android:layout_width="wrap_content"
+        android:layout_width="74dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/miViaje"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="19dp"
-        android:layout_marginLeft="19dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="135dp"
-        android:layout_marginRight="135dp"
-        android:text="ID Viaje: " />
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="297dp"
+        android:layout_marginRight="297dp"
+        android:elevation="3dp"
+        android:text="ID Viaje: "
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/miViajeIDText"
-        android:layout_width="55dp"
-        android:layout_height="wrap_content"
+        android:layout_width="198dp"
+        android:layout_height="24dp"
         android:layout_below="@+id/miViaje"
-        android:layout_marginLeft="80dp"
-        android:layout_marginTop="-18dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:elevation="0.1dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="" />
-
-    <TextView
-        android:id="@+id/miViajeInformacion"
-        android:layout_width="339dp"
-        android:layout_height="142dp"
-        android:layout_below="@+id/miViajeID"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginRight="18dp"
-        android:background="#D5F5E3"
-        android:text=""
-        android:textStyle="bold"
-        app:backgroundTint="#D5F5E3" />
-
-
-
-
 
     <TextView
         android:id="@+id/miViajeOrigen"
@@ -99,24 +87,28 @@
         android:layout_below="@+id/miViajeID"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginStart="26dp"
-        android:layout_marginLeft="26dp"
-        android:layout_marginTop="17dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="13dp"
         android:text="Origen:"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:elevation="3dp"/>
+
 
     <EditText
         android:id="@+id/viajeOrigenText"
-        android:layout_width="88dp"
-        android:layout_height="29dp"
+        android:layout_width="197dp"
+        android:layout_height="21dp"
+        android:layout_below="@+id/miViajeIDText"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="80dp"
         android:layout_marginLeft="200dp"
-        android:layout_marginTop="210dp"
-        android:layout_marginEnd="193dp"
-        android:layout_marginRight="193dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="98dp"
+        android:layout_marginRight="98dp"
         android:layout_marginBottom="-25dp"
+        android:elevation="0.1dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="" />
@@ -125,120 +117,106 @@
         android:id="@+id/miViajeDestino"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/viajeOrigenText"
+        android:layout_below="@+id/miViajeOrigen"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="33dp"
+        android:layout_marginTop="13dp"
         android:text="Destino:"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:elevation="3dp"/>
 
     <EditText
         android:id="@+id/miViajeDestinoText"
-        android:layout_width="88dp"
-        android:layout_height="29dp"
+        android:layout_width="194dp"
+        android:layout_height="27dp"
         android:layout_below="@+id/viajeOrigenText"
-        android:layout_alignEnd="@+id/miViajeInformacion"
-        android:layout_alignRight="@+id/miViajeInformacion"
-        android:layout_marginStart="95dp"
-        android:layout_marginLeft="200dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="167dp"
-        android:layout_marginRight="167dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginLeft="9dp"
+        android:layout_marginTop="34dp"
         android:layout_marginBottom="-25dp"
+        android:layout_toEndOf="@+id/miViajeDestino"
+        android:layout_toRightOf="@+id/miViajeDestino"
+        android:elevation="0.1dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="" />
-
-
-
-
 
     <TextView
         android:id="@+id/miViajeHoraPartida"
-        android:layout_width="wrap_content"
+        android:layout_width="113dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/miViajeDestinoText"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="22dp"
+        android:layout_below="@+id/miViajeDestino"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="258dp"
+        android:layout_marginRight="258dp"
         android:text="Hora Partida:"
-        android:textStyle="bold"/>
-
-    <EditText
-        android:id="@+id/horaPartidaText"
-        android:layout_width="88dp"
-        android:layout_height="29dp"
-        android:layout_below="@+id/miViajeDestinoText"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="-25dp"
-        android:layout_marginRight="-25dp"
-        android:layout_marginBottom="-25dp"
-        android:layout_toEndOf="@+id/miViajeHoraPartida"
-        android:layout_toRightOf="@+id/miViajeHoraPartida"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/miViajePuntoPartida"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/horaPartidaText"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="35dp"
+        android:layout_below="@+id/miViajeHoraPartida"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="42dp"
+        android:layout_marginTop="13dp"
         android:text="Punto de partida:"
-        android:textStyle="bold"/>
-
-    <EditText
-        android:id="@+id/puntoEncuentroText"
-        android:layout_width="88dp"
-        android:layout_height="29dp"
-        android:layout_below="@+id/horaPartidaText"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginEnd="-25dp"
-        android:layout_marginRight="-25dp"
-        android:layout_marginBottom="-25dp"
-        android:layout_toEndOf="@+id/miViajePuntoPartida"
-        android:layout_toRightOf="@+id/miViajePuntoPartida"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="" />
-
-    <ImageView
-        android:id="@+id/mapaViaje"
-        android:layout_width="match_parent"
-        android:layout_height="274dp"
-        android:layout_below="@+id/miViajeInformacion"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="110dp"
-        app:srcCompat="@drawable/mapa" />
+        android:textStyle="bold" />
 
 
     <Button
         android:id="@+id/botonCancelarViaje"
         android:layout_width="200dp"
         android:layout_height="40dp"
-        android:layout_below="@+id/miViajeInformacion"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="156dp"
-        android:layout_marginLeft="156dp"
-        android:layout_marginTop="277dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginBottom="35dp"
         android:background="#FFC107"
         android:text="Cancelar Viaje"
         android:textColor="#FFFFFF"
         android:textColorHighlight="#FFC107"
         android:textColorHint="#FFC107"
         app:backgroundTint="#EEBC0B" />
-    
+
+    <EditText
+        android:id="@+id/editHoraPartida"
+        android:layout_width="159dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/miViajeDestinoText"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="97dp"
+        android:layout_marginRight="97dp"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/editPuntoPartida"
+        android:layout_width="136dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editHoraPartida"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="-14dp"
+        android:layout_marginEnd="99dp"
+        android:layout_marginRight="99dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+         />
+
 </RelativeLayout>
