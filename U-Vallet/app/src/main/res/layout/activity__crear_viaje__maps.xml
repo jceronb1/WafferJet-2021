@@ -35,7 +35,7 @@
         android:background="@drawable/bg_round"
         android:elevation="5dp"
         android:iconifiedByDefault="false"
-        android:queryHint="Destino..." />
+        android:queryHint="Destino..."/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

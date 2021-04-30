@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DirectionsJSONParser {
     /** Receives a JSONObject and returns a list of lists containing latitude and longitude */
@@ -108,24 +109,22 @@ public class DirectionsJSONParser {
         JSONArray jSteps = null;
         JSONObject jLegsDuration = null;
         JSONObject jDuration = null;
-
         try {
 
             jRoutes = jObject.getJSONArray("routes");
-
+            HashMap<String,String> hmd = new HashMap<String, String>();
             /** Traversing all routes */
             for(int i=0;i<jRoutes.length();i++){
                 jLegs = ( (JSONObject)jRoutes.get(i)).getJSONArray("legs");
                 List path = new ArrayList<HashMap<String, String>>();
                 List path1 = new ArrayList<ArrayList<HashMap<String,String>>>();
-
+                String key = null;
                 // Log.d("legs",jLegs.toString());
                 /** Traversing all legs */
                 for(int j=0;j<jLegs.length();j++){
                     jLegsDuration = (jLegs.getJSONObject(j));
                     String duration = jLegsDuration.getJSONObject("duration").getString("text");
                     Log.d("JSON DURATION", duration);
-                    HashMap<String,String> hmd = new HashMap<String, String>();
                     hmd.put("dur", duration);
                     jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
                     // Log.d("steps",jSteps.toString());
@@ -150,12 +149,19 @@ public class DirectionsJSONParser {
                         }
 
                     }
+                    path1.add(hmd);
                     path1.add(path);
-
+                    //Log.d("JSON PATH",String.valueOf(path1.size()));
+                    //path1.add(hmd);
                 }
                 routes1.add(path1);
             }
-
+            /*Log.d("JSON ROUTE",String.valueOf(routes1.size()));
+            ArrayList<HashMap<String,String>> directions = new ArrayList<HashMap<String, String>>();
+            directions.add(hmd);
+            List directions1 = new ArrayList<ArrayList<HashMap<String, String>>>();
+            directions1.add(directions);
+            routes1.add(directions1);*/
         } catch (JSONException e) {
             e.printStackTrace();
         }catch (Exception e){
