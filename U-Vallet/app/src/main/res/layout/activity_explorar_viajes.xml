@@ -1,196 +1,38 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity_ExplorarViajes"
-    android:background="@drawable/fondo">
+    android:background="@drawable/fondo"
+    android:orientation="vertical"
+    tools:context=".Activity_ExplorarViaje">
 
     <TextView
-        android:id="@+id/Uvallet"
-        android:layout_width="266dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="79dp"
-        android:layout_marginLeft="69dp"
-        android:layout_marginTop="34dp"
-        android:layout_marginEnd="66dp"
-        android:layout_marginRight="66dp"
+        android:layout_marginStart="97dp"
+        android:layout_marginLeft="97dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
         android:background="#000C0808"
-        android:text="U Vallet"
+        android:gravity="center"
+        android:text="U-Vallet"
         android:textColor="#3F51B5"
-        android:textSize="70sp"
+        android:textSize="55sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/fondoPosibleViaje"
-        android:layout_width="wrap_content"
-        android:layout_height="141dp"
-        android:layout_below="@+id/Uvallet"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginEnd="38dp"
-        android:layout_marginRight="38dp"
-        android:layout_marginBottom="443dp"
-        android:background="#CDCDCD" />
+    <ListView
+        android:id="@+id/Trips_ListView"
+        android:layout_width="407dp"
+        android:layout_height="620dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/viewNombreConductor"
-        android:layout_width="292dp"
-        android:layout_height="34dp"
-        android:layout_alignTop="@+id/fondoPosibleViaje"
-        android:layout_alignEnd="@+id/fondoPosibleViaje"
-        android:layout_alignRight="@+id/fondoPosibleViaje"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="23dp"
-        android:layout_marginRight="23dp"
-        android:text="Nombre del conductor"
-        app:autoSizeTextType="uniform"
-        tools:layout_editor_absoluteX="26dp"
-        tools:layout_editor_absoluteY="19dp"/>
 
-    <TextView
-        android:id="@+id/viewOrigen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/viewNombreConductor"
-        android:layout_alignStart="@+id/fondoPosibleViaje"
-        android:layout_alignLeft="@+id/fondoPosibleViaje"
-        android:layout_marginStart="17dp"
-        android:layout_marginLeft="17dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginBottom="124dp"
-        android:text="Origen :"
-        android:textStyle="bold"
-        app:autoSizeTextType="uniform" />
-
-    <TextView
-        android:id="@+id/viewDireccionOrigen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/viewNombreConductor"
-        android:layout_marginStart="19dp"
-        android:layout_marginLeft="19dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginBottom="124dp"
-        android:layout_toEndOf="@+id/viewOrigen"
-        android:layout_toRightOf="@+id/viewOrigen"
-        android:text="Dirección XYZ" />
-
-    <TextView
-        android:id="@+id/viewDestino"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/fondoPosibleViaje"
-        android:layout_alignLeft="@+id/fondoPosibleViaje"
-        android:layout_alignBottom="@+id/fondoPosibleViaje"
-        android:layout_marginStart="17dp"
-        android:layout_marginLeft="17dp"
-        android:layout_marginBottom="78dp"
-        android:text="Destino :"
-        android:textStyle="bold"
-        app:autoSizeTextType="uniform" />
-
-    <TextView
-        android:id="@+id/viewDireccionDestino"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/fondoPosibleViaje"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginBottom="78dp"
-        android:layout_toEndOf="@+id/viewDestino"
-        android:layout_toRightOf="@+id/viewDestino"
-        android:text="Dirección XYZ" />
-
-    <TextView
-        android:id="@+id/viewCarroConductor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/fondoPosibleViaje"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginBottom="52dp"
-        android:layout_toEndOf="@+id/viewDestino"
-        android:layout_toRightOf="@+id/viewDestino"
-        android:text="carro XYZ" />
-
-    <TextView
-        android:id="@+id/viewPlacaCarro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/fondoPosibleViaje"
-        android:layout_marginStart="161dp"
-        android:layout_marginLeft="161dp"
-        android:layout_marginBottom="51dp"
-        android:layout_toEndOf="@+id/viewDestino"
-        android:layout_toRightOf="@+id/viewDestino"
-        android:text="DDM - 123" />
-
-    <TextView
-        android:id="@+id/viewCarro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/fondoPosibleViaje"
-        android:layout_alignLeft="@+id/fondoPosibleViaje"
-        android:layout_alignBottom="@+id/fondoPosibleViaje"
-        android:layout_marginStart="17dp"
-        android:layout_marginLeft="17dp"
-        android:layout_marginBottom="53dp"
-        android:text="Carro :"
-        android:textStyle="bold"
-        app:autoSizeTextType="uniform" />
-
-    <TextView
-        android:id="@+id/viewPlaca"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/fondoPosibleViaje"
-        android:layout_alignLeft="@+id/fondoPosibleViaje"
-        android:layout_alignBottom="@+id/fondoPosibleViaje"
-        android:layout_marginStart="184dp"
-        android:layout_marginLeft="184dp"
-        android:layout_marginBottom="51dp"
-        android:text="Placa:"
-        android:textStyle="bold"
-        app:autoSizeTextType="uniform" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="140dp"
-        android:layout_height="36dp"
-        android:layout_alignStart="@+id/fondoPosibleViaje"
-        android:layout_alignLeft="@+id/fondoPosibleViaje"
-        android:layout_alignBottom="@+id/fondoPosibleViaje"
-        android:layout_marginStart="17dp"
-        android:layout_marginLeft="17dp"
-        android:layout_marginBottom="9dp"
-        android:text="Reservar viaje"
-        android:textSize="10sp"
-        app:backgroundTint="#4CAF50" />
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="140dp"
-        android:layout_height="36dp"
-        android:layout_alignBottom="@+id/fondoPosibleViaje"
-        android:layout_marginStart="19dp"
-        android:layout_marginLeft="19dp"
-        android:layout_marginBottom="11dp"
-        android:layout_toEndOf="@+id/button"
-        android:layout_toRightOf="@+id/button"
-        android:text="Ver ruta"
-        android:textSize="10sp"
-        app:backgroundTint="#EE0B0B" />
-</RelativeLayout>
+</LinearLayout>
