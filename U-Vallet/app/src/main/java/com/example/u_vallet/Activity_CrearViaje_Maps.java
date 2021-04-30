@@ -6,10 +6,16 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -37,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapReadyCallback {
 
@@ -50,6 +57,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     ArrayList<LatLng> mMarkerPoints;
     private Marker markerOrigin;
     private Marker markerDestination;
+    ArrayList<Polyline> polylines;
 
     LatLng originLatLng;
     LatLng destinationLatLng;
@@ -60,20 +68,66 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__crear_viaje__maps);
-
+        polylines = new ArrayList<>();
         markerOrigin = null;
         markerDestination = null;
         searchViewOrigin = findViewById(R.id.sv_origin);
+
         searchViewDestination = findViewById(R.id.sv_destination);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        int originCloseButtonId = searchViewOrigin.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
+        int destinationButtonID = searchViewDestination.getContext().getResources().getIdentifier("android:id/search_close_btn",null,null);
+        ImageView originCloseButton = (ImageView) searchViewOrigin.findViewById(originCloseButtonId);
+        ImageView destinationCloseButton = (ImageView) searchViewDestination.findViewById(destinationButtonID);
+
+        originCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchViewOrigin.setQuery("",false);
+                if(markerOrigin!= null){
+                    mMarkerPoints.remove(markerOrigin.getPosition());
+                    markerOrigin.remove();
+                    markerOrigin = null;
+                }
+                if(polylines!= null){
+                    for(int i = 0; i<polylines.size(); i++)
+                    {
+                            polylines.get(i).remove();
+                    }
+                }
+            }
+        });
+
+        destinationCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchViewDestination.setQuery("",false);
+                if(markerDestination != null){
+                    mMarkerPoints.remove(markerDestination.getPosition());
+                    markerDestination.remove();
+                    markerDestination = null;
+                }
+                if(polylines!= null){
+                    for(int i = 0; i<polylines.size(); i++)
+                    {
+                        polylines.get(i).remove();
+                    }
+                }
+            }
+        });
         searchViewOrigin.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
+                if(markerOrigin!= null){
+                    markerOrigin.remove();
+                }
                 if(mMarkerPoints.size()>1){
                     mMarkerPoints.clear();
                 }
                 originLocation = searchViewOrigin.getQuery().toString();
+                if(!originLocation.contains(",")){
+                    originLocation = originLocation +", Bogotá";
+                }
                 List<Address> addressListOrigin = null;
 
                 if(originLocation != null || !originLocation.equals("")) {
@@ -95,6 +149,11 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                     mMap.addMarker(markerOrigin);*/
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(originLatLng, 17));
                     mMarkerPoints.add(originLatLng);
+
+                    if(mMarkerPoints.size() >= 2){
+                        mOrigin = originLatLng;
+                        drawRoute();
+                    }
                 }
                 return false;
             }
@@ -103,20 +162,29 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
+
         });
 
         searchViewDestination.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                if(markerDestination != null){
+                    markerDestination.remove();
+                }
                 if(mMarkerPoints.size()>1){
                     mMarkerPoints.clear();
                 }
+
                 destinationLocation = searchViewDestination.getQuery().toString();
+                if(!destinationLocation.contains(",")){
+                    destinationLocation = destinationLocation +", Bogotá";
+                }
                 List<Address> addressListDestination = null;
 
                 if(destinationLocation != null || !destinationLocation.equals("")){
                     Geocoder geocoder = new Geocoder(Activity_CrearViaje_Maps.this);
                     try{
+
                         addressListDestination = geocoder.getFromLocationName(destinationLocation, 1);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -142,6 +210,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
+
         });
 
         mapFragment.getMapAsync(this);
@@ -150,8 +219,8 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), Activity_CrearViaje.class);
-                intent.putExtra("Origen", originLocation);
-                intent.putExtra("Destino", destinationLocation);
+                intent.putExtra("Origen", searchViewOrigin.getQuery());
+                intent.putExtra("Destino", searchViewDestination.getQuery());
                 startActivity(intent);
             }
         });
@@ -176,7 +245,8 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
-
+        Geocoder geocoder;
+        geocoder = new Geocoder(this, Locale.getDefault());
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
@@ -201,20 +271,90 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                  */
                 if(mMarkerPoints.size()==1){
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                }else if(mMarkerPoints.size() == 2 && markerOrigin == null){
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                 }else if(mMarkerPoints.size()==2){
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 }
 
                 // Add new marker to the Google Map Android API V2
-                mMap.addMarker(options);
+
+                List<Address> addresses = null;
+                String address = String.valueOf(point);
+                Log.d("ADD", address);
+                String[] aux = address.split("\\(");
+                String[] aux2 = aux[1].split("\\)");
+                String[] ltlg = aux2[0].split(",");
+                double lat = Double.parseDouble(ltlg[0]);
+                double lng = Double.parseDouble(ltlg[1]);
+                String completeAdd = null;
+                String finalAdd = null;
+                try{
+                    addresses = geocoder.getFromLocation(lat,lng, 1);
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+
+                completeAdd = addresses.get(0).getAddressLine(0);
+                Log.d("FINAL_ADD", completeAdd);
+                String[] addName = completeAdd.split(",");
+                Log.d("FINAL_ADD", addName[0]);
+                finalAdd = addName[0];
+                Log.d("FINAL_ADD", finalAdd);
+                if(searchViewOrigin.getQuery().length()>0 && searchViewDestination.getQuery().length()>0){
+                    searchViewOrigin.setQuery(finalAdd, false);
+                    searchViewDestination.setQuery("",false);
+                }
+                else if(searchViewOrigin.getQuery().length()==0){
+                    searchViewOrigin.setQuery(finalAdd, false);
+                }else{
+                    searchViewDestination.setQuery(finalAdd, false);
+                }
+                if(mMarkerPoints.size() == 1){
+                    originLatLng = point;
+                    markerOrigin = mMap.addMarker(options.title(finalAdd));
+                }else if(mMarkerPoints.size() == 2 && markerOrigin == null){
+                    originLatLng = point;
+                    markerOrigin = mMap.addMarker(options.title(finalAdd));
+                }else if (mMarkerPoints.size() == 2){
+                    destinationLatLng = point;
+                    markerDestination = mMap.addMarker(options.title(finalAdd));
+                }
+
 
                 // Checks, whether start and end locations are captured
                 if(mMarkerPoints.size() >= 2){
-                    mOrigin = mMarkerPoints.get(0);
-                    mDestination = mMarkerPoints.get(1);
+                    mOrigin = originLatLng;
+                    mDestination = destinationLatLng;
                     drawRoute();
                 }
 
+            }
+        });
+        mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+            @Override
+            public void onPolylineClick(Polyline polyline) {
+                Log.e("Polyline position", " -- " + polyline.getTag());
+                Log.e("Polyline color", String.valueOf(polyline.getColor()));
+                Log.e("Polyline colors", String.valueOf(R.color.grey));
+
+                //polyline.getId();
+                Log.e("Polyline id", polyline.getId());
+                //ArrayList<Polyline> polylinesAux = new ArrayList<>();
+                //polylinesAux = polylines;
+                for(int i = 0; i<polylines.size(); i++)
+                {
+                    //polylines.get(i).getId();
+                     if(polylines.get(i).getId().equals(polyline.getId())){
+                        polyline.setColor(-10052106); //ligthblue
+                        //polyline.remove();
+                    }else{
+                        Log.e("Polyline id FOR", polylines.get(i).getId());
+                        polylines.get(i).setColor(-4473409); //grey
+                    }
+
+                }
+                //onButtonShowPopupWindowClick("  " + polyline.getTag());
             }
         });
     }
@@ -399,13 +539,17 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
             JSONObject jObject;
             List<List<List<HashMap<String, String>>>> routes = null;
-
+            List<List<HashMap<String, String>>> routesAux = null;
             try {
                 jObject = new JSONObject(jsonData[0]);
                 DirectionsJSONParser parser = new DirectionsJSONParser();
 
                 // Starts parsing data
                 routes = parser.parse(jObject);
+                /*int tam = routes.size()-1;
+                routesAux = routes.get(tam);
+                routes.remove(tam);
+                Log.d("JSON", routesAux.toString());*/
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -449,6 +593,15 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                     // }else{
                     List<List<HashMap<String, String>>> path1 = result.get(i);
 
+                    HashMap<String, String>pathAux = (HashMap<String, String>) path1.get(0);
+                    Log.d("JSON AUX",String.valueOf(pathAux));
+                    path1.remove(0);
+                    duration = pathAux.get("dur");
+
+
+                    //path1.remove(0);
+
+
                     for (int s = 0; s < path1.size(); s++) {
                         Log.d("pathsize1", path1.size() + "");
 
@@ -461,6 +614,9 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         for (int j = 0; j < path.size(); j++) {
                             lineOptions1 = new PolylineOptions();
                             HashMap<String, String> point = path.get(j);
+                           /*String pathAux = point.get("dur");
+                            point.remove("dur");
+                            Log.d("JSON AUX",pathAux);*/
                             /*points = new ArrayList<LatLng>();
                             if(j==0){    // Get distance from the list
                                 distance = (String)point.get("distance");
@@ -521,23 +677,32 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 // Drawing polyline in the Google Map for the i-th route
                 // map.addPolyline(lineOptions);
             }
-
             if (size3 != 0)
             {
 
                 if ((size1 > size2 && size1 > size3)) {
                     if (size2 > size3) {
                         PolylineOptions line1 = new PolylineOptions().width(8).color(mapFragment.getActivity().getResources().getColor(R.color.grey));
-                        PolylineOptions line2 = new PolylineOptions().width(8).color(mapFragment.getResources().getColor(R.color.grey));
-                        PolylineOptions line3 = new PolylineOptions().width(8).color(mapFragment.getResources().getColor(R.color.lightblue));
+                        PolylineOptions line2 = new PolylineOptions().width(8).color(mapFragment.getActivity().getResources().getColor(R.color.grey));
+                        PolylineOptions line3 = new PolylineOptions().width(8).color(mapFragment.getActivity().getResources().getColor(R.color.lightblue));
 
                         line1.addAll(aline1);
                         line2.addAll(aline2);
                         line3.addAll(aline3);
 
-                        mMap.addPolyline(line1);
-                        mMap.addPolyline(line2);
-                        mMap.addPolyline(line3);
+                        Polyline lineA = mMap.addPolyline(line1);
+                        Polyline lineB = mMap.addPolyline(line2);
+                        Polyline lineC = mMap.addPolyline(line3);
+                        lineA.setClickable(true);
+                        lineA.setTag("lineA");
+                        lineB.setClickable(true);
+                        lineB.setTag("lineB");
+                        lineC.setClickable(true);
+                        lineC.setTag("lineC");
+
+                        polylines.add(lineA);
+                        polylines.add(lineB);
+                        polylines.add(lineC);
                     } else {
 
                         PolylineOptions line1 = new PolylineOptions().width(8).color(mapFragment.getActivity().getResources().getColor(R.color.grey));
@@ -548,11 +713,20 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         line2.addAll(aline2);
                         line3.addAll(aline3);
 
-                        mMap.addPolyline(line1);
-                        mMap.addPolyline(line3);
+                        Polyline lineA = mMap.addPolyline(line1);
+                        Polyline lineC =mMap.addPolyline(line3);
 
-                        mMap.addPolyline(line2);
+                        Polyline lineB  = mMap.addPolyline(line2);
+                        lineA.setClickable(true);
+                        lineA.setTag("lineA");
+                        lineB.setClickable(true);
+                        lineB.setTag("lineB");
+                        lineC.setClickable(true);
+                        lineC.setTag("lineC");
 
+                        polylines.add(lineA);
+                        polylines.add(lineB);
+                        polylines.add(lineC);
                     }
                 } else if ((size2 > size1 && size2 > size3)) {
                     if (size1 > size3) {
@@ -564,11 +738,19 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         line2.addAll(aline2);
                         line3.addAll(aline3);
 
-                        mMap.addPolyline(line1);
-                        mMap.addPolyline(line2);
+                        Polyline lineA = mMap.addPolyline(line1);
+                        Polyline lineB = mMap.addPolyline(line2);
+                        Polyline lineC = mMap.addPolyline(line3);
+                        lineA.setClickable(true);
+                        lineA.setTag("lineA");
+                        lineB.setClickable(true);
+                        lineB.setTag("lineB");
+                        lineC.setClickable(true);
+                        lineC.setTag("lineC");
 
-                        mMap.addPolyline(line3);
-
+                        polylines.add(lineA);
+                        polylines.add(lineB);
+                        polylines.add(lineC);
 
                     } else {
 
@@ -581,10 +763,19 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         line3.addAll(aline3);
 
 
-                        mMap.addPolyline(line2);
-                        mMap.addPolyline(line3);
+                        Polyline lineB = mMap.addPolyline(line2);
+                        Polyline lineC = mMap.addPolyline(line3);
 
-                        mMap.addPolyline(line1);
+                        Polyline lineA =mMap.addPolyline(line1);
+                        lineA.setClickable(true);
+                        lineA.setTag("lineA");
+                        lineB.setClickable(true);
+                        lineB.setTag("lineB");
+                        lineC.setClickable(true);
+                        lineC.setTag("lineC");
+                        polylines.add(lineA);
+                        polylines.add(lineB);
+                        polylines.add(lineC);
 
                     }
                 } else if ((size3 > size1 && size3 > size2)) {
@@ -598,9 +789,20 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         line3.addAll(aline3);
 
 
-                        mMap.addPolyline(line3);
-                        mMap.addPolyline(line1);
-                        mMap.addPolyline(line2);
+                        Polyline lineC = mMap.addPolyline(line3);
+                        Polyline lineA = mMap.addPolyline(line1);
+                        Polyline lineB = mMap.addPolyline(line2);
+
+                        lineA.setClickable(true);
+                        lineA.setTag("lineA");
+                        lineB.setClickable(true);
+                        lineB.setTag("lineB");
+                        lineC.setClickable(true);
+                        lineC.setTag("lineC");
+
+                        polylines.add(lineA);
+                        polylines.add(lineB);
+                        polylines.add(lineC);
 
                     } else {
                         PolylineOptions line1 = new PolylineOptions().width(8).color(mapFragment.getActivity().getResources().getColor(R.color.lightblue));
@@ -611,10 +813,20 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         line2.addAll(aline2);
                         line3.addAll(aline3);
 
-                        mMap.addPolyline(line3);
-                        mMap.addPolyline(line2);
+                        Polyline lineC = mMap.addPolyline(line3);
+                        Polyline lineB = mMap.addPolyline(line2);
+                        Polyline lineA = mMap.addPolyline(line1);
 
-                        mMap.addPolyline(line1);
+                        lineA.setClickable(true);
+                        lineA.setTag("lineA");
+                        lineB.setClickable(true);
+                        lineB.setTag("lineB");
+                        lineC.setClickable(true);
+                        lineC.setTag("lineC");
+
+                        polylines.add(lineA);
+                        polylines.add(lineB);
+                        polylines.add(lineC);
 
                     }
                 } else {
@@ -632,8 +844,15 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                     line1.addAll(aline1);
                     line2.addAll(aline2);
 
-                    mMap.addPolyline(line1);
-                    mMap.addPolyline(line2);
+                    Polyline lineA = mMap.addPolyline(line1);
+                    Polyline lineB = mMap.addPolyline(line2);
+
+                    lineA.setClickable(true);
+                    lineA.setTag("lineA");
+                    lineB.setClickable(true);
+                    lineB.setTag("lineB");
+                    polylines.add(lineA);
+                    polylines.add(lineB);
 
                 }else
                 {
@@ -643,8 +862,15 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                     line1.addAll(aline1);
                     line2.addAll(aline2);
 
-                    mMap.addPolyline(line2);
-                    mMap.addPolyline(line1);
+                    Polyline lineB = mMap.addPolyline(line2);
+                    Polyline lineA = mMap.addPolyline(line1);
+
+                    lineA.setClickable(true);
+                    lineA.setTag("lineA");
+                    lineB.setClickable(true);
+                    lineB.setTag("lineB");
+                    polylines.add(lineA);
+                    polylines.add(lineB);
                 }
 
 
@@ -653,7 +879,11 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
             else if(size1!=0){
                 PolylineOptions line1 = new PolylineOptions().width(8).color(mapFragment.getActivity().getResources().getColor(R.color.lightblue));
                 line1.addAll(aline1);
-                mMap.addPolyline(line1);
+                Polyline lineA = mMap.addPolyline(line1);
+
+                lineA.setClickable(true);
+                lineA.setTag("lineA");
+                polylines.add(lineA);
             }
 
         }
