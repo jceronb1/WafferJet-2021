@@ -108,7 +108,7 @@
                 android:layout_marginRight="48dp"
                 android:ems="10"
                 android:inputType=""
-                android:text="Username" />
+                android:hint="Username" />
 
             <TextView
                 android:id="@+id/contra"
@@ -128,7 +128,7 @@
                 app:autoSizeTextType="uniform" />
 
             <EditText
-                android:id="@+id/contraseña"
+                android:id="@+id/contraseñaText"
                 android:layout_width="285dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/contra"
@@ -142,14 +142,14 @@
                 android:layout_marginRight="47dp"
                 android:layout_marginBottom="15dp"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="Password" />
+                android:hint="Password"
+                android:inputType="textPassword"/>
 
             <Button
                 android:id="@+id/iniciar_sesion"
                 android:layout_width="200dp"
                 android:layout_height="40dp"
-                android:layout_below="@+id/contraseña"
+                android:layout_below="@+id/contraseñaText"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentEnd="true"

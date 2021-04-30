@@ -221,6 +221,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 Intent intent = new Intent(v.getContext(), Activity_CrearViaje.class);
                 intent.putExtra("Origen", searchViewOrigin.getQuery());
                 intent.putExtra("Destino", searchViewDestination.getQuery());
+                Intent intent2 = new Intent(v.getContext(), Activity_ExplorarViajes.class);
                 startActivity(intent);
             }
         });

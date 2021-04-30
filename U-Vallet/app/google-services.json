@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "55405502513",
+    "project_id": "u-vallet",
+    "storage_bucket": "u-vallet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55405502513:android:d150b3d7b4217c15faf510",
+        "android_client_info": {
+          "package_name": "com.example.u_vallet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "55405502513-e20o9aht2m9lts4qt41bd5scsjecoj44.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClupHYNBqJCd8dmShQIedZ4TFqx-TUUU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "55405502513-e20o9aht2m9lts4qt41bd5scsjecoj44.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

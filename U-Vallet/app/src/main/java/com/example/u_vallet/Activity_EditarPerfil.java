@@ -22,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,6 +61,17 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                 startActivityForResult(pickImage, IMAGE_PICKER_REQUEST);
             }
         });
+        Button botonTomarFoto = (Button) findViewById(R.id.botonTomarFoto);
+        botonTomarFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takeImage();
+            }
+        });
+    }
+    private void takeImage() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(takePictureIntent,REQUEST_IMAGE_CAPTURE);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
