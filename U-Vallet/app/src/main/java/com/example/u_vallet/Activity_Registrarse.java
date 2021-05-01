@@ -66,7 +66,6 @@ public class Activity_Registrarse extends AppCompatActivity {
     private FirebaseFirestore mFstore;
     private StorageReference mSotorageRef;
 
-
     public static final String PATH_USERS = "users/";
 
     private EditText mUser;
@@ -79,7 +78,6 @@ public class Activity_Registrarse extends AppCompatActivity {
     private ImageView mImageView;
     private DatePickerDialog.OnDateSetListener mFechaSetListener;
     private Uri imagenUri;
-
 
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
@@ -95,16 +93,7 @@ public class Activity_Registrarse extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mSotorageRef = FirebaseStorage.getInstance().getReference();
 
-        /*StorageReference profileRef = mSotorageRef.child("users/"+mAuth.getCurrentUser().getUid()+"profile.jpg");
-        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).into(mImageView);
-            }
-        })*/
-
         Button buttonRegistrarse = (Button) findViewById(R.id.buttoRegistrar);
-        //Button buttonGaleria =(Button) findViewById(R.id.buttonSeleccionarFoto);
 
         mImageView = (ImageView)findViewById(R.id.imagenFotoPerfil);
         mUserName = (EditText)findViewById(R.id.nombreUsuarioText);
@@ -198,6 +187,7 @@ public class Activity_Registrarse extends AppCompatActivity {
         }));
 
     }
+
     private void requestStoragePermission(){
         if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
             new AlertDialog.Builder(this)
@@ -259,6 +249,7 @@ public class Activity_Registrarse extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(takePictureIntent,REQUEST_IMAGE_CAPTURE);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -288,6 +279,7 @@ public class Activity_Registrarse extends AppCompatActivity {
             }
         }
     }
+
     private void uploadImageToFirebase(Uri imageUri){
         StorageReference fileRef = mSotorageRef.child("users/"+mAuth.getCurrentUser().getUid()+"/profile.jpg");
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -308,6 +300,7 @@ public class Activity_Registrarse extends AppCompatActivity {
             }
         });
     }
+
     private boolean validateForm(){
         boolean valid = true;
         String user = mUserName.getText().toString();
@@ -361,6 +354,7 @@ public class Activity_Registrarse extends AppCompatActivity {
         }
         return valid;
     }
+
     private void updateUI(FirebaseUser currentUser) throws ParseException {
         if(currentUser != null){
             currentUser = mAuth.getCurrentUser();
@@ -373,7 +367,7 @@ public class Activity_Registrarse extends AppCompatActivity {
                 usuario.setContraseña(mPassword.getText().toString());
                 Date fecha = new SimpleDateFormat("dd/MM/yyyy").parse(mFechaNacimiento.getText().toString());
                 usuario.setFechaNacimiento(fecha);
-                usuario.setTelefono(Double.parseDouble(mTelefono.getText().toString()));
+                usuario.setTelefono(Long.parseLong(mTelefono.getText().toString()));
                 usuario.setDireccion(mDireccion.getText().toString());
 
                 myRef = database.getReference(PATH_USERS + currentUser.getUid());
@@ -426,11 +420,13 @@ public class Activity_Registrarse extends AppCompatActivity {
 
     public void loadUsersSuscripcion(){
         myRef = database.getReference(PATH_USERS);
+
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnahpshot : dataSnapshot.getChildren()) {
                     Usuario usuario = singleSnahpshot.getValue(Usuario.class);
+
                     Log.i("Suscripcion Usuarios", "Encontró usuario: " + usuario.getName());
                     String name = usuario.getName();
                     String contraseña = usuario.getContraseña();

@@ -34,17 +34,46 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Activity_EditarPerfil extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+    private StorageReference mStorageRef;
+    public static final String PATH_USERS = "users/";
+
+    private EditText mNombreUsuario;
+    private EditText mNombreCompleto;
+    private EditText mContraseñaAntigua;
+    private TextView mFechaNacimeiento;
+    private EditText mTelefono;
+    private EditText mDireccion;
+    private ImageView mImageView;
 
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
@@ -60,10 +89,27 @@ public class Activity_EditarPerfil extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_perfil);
 
-        /*if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE != PackageManager.PERMISSION_GRANTED)){
-            if(ActivityCompat.)
-        }*/
+        database = FirebaseDatabase.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
+        mNombreUsuario = (EditText) findViewById(R.id.nombreUsuarioText);
+        mNombreCompleto = (EditText) findViewById(R.id.nombreCompletoText);
+        mContraseñaAntigua = (EditText) findViewById(R.id.contrasenaAntiguaText);
+        mFechaNacimeiento = (TextView) findViewById(R.id.fechaNacimientoPick);
+        mTelefono = (EditText) findViewById(R.id.telefonoText);
+        mDireccion = (EditText) findViewById(R.id.direccionText);
+        mImageView = (ImageView) findViewById(R.id.imagenFotoPerfil);
+
+        StorageReference profileRef = mStorageRef.child("users/"+mAuth.getCurrentUser().getUid()+"/profile.jpg");
+        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).into(mImageView);
+            }
+        });
+
+        loadUserInfo();
         Button botonCambiarImagen = (Button) findViewById(R.id.botonCambiarImagen);
         botonCambiarImagen.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +126,7 @@ public class Activity_EditarPerfil extends AppCompatActivity {
 
             }
         });
+
         Button botonTomarFoto = (Button) findViewById(R.id.botonTomarFoto);
         botonTomarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,6 +242,41 @@ public class Activity_EditarPerfil extends AppCompatActivity {
         }
     }
 
+    public void loadUserInfo(){
+        myRef = database.getReference(PATH_USERS);
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                    Usuario usuario = singleSnapshot.getValue(Usuario.class);
+                    String email = usuario.getUsername();
+                    String nombreC = usuario.getName();
+                    String contraseñaA = usuario.getContraseña();
+                    //String fecha = usuario.getFechaNacimiento().toString();
+                    String telefono = String.valueOf(usuario.getTelefono());
+                    String direccion = usuario.getDireccion();
+
+                    Log.d("LOADUSER", email +"/" + mAuth.getCurrentUser().getEmail());
+                    if(email.equals(mAuth.getCurrentUser().getEmail())) {
+
+                        mNombreUsuario.setText(email);
+                        mNombreCompleto.setText(nombreC);
+                        mContraseñaAntigua.setText(contraseñaA);
+                        //mFechaNacimeiento.setText(fecha);
+                        mTelefono.setText(telefono);
+                        mDireccion.setText(direccion);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("LOADUSER", "Error en la consulta", databaseError.toException());
+            }
+        });
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == STORAGE_PERMISSION_CODE) {
@@ -206,10 +288,12 @@ public class Activity_EditarPerfil extends AppCompatActivity {
 
         }
     }
+
     private void takeImage() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(takePictureIntent,REQUEST_IMAGE_CAPTURE);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -236,6 +320,7 @@ public class Activity_EditarPerfil extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.activity__navegation, menu);

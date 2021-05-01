@@ -8,12 +8,12 @@ public class Usuario {
     String contraseñaAntigua;
     String contraseñaNueva;
     Date fechaNacimiento;
-    double telefono;
+    long telefono;
     String direccion;
     String contraseña;
     String confimarContraseña;
 
-    public Usuario (String username, String name, String contraseñaAntigua, String contraseñaNueva, Date fechaNacimiento, double telefono, String direccion) {
+    public Usuario (String username, String name, String contraseñaAntigua, String contraseñaNueva, Date fechaNacimiento, long telefono, String direccion) {
         this.username = username;
         this.name = name;
         this.contraseñaAntigua = contraseñaAntigua;
@@ -22,7 +22,7 @@ public class Usuario {
         this.telefono = telefono;
         this.direccion = direccion;
     }
-    public Usuario (String username, String name, String contraseñaAntigua, String contraseñaNueva,  double telefono, String direccion) {
+    public Usuario (String username, String name, String contraseñaAntigua, String contraseñaNueva,  long telefono, String direccion) {
         this.username = username;
         this.name = name;
         this.contraseñaAntigua = contraseñaAntigua;
@@ -73,11 +73,11 @@ public class Usuario {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public double getTelefono() {
+    public long getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(double telefono) {
+    public void setTelefono(long telefono) {
         this.telefono = telefono;
     }
 
