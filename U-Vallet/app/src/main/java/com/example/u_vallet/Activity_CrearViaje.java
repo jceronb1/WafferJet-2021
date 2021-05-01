@@ -2,6 +2,7 @@ package com.example.u_vallet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,9 +11,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
-public class Activity_CrearViaje extends AppCompatActivity {
+import java.util.Calendar;
 
+public class Activity_CrearViaje extends AppCompatActivity implements View.OnClickListener {
+
+    Button botonHora;
+    EditText campoHora;
+    private int dia,mes,anio,hora,minutos;
+    private TimePickerDialog.OnTimeSetListener mTimeListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +54,14 @@ public class Activity_CrearViaje extends AppCompatActivity {
                 startActivity(intentMisCarros);
             }
         });
+
+        //obtener hora partida
+        botonHora = (Button)findViewById(R.id.botonHora);
+        campoHora = (EditText)findViewById(R.id.editHoraPartida);
+        botonHora.setOnClickListener(this);
+
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.activity__navegation, menu);
@@ -63,5 +78,23 @@ public class Activity_CrearViaje extends AppCompatActivity {
             Intent intent = new Intent( this, Activity_EditarPerfil.class);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //boton para la hora partida
+    @Override
+    public void onClick(View v) {
+        if(v == botonHora){
+            final Calendar calendar = Calendar.getInstance();
+            hora = calendar.get(Calendar.HOUR_OF_DAY);
+            minutos = calendar.get(Calendar.MINUTE);
+
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    campoHora.setText(hourOfDay+" : "+minute);
+                }
+            },hora,minutos,false);
+            timePickerDialog.show();
+        }
     }
 }
