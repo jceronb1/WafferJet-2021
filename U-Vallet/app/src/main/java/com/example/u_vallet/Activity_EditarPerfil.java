@@ -15,6 +15,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -40,34 +42,106 @@ public class Activity_EditarPerfil extends AppCompatActivity {
 
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
-    private AppBarConfiguration mAppBarConfiguration;
+
+    private int STORAGE_PERMISSION_CODE = 1;
+    private int CAMERA_PERMISSION_CODE = 2;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_perfil);
 
-        permisosAndroid.requestPermission(this,  Manifest.permission.READ_EXTERNAL_STORAGE, "", IMAGE_PICKER_REQUEST);
-        permisosAndroid.requestPermission(this, Manifest.permission.CAMERA, "", REQUEST_IMAGE_CAPTURE);
         /*if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE != PackageManager.PERMISSION_GRANTED)){
             if(ActivityCompat.)
         }*/
+
         Button botonCambiarImagen = (Button) findViewById(R.id.botonCambiarImagen);
         botonCambiarImagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pickImage = new Intent(Intent.ACTION_PICK);
-                pickImage.setType("image/*");
-                startActivityForResult(pickImage, IMAGE_PICKER_REQUEST);
+                if(ContextCompat.checkSelfPermission( Activity_EditarPerfil.this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(Activity_EditarPerfil.this, "You have already granted this permission!", Toast.LENGTH_SHORT).show();
+                    Intent pickImage = new Intent(Intent.ACTION_PICK);
+                    pickImage.setType("image/*");
+                    startActivityForResult(pickImage, IMAGE_PICKER_REQUEST);
+                }else{
+                    requestStoragePermission();
+                }
+
             }
         });
         Button botonTomarFoto = (Button) findViewById(R.id.botonTomarFoto);
         botonTomarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takeImage();
+                if(ContextCompat.checkSelfPermission(Activity_EditarPerfil.this,
+                        Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(Activity_EditarPerfil.this, "You have already granted this permission!", Toast.LENGTH_SHORT).show();
+                    takeImage();
+                }else{
+                    requestCamaraPermission();
+                }
             }
         });
+    }
+
+    private void requestStoragePermission(){
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
+            new AlertDialog.Builder(this)
+                    .setTitle("Permiso requerido")
+                    .setMessage("Este permiso es requerido para el acceso a su galeria")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(Activity_EditarPerfil.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                        }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+        } else{
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},STORAGE_PERMISSION_CODE);
+        }
+    }
+    private void requestCamaraPermission(){
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+            new AlertDialog.Builder(this)
+                .setTitle("Permiso requerido")
+                .setTitle("Este permiso es requerido para el acceso a su camarar")
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(Activity_EditarPerfil.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+                    }
+
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
+        } else{
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permiso Concedido", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Permiso Denegado", Toast.LENGTH_SHORT).show();
+            }
+
+        }
     }
     private void takeImage() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -99,21 +173,6 @@ public class Activity_EditarPerfil extends AppCompatActivity {
             }
         }
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 2: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permiso Concedido", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Permiso Denegado", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.activity__navegation, menu);
