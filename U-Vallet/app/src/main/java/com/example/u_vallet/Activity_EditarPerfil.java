@@ -84,6 +84,24 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                 }
             }
         });
+
+        Button Guardar = (Button)findViewById(R.id.botonGuardar);
+        Button Cancelar = (Button)findViewById(R.id.cancelar);
+        Guardar.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentRoles = new Intent(v.getContext(), Activity_Roles.class);
+                startActivity(intentRoles);
+            }
+        }));
+        Cancelar.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentRoles = new Intent(v.getContext(), Activity_Roles.class);
+                startActivity(intentRoles);
+            }
+        }));
+
     }
 
     private void requestStoragePermission(){

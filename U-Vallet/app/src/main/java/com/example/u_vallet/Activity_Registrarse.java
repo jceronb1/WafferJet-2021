@@ -115,6 +115,16 @@ public class Activity_Registrarse extends AppCompatActivity {
             }
         });
 
+        Button Cancelar = (Button)findViewById(R.id.cancelar2);
+
+        Cancelar.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentLogin = new Intent(v.getContext(), Activity_Login.class);
+                startActivity(intentLogin);
+            }
+        }));
+
     }
     private void requestStoragePermission(){
         if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
