@@ -23,8 +23,8 @@ public class Activity_MisCarros extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mis_carros);
 
-        Button botonMiViaje = (Button) findViewById(R.id.buttonCambiarFoto);
-        Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViajeMC);
+        Button botonMiViaje = (Button) findViewById(R.id.buttonMiViajeMV2);
+        Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViajeMC4);
 
         botonMiViaje.setOnClickListener(new View.OnClickListener() {
             @Override
