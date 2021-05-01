@@ -28,7 +28,6 @@ public class Activity_Roles extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intentConductor = new Intent (v.getContext(), Activity_MisCarros.class);
-                //Intent intentConductor = new Intent(v.getContext(), Activity_CrearViaje_Maps.class);
                 startActivity(intentConductor);
             }
         });

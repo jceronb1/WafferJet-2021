@@ -8,11 +8,14 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,8 +23,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,6 +44,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Activity_Registrarse extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -52,6 +62,8 @@ public class Activity_Registrarse extends AppCompatActivity {
     private EditText mConfirmPassword;
     private EditText mTelefono;
     private EditText mDireccion;
+    private TextView mFechaNacimiento;
+    private DatePickerDialog.OnDateSetListener mFechaSetListener;
 
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
@@ -73,7 +85,7 @@ public class Activity_Registrarse extends AppCompatActivity {
         mUser = (EditText)findViewById(R.id.nombreCompletoText);
         mPassword = (EditText)findViewById(R.id.contrasenaText);
         mConfirmPassword = (EditText)findViewById(R.id.confirmarContrasenaText);
-        //Fecha de Nacimiento
+        mFechaNacimiento = (TextView)findViewById(R.id.fechaNacimientoPick);
         mTelefono = (EditText)findViewById(R.id.telefonoText);
         mDireccion = (EditText)findViewById(R.id.direccionText);
 
@@ -114,7 +126,41 @@ public class Activity_Registrarse extends AppCompatActivity {
                 }
             }
         });
+        mFechaNacimiento.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                Calendar cal = Calendar.getInstance();
+                int año = cal.get(Calendar.YEAR);
+                int mes = cal.get(Calendar.MONTH);
+                int dia = cal.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog dialog = new DatePickerDialog(
+                        Activity_Registrarse.this,
+                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                        mFechaSetListener,
+                        año,mes,dia);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+            }
+        });
+        mFechaSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int año, int mes, int diaDelMes) {
+                String sDia, sMes;
+                mes = mes +1;
+                Log.d("DATE_PICK", "OnDateSet: fecha: "+diaDelMes+"/"+mes+"/"+año);
+                if(diaDelMes < 10)
+                    sDia = "0"+diaDelMes;
+                else
+                    sDia = String.valueOf(diaDelMes);
+                if(mes < 10)
+                    sMes = "0"+mes;
+                else
+                    sMes = String.valueOf(mes);
+                String fecha = sDia + "/" + sMes + "/" + año;
+                mFechaNacimiento.setText(fecha);
+            }
+        };
         Button Cancelar = (Button)findViewById(R.id.cancelar2);
 
         Cancelar.setOnClickListener((new View.OnClickListener() {
@@ -219,6 +265,7 @@ public class Activity_Registrarse extends AppCompatActivity {
         String nombre = mUser.getText().toString();
         String contraseña = mPassword.getText().toString();
         String confirmarContraseña = mConfirmPassword.getText().toString();
+        String fechaNacimiento = mFechaNacimiento.getText().toString();
         String telefono = mTelefono.getText().toString();
         String direccion = mDireccion.getText().toString();
         if(TextUtils.isEmpty(user)){
@@ -245,6 +292,12 @@ public class Activity_Registrarse extends AppCompatActivity {
         }else{
             mConfirmPassword.setError(null);
         }
+        if(TextUtils.isEmpty(fechaNacimiento)){
+            mFechaNacimiento.setError("Required");
+            valid = false;
+        }else{
+            mFechaNacimiento.setError(null);
+        }
         if(TextUtils.isEmpty(telefono)){
             mTelefono.setError("Required");
             valid = false;
@@ -259,15 +312,17 @@ public class Activity_Registrarse extends AppCompatActivity {
         }
         return valid;
     }
-    private void updateUI(FirebaseUser currentUser){
+    private void updateUI(FirebaseUser currentUser) throws ParseException {
         if(currentUser != null){
             currentUser = mAuth.getCurrentUser();
             if(validateForm()) {
+
                 Usuario usuario = new Usuario();
                 usuario.setUsername(mUserName.getText().toString());
                 usuario.setName(mUser.getText().toString());
                 usuario.setContraseña(mPassword.getText().toString());
-                //usuario.setFecha()
+                Date fecha = new SimpleDateFormat("dd/MM/yyyy").parse(mFechaNacimiento.getText().toString());
+                usuario.setFechaNacimiento(fecha);
                 usuario.setTelefono(Double.parseDouble(mTelefono.getText().toString()));
                 usuario.setDireccion(mDireccion.getText().toString());
 
@@ -285,6 +340,7 @@ public class Activity_Registrarse extends AppCompatActivity {
             mUser.setText("");
             mPassword.setText("");
             mConfirmPassword.setText("");
+            mFechaNacimiento.setText("");
             mTelefono.setText("");
             mDireccion.setText("");
         }
@@ -302,7 +358,11 @@ public class Activity_Registrarse extends AppCompatActivity {
                                 UserProfileChangeRequest.Builder upcrb = new UserProfileChangeRequest.Builder();
                                 upcrb.setDisplayName(mUserName.getText().toString());
                                 user.updateProfile(upcrb.build());
-                                updateUI(user);
+                                try {
+                                    updateUI(user);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                         if(!task.isSuccessful()){
