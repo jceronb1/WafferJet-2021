@@ -30,6 +30,20 @@
         app:layout_constraintHorizontal_bias="0.111"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="433dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/Trips_ListView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="33dp"
+        android:layout_marginBottom="-2dp"
+        android:background="#2B3BD2"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
     <Button
         android:id="@+id/buttonCrearViajeMC3"
         android:layout_width="198dp"
@@ -53,6 +67,7 @@
         app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toEndOf="@+id/buttonMiViajeCV" />
 
+
     <Button
         android:id="@+id/button3"
         android:layout_width="192dp"
@@ -60,9 +75,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginBottom="-2dp"
+        android:layout_marginStart="211dp"
+        android:layout_marginLeft="211dp"
+        android:layout_marginBottom="2dp"
         app:backgroundTint="#EEBC0B"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,12 +85,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-
-
     <ListView
         android:id="@+id/Trips_ListView"
-        android:layout_width="407dp"
-        android:layout_height="560dp"
+        android:layout_width="390dp"
+        android:layout_height="541dp"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="5dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -22,7 +22,7 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
         botonCrearViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentCrearViaje = new Intent(v.getContext(), Activity_CrearViaje.class);
+                Intent intentCrearViaje = new Intent(v.getContext(), Activity_CrearViaje_Maps.class);
                 startActivity(intentCrearViaje);
             }
         });

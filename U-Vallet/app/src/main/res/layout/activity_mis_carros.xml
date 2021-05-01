@@ -9,8 +9,8 @@
 
     <Button
         android:id="@+id/buttonCrearViajeMC4"
-        android:layout_width="134dp"
-        android:layout_height="72dp"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="7dp"
         android:layout_marginLeft="7dp"
@@ -32,8 +32,8 @@
 
     <Button
         android:id="@+id/buttonMisCarrosMV2"
-        android:layout_width="140dp"
-        android:layout_height="71dp"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
@@ -67,8 +67,8 @@
 
     <Button
         android:id="@+id/buttonMiViajeMV2"
-        android:layout_width="134dp"
-        android:layout_height="74dp"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="-9dp"
         android:text="Mi Viaje"
@@ -77,6 +77,19 @@
         app:backgroundTint="#2B3BD2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="433dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-2dp"
+        android:background="#2B3BD2"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
