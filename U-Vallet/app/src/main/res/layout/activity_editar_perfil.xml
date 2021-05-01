@@ -102,17 +102,17 @@
         android:layout_alignParentRight="true"
         android:layout_marginStart="33dp"
         android:layout_marginLeft="33dp"
-        android:layout_marginTop="19dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="116dp"
         android:layout_marginRight="116dp"
-        android:text="Nombre de usuario"
+        android:text="Correo Electronico"
         android:textColor="#000000"
         android:textSize="16sp" />
 
     <EditText
         android:id="@+id/nombreUsuarioText"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/nombreUsuarioView"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -129,7 +129,7 @@
     <EditText
         android:id="@+id/nombreCompletoText"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/nombreUsuarioView"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -182,7 +182,7 @@
     <EditText
         android:id="@+id/contrasenaAntiguaText"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/nombreUsuarioView"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -200,7 +200,7 @@
     <EditText
         android:id="@+id/contrasenaNuevaText"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/nombreUsuarioView"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -253,7 +253,7 @@
     <EditText
         android:id="@+id/fechaNacimientoPick"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/nombreUsuarioView"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -265,7 +265,7 @@
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
         android:ems="10"
-        android:inputType="date"/>
+        android:inputType="date" />
 
     <TextView
         android:id="@+id/telefonoView"
@@ -288,7 +288,7 @@
     <EditText
         android:id="@+id/telefonoText"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/nombreUsuarioView"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -323,7 +323,7 @@
     <EditText
         android:id="@+id/direccionText"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/nombreUsuarioView"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -337,46 +337,11 @@
         android:ems="10"
         android:inputType="" />
 
-    <TextView
-        android:id="@+id/correoElectronicoView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/nombreCompletoText"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="33dp"
-        android:layout_marginLeft="33dp"
-        android:layout_marginTop="294dp"
-        android:layout_marginEnd="116dp"
-        android:layout_marginRight="116dp"
-        android:text="Correo electrónico"
-        android:textColor="#000000"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/correoElectronicoText"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_below="@+id/nombreUsuarioView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="33dp"
-        android:layout_marginLeft="33dp"
-        android:layout_marginTop="408dp"
-        android:layout_marginEnd="31dp"
-        android:layout_marginRight="31dp"
-        android:ems="10"
-        android:inputType="textEmailAddress" />
-
     <Button
         android:id="@+id/botonGuardar"
         android:layout_width="120dp"
         android:layout_height="35dp"
-        android:layout_below="@+id/correoElectronicoText"
+        android:layout_below="@+id/direccionText"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginStart="33dp"
@@ -390,7 +355,7 @@
         android:id="@+id/cancelar"
         android:layout_width="120dp"
         android:layout_height="35dp"
-        android:layout_below="@+id/correoElectronicoText"
+        android:layout_below="@+id/direccionText"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="57dp"
