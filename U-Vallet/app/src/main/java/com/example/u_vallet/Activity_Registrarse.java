@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,6 +44,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -52,8 +60,13 @@ import java.util.Date;
 
 public class Activity_Registrarse extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    FirebaseDatabase database;
-    DatabaseReference myRef;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+    private FirebaseUser mFUser;
+    private FirebaseFirestore mFstore;
+    private StorageReference mSotorageRef;
+
+
     public static final String PATH_USERS = "users/";
 
     private EditText mUser;
@@ -63,7 +76,10 @@ public class Activity_Registrarse extends AppCompatActivity {
     private EditText mTelefono;
     private EditText mDireccion;
     private TextView mFechaNacimiento;
+    private ImageView mImageView;
     private DatePickerDialog.OnDateSetListener mFechaSetListener;
+    private Uri imagenUri;
+
 
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
@@ -77,10 +93,20 @@ public class Activity_Registrarse extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        mSotorageRef = FirebaseStorage.getInstance().getReference();
+
+        /*StorageReference profileRef = mSotorageRef.child("users/"+mAuth.getCurrentUser().getUid()+"profile.jpg");
+        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).into(mImageView);
+            }
+        })*/
 
         Button buttonRegistrarse = (Button) findViewById(R.id.buttoRegistrar);
         //Button buttonGaleria =(Button) findViewById(R.id.buttonSeleccionarFoto);
 
+        mImageView = (ImageView)findViewById(R.id.imagenFotoPerfil);
         mUserName = (EditText)findViewById(R.id.nombreUsuarioText);
         mUser = (EditText)findViewById(R.id.nombreCompletoText);
         mPassword = (EditText)findViewById(R.id.contrasenaText);
@@ -104,7 +130,7 @@ public class Activity_Registrarse extends AppCompatActivity {
                 if(ContextCompat.checkSelfPermission( Activity_Registrarse.this,
                         Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
                     Toast.makeText(Activity_Registrarse.this, "You have already granted this permission!", Toast.LENGTH_SHORT).show();
-                    Intent pickImage = new Intent(Intent.ACTION_PICK);
+                    Intent pickImage = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     pickImage.setType("image/*");
                     startActivityForResult(pickImage, IMAGE_PICKER_REQUEST);
                 }else{
@@ -230,13 +256,13 @@ public class Activity_Registrarse extends AppCompatActivity {
         }
     }
     private void takeImage() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(takePictureIntent,REQUEST_IMAGE_CAPTURE);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ImageView image = (ImageView) findViewById(R.id.imagenFotoPerfil);
+
         switch (requestCode) {
             case 1: {
                 if (resultCode == RESULT_OK) {
@@ -244,7 +270,10 @@ public class Activity_Registrarse extends AppCompatActivity {
                         final Uri imageUri = data.getData();
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                        image.setImageBitmap(selectedImage);
+                        mImageView.setImageBitmap(selectedImage);
+                        //mImageView.setImageURI(imageUri);
+                        imagenUri = imageUri;
+
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -254,10 +283,30 @@ public class Activity_Registrarse extends AppCompatActivity {
                 if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    image.setImageBitmap(imageBitmap);
+                    mImageView.setImageBitmap(imageBitmap);
                 }
             }
         }
+    }
+    private void uploadImageToFirebase(Uri imageUri){
+        StorageReference fileRef = mSotorageRef.child("users/"+mAuth.getCurrentUser().getUid()+"/profile.jpg");
+        fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(mImageView);
+                        Toast.makeText(Activity_Registrarse.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Activity_Registrarse.this, "Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     private boolean validateForm(){
         boolean valid = true;
@@ -315,6 +364,7 @@ public class Activity_Registrarse extends AppCompatActivity {
     private void updateUI(FirebaseUser currentUser) throws ParseException {
         if(currentUser != null){
             currentUser = mAuth.getCurrentUser();
+            uploadImageToFirebase(imagenUri);
             if(validateForm()) {
 
                 Usuario usuario = new Usuario();
