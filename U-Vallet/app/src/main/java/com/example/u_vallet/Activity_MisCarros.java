@@ -51,10 +51,8 @@ public class Activity_MisCarros extends AppCompatActivity {
             }
         });
 
-
+        //
         Button botonMiViaje = (Button) findViewById(R.id.buttonMiViajeMV2);
-        Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViajeMC4);
-
         botonMiViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +61,8 @@ public class Activity_MisCarros extends AppCompatActivity {
             }
         });
 
+        //
+        Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViajeMC4);
         botonCrearViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,7 +105,9 @@ public class Activity_MisCarros extends AppCompatActivity {
         return testData;
     }
 
-
+    //----------------------------------------------
+    //--------   Custom adapter for cars  ----------
+    //----------------------------------------------
     class CarrosCustomAdapter extends BaseAdapter {
 
         @Override
@@ -141,12 +143,22 @@ public class Activity_MisCarros extends AppCompatActivity {
             modelo.setText(MisCarros.get(position).modelo);
             capacidad.setText(String.valueOf(MisCarros.get(position).capacidad));
 
-            // Set event listeners to teh buttons
+            // Set event listeners to the buttons
             Button seleccionarCarro = (Button) convertView.findViewById(R.id.botonSeleccionarCarro);
             seleccionarCarro.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.i("TAG","Carro seleccionado");
+                }
+            });
+
+            //------ Get button to edit a car and add event listener --------
+            Button btnEditarCarro = (Button) convertView.findViewById(R.id.btn_ListViewCarro_EditarCarro);
+            btnEditarCarro.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent editarCarro = new Intent(v.getContext(), Activity_EditarCarro.class);
+                    startActivity(editarCarro);
                 }
             });
 

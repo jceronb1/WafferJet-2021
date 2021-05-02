@@ -30,14 +30,14 @@ public class Activity_AgregarCarro extends AppCompatActivity {
         firebaseDB = FirebaseDatabase.getInstance().getReference();
 
         // Get "Agregar nuevo carro" and add event listener
-        Button agregarCarro = (Button) findViewById(R.id.btn_AgregarCarro_AgregarCarro);
+        Button agregarCarro = (Button) findViewById(R.id.btn_EditarCarro_GuardarCambios);
         agregarCarro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get input fields
-                EditText placa = (EditText) v.findViewById(R.id.AgregarCarro_Placa);
-                EditText marca = (EditText) v.findViewById(R.id.AgregarCarro_Marca);
-                EditText modelo = (EditText) v.findViewById(R.id.AgregarCarro_Modelo);
+                EditText placa = (EditText) v.findViewById(R.id.EditarCarro_Placa);
+                EditText marca = (EditText) v.findViewById(R.id.EditarCarro_Marca);
+                EditText modelo = (EditText) v.findViewById(R.id.EditarCarro_Modelo);
                 EditText capacidad = (EditText) v.findViewById(R.id.AgregarCarro_Capacidad);
                 // Convert values in input
                 String marcaCarro = marca.getText().toString();

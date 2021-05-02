@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.u_vallet">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- Location -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> <!-- Location -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Location -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
@@ -25,6 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
+        <activity android:name=".Activity_EditarCarro"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -39,7 +39,7 @@
 
         <activity
             android:name=".Activity_CrearViaje_Maps"
-            android:label="@string/title_activity__crear_viaje__maps"></activity>
+            android:label="@string/title_activity__crear_viaje__maps" />
         <activity android:name=".Activity_Agregar_Vehiculo" />
         <activity android:name=".Activity_Mi_Viaje_Pasajero" />
         <activity android:name=".Activity_MisCarros" />
