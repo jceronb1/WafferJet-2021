@@ -1,5 +1,6 @@
 package com.example.u_vallet;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -77,6 +78,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     // Location
     private static final int REQUEST_LOCATION = 410;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    String[] location_permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
     private double userLastKnownLocationLat;
     private double userLastKnownLocationLong;
 
@@ -395,10 +397,44 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                     }
                 }
             });
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            Toast.makeText(this, "Location permissions are required", Toast.LENGTH_SHORT).show();
         } else {
             // If permissions have not been granted, request required permissions
-            String[] location_permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
             ActivityCompat.requestPermissions(this, location_permissions, REQUEST_LOCATION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // Line to erase after
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Check if permissions were granted
+        switch (requestCode) {
+            case REQUEST_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Location permissions granted", Toast.LENGTH_SHORT).show();
+                    // Get last know user's location
+                    fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                // Get Longitude and Latitude
+                                userLastKnownLocationLat = location.getLatitude();
+                                userLastKnownLocationLong = location.getLongitude();
+                                // Center the map camera into current user location
+                                LatLng mapaInicial = new LatLng(userLastKnownLocationLat, userLastKnownLocationLong);
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(mapaInicial));
+                                mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+                            } else {
+                                Log.i("Location", "Location is null");
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(this, "Location services were denied by the user", Toast.LENGTH_SHORT).show();
+                }
+                return;
         }
     }
 
