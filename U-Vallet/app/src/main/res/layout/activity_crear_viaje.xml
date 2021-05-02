@@ -11,9 +11,6 @@
         android:stretchColumns="1">
 
         <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".Activity_CrearViaje"
@@ -229,14 +226,14 @@
             <Button
                 android:id="@+id/buttonCrearViaje"
                 android:layout_width="wrap_content"
-                android:layout_height="38dp"
+                android:layout_height="37dp"
                 android:layout_below="@+id/editValorViaje"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginStart="122dp"
-                android:layout_marginLeft="122dp"
+                android:layout_marginStart="215dp"
+                android:layout_marginLeft="215dp"
                 android:layout_marginTop="35dp"
                 android:layout_marginEnd="23dp"
                 android:layout_marginRight="23dp"
@@ -310,6 +307,45 @@
                 android:layout_marginRight="123dp"
                 android:layout_marginBottom="5dp"
                 app:backgroundTint="#EEBC0B" />
+
+            <TextView
+                android:id="@+id/placaCarro"
+                android:layout_width="139dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/buttonMiViajeCV"
+                android:layout_below="@+id/editValorViaje"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+
+                android:layout_marginStart="54dp"
+                android:layout_marginLeft="54dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="51dp"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:text="Carro asignado" />
+
+            <TextView
+                android:id="@+id/campoPlacaCarro"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_above="@+id/buttonMiViajeCV"
+                android:layout_below="@+id/placaCarro"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginStart="56dp"
+                android:layout_marginLeft="56dp"
+                android:layout_marginTop="-40dp"
+                android:layout_marginEnd="201dp"
+                android:layout_marginRight="201dp"
+                android:layout_marginBottom="14dp"
+                android:text="Renault : HLK 652"
+                android:textColor="#000000"
+                android:textSize="16sp" />
         </RelativeLayout>
     </TableLayout>
 </ScrollView>

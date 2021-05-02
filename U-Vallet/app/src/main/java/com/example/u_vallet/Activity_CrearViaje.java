@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -26,6 +27,10 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_viaje);
 
+        String placaCarro = getIntent().getExtras().getString("placa");
+        TextView placa = (TextView)findViewById(R.id.campoPlacaCarro);
+        //Log.i("PLACA",placaCarro);
+        placa.setText(placaCarro);
         //String origenAux[] = origen.split(",");
         Button botonMiViaje = (Button) findViewById(R.id.buttonMiViajeCV);
         Button botonMisCarros = (Button) findViewById(R.id.buttonMisCarrosCV);

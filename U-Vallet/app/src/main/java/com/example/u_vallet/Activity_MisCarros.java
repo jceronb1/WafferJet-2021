@@ -39,7 +39,7 @@ public class Activity_MisCarros extends AppCompatActivity {
         carrosListView.setAdapter(carrosAdapter);
 
 
-        /*
+
         Button botonMiViaje = (Button) findViewById(R.id.buttonMiViajeMV2);
         Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViajeMC4);
 
@@ -57,7 +57,7 @@ public class Activity_MisCarros extends AppCompatActivity {
                 Intent intentCrearViaje = new Intent(v.getContext(), Activity_CrearViaje_Maps.class);
                 startActivity(intentCrearViaje);
             }
-        });*/
+        });
     }
 
     @Override

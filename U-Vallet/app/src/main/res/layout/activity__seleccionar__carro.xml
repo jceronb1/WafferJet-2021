@@ -62,28 +62,6 @@
         android:text="Selecciona tu vehiculo para el viaje" />
 
 
-    <Button
-        android:id="@+id/botonContinuarCrearViaje"
-        android:layout_width="200dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/miCarroSubtitulo"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="127dp"
-        android:layout_marginLeft="127dp"
-        android:layout_marginTop="350dp"
-        android:layout_marginEnd="39dp"
-        android:layout_marginRight="39dp"
-        android:layout_marginBottom="15dp"
-        android:background="#FFC107"
-        android:text="Continuar"
-        android:textColor="#000000"
-        android:textColorHighlight="#FFC107"
-        android:textColorHint="#FFC107"
-        app:backgroundTint="#EEBC0B" />
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
         android:layout_width="433dp"
@@ -150,6 +128,22 @@
         app:backgroundTint="#2B3BD2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ListView
+        android:id="@+id/Cars_ListView"
+        android:layout_width="349dp"
+        android:layout_height="311dp"
+        android:layout_above="@+id/buttonCrearViajeMC4"
+        android:layout_below="@+id/miCarroSubtitulo"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginRight="35dp"
+        android:layout_marginBottom="41dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
