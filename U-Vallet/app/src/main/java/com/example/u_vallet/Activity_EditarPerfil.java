@@ -512,6 +512,10 @@ public class Activity_EditarPerfil extends AppCompatActivity {
         }else if (itemClicked == R.id.menuEditarPerfil){
             Intent intent = new Intent( this, Activity_EditarPerfil.class);
             startActivity(intent);
+        }else if(itemClicked == R.id.menuLogOut){
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent( this, Activity_Login.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

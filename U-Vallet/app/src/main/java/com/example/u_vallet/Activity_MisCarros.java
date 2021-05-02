@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 
 
@@ -74,6 +76,10 @@ public class Activity_MisCarros extends AppCompatActivity {
             startActivity(intent);
         }else if (itemClicked == R.id.menuEditarPerfil){
             Intent intent = new Intent( this, Activity_EditarPerfil.class);
+            startActivity(intent);
+        }else if(itemClicked == R.id.menuLogOut){
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent( this, Activity_Login.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

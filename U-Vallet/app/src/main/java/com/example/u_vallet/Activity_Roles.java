@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class Activity_Roles extends AppCompatActivity {
 
     @Override
@@ -55,6 +57,10 @@ public class Activity_Roles extends AppCompatActivity {
             startActivity(intent);
         }else if (itemClicked == R.id.menuEditarPerfil){
             Intent intent = new Intent( this, Activity_EditarPerfil.class);
+            startActivity(intent);
+        }else if(itemClicked == R.id.menuLogOut){
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent( this, Activity_Login.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

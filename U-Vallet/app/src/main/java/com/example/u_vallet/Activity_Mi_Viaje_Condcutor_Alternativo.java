@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class Activity_Mi_Viaje_Condcutor_Alternativo extends AppCompatActivity {
 
     @Override
@@ -28,6 +30,10 @@ public class Activity_Mi_Viaje_Condcutor_Alternativo extends AppCompatActivity {
             startActivity(intent);
         }else if (itemClicked == R.id.menuEditarPerfil){
             Intent intent = new Intent( this, Activity_EditarPerfil.class);
+            startActivity(intent);
+        }else if(itemClicked == R.id.menuLogOut){
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent( this, Activity_Login.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
