@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,8 +40,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -50,14 +56,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Activity_EditarPerfil extends AppCompatActivity {
 
@@ -65,16 +75,20 @@ public class Activity_EditarPerfil extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private StorageReference mStorageRef;
+    private FirebaseUser currentUser;
     public static final String PATH_USERS = "users/";
 
     private EditText mNombreUsuario;
     private EditText mNombreCompleto;
     private EditText mContraseñaAntigua;
-    private TextView mFechaNacimeiento;
+    private EditText mContraseñaNueva;
+    private TextView mFechaNacimiento;
     private EditText mTelefono;
     private EditText mDireccion;
+    private String uid;
     private ImageView mImageView;
-
+    private Button mPassword;
+    private Uri imagenUri;
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
 
@@ -92,14 +106,17 @@ public class Activity_EditarPerfil extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference();
+        currentUser = mAuth.getCurrentUser();
 
         mNombreUsuario = (EditText) findViewById(R.id.nombreUsuarioText);
         mNombreCompleto = (EditText) findViewById(R.id.nombreCompletoText);
         mContraseñaAntigua = (EditText) findViewById(R.id.contrasenaAntiguaText);
-        mFechaNacimeiento = (TextView) findViewById(R.id.fechaNacimientoPick);
+        mContraseñaNueva = (EditText) findViewById(R.id.contrasenaNuevaText);
+        mFechaNacimiento = (TextView) findViewById(R.id.fechaNacimientoPick);
         mTelefono = (EditText) findViewById(R.id.telefonoText);
         mDireccion = (EditText) findViewById(R.id.direccionText);
         mImageView = (ImageView) findViewById(R.id.imagenFotoPerfil);
+
 
         StorageReference profileRef = mStorageRef.child("users/"+mAuth.getCurrentUser().getUid()+"/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -179,9 +196,16 @@ public class Activity_EditarPerfil extends AppCompatActivity {
         };
         Button Guardar = (Button)findViewById(R.id.botonGuardar);
         Button Cancelar = (Button)findViewById(R.id.cancelar);
+
         Guardar.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    updateUserInfo(currentUser);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 Intent intentRoles = new Intent(v.getContext(), Activity_Roles.class);
                 startActivity(intentRoles);
             }
@@ -242,6 +266,41 @@ public class Activity_EditarPerfil extends AppCompatActivity {
         }
     }
 
+    private void guardarcontraseña(){
+        Log.d("hello","vamos");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Get auth credentials from the user for re-authentication. The example below shows
+        // email and password credentials but there are multiple possible providers,
+        // such as GoogleAuthProvider or FacebookAuthProvider.
+        String nombreusuario = mNombreUsuario.getHint().toString();
+        String contra =mContraseñaAntigua.getText().toString();
+        String nueva = mContraseñaNueva.getText().toString();
+        Log.d("hello",nombreusuario);
+        AuthCredential credential = EmailAuthProvider.getCredential(nombreusuario,contra);
+
+        // Prompt the user to re-provide their sign-in credentials
+        user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    user.updatePassword(nueva).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("hello", "Password updated");
+                            } else {
+                                Log.d("hello", "Error password not updated");
+                            }
+                        }
+                    });
+                } else {
+                    Log.d("hello", "Error auth failed");
+                }
+            }
+        });
+    }
+
     public void loadUserInfo(){
         myRef = database.getReference(PATH_USERS);
         myRef.addValueEventListener(new ValueEventListener() {
@@ -252,17 +311,28 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                     String email = usuario.getUsername();
                     String nombreC = usuario.getName();
                     String contraseñaA = usuario.getContraseña();
-                    //String fecha = usuario.getFechaNacimiento().toString();
+                    Date fecha = usuario.getFechaNacimiento();
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    String sFecha = null;
+                    Log.d("FECHAUS", String.valueOf(fecha));
+                    if(fecha != null) {
+                        sFecha = dateFormat.format(fecha);
+                        Log.d("FECHAUS", sFecha+"/"+String.valueOf(fecha));
+                    }
+
                     String telefono = String.valueOf(usuario.getTelefono());
                     String direccion = usuario.getDireccion();
+                    String key = usuario.getUid();
 
                     Log.d("LOADUSER", email +"/" + mAuth.getCurrentUser().getEmail());
                     if(email.equals(mAuth.getCurrentUser().getEmail())) {
 
-                        mNombreUsuario.setText(email);
+                        uid = key;
+                        Log.d("UID_EP", key);
+                        mNombreUsuario.setHint(email);
                         mNombreCompleto.setText(nombreC);
                         mContraseñaAntigua.setText(contraseñaA);
-                        //mFechaNacimeiento.setText(fecha);
+                        mFechaNacimiento.setText(sFecha);
                         mTelefono.setText(telefono);
                         mDireccion.setText(direccion);
                         break;
@@ -275,6 +345,111 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                 Log.w("LOADUSER", "Error en la consulta", databaseError.toException());
             }
         });
+    }
+
+    private void uploadImageToFirebase(Uri imagenUri){
+        StorageReference fileRef = mStorageRef.child("users/"+mAuth.getCurrentUser().getUid()+"/profile.jpg");
+        fileRef.putFile(imagenUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(mImageView);
+                        Toast.makeText(Activity_EditarPerfil.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Activity_EditarPerfil.this, "Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean validateForm(){
+        boolean valid = true;
+        String nombre = mNombreCompleto.getText().toString();
+        String contraseña = mContraseñaAntigua.getText().toString();
+        String confirmarContraseña = mContraseñaNueva.getText().toString();
+        String fechaNacimiento = mFechaNacimiento.getText().toString();
+        String telefono = mTelefono.getText().toString();
+        String direccion = mDireccion.getText().toString();
+
+        if(TextUtils.isEmpty(nombre)){
+            mNombreCompleto.setError("Required");
+            valid = false;
+        }else{
+            mNombreCompleto.setError(null);
+        }
+        if(TextUtils.isEmpty(contraseña)){
+            mContraseñaAntigua.setError("Required");
+            valid = false;
+        }else{
+            mContraseñaAntigua.setError(null);
+        }
+        /*if(TextUtils.isEmpty(confirmarContraseña)){
+            mConfirmPassword.setError("Required");
+            valid = false;
+        }else{
+            mConfirmPassword.setError(null);
+        }*/
+        if(TextUtils.isEmpty(fechaNacimiento)){
+            mFechaNacimiento.setError("Required");
+            valid = false;
+        }else{
+            mFechaNacimiento.setError(null);
+        }
+        if(TextUtils.isEmpty(telefono)){
+            mTelefono.setError("Required");
+            valid = false;
+        }else{
+            mTelefono.setError(null);
+        }
+        if(TextUtils.isEmpty(direccion)){
+            mDireccion.setError("Required");
+            valid = false;
+        }else{
+            mDireccion.setError(null);
+        }
+        return valid;
+    }
+
+    private void overWriteUserInfo(FirebaseUser currentUser,String uid, String userName, String name, String contraseña, Date fechaNacimiento, long telefono, String direccion){
+        currentUser = mAuth.getCurrentUser();
+        String key = uid;
+        Log.d("UID_OW",key+"/"+uid);
+        myRef = database.getReference("users/");
+        Usuario usuario = new Usuario (uid, userName, name, contraseña, fechaNacimiento, telefono, direccion);
+        Map<String, Object> valoresUsuario = usuario.toMap();
+        Map<String, Object> actualizacionHijos = new HashMap<>();
+        actualizacionHijos.put(key,valoresUsuario);
+        myRef.updateChildren(actualizacionHijos);
+    }
+
+    private void updateUserInfo(FirebaseUser currentUser) throws ParseException {
+        Log.d("UID_GET",uid);
+        if(validateForm()){
+            Date fecha = new SimpleDateFormat("dd/MM/yyyy").parse(mFechaNacimiento.getText().toString());
+            if(mContraseñaNueva != null){
+                overWriteUserInfo(currentUser,uid,mNombreUsuario.getHint().toString(),mNombreCompleto.getText().toString(),mContraseñaNueva.getText().toString(),
+                        fecha,Long.parseLong(mTelefono.getText().toString()),mDireccion.getText().toString());
+                Log.d("hello", "entramos");
+                guardarcontraseña();
+            }else {
+                overWriteUserInfo(currentUser, uid, mNombreUsuario.getHint().toString(), mNombreCompleto.getText().toString(), mContraseñaAntigua.getText().toString(),
+                        fecha, Long.parseLong(mTelefono.getText().toString()), mDireccion.getText().toString());
+            }
+            /*myRef = database.getReference(PATH_USERS + currentUser.getUid());
+            String key = myRef.push().getKey();
+            myRef = database.getReference(PATH_USERS + key);
+            myRef.valu
+            myRef.setValue(usuario);*/
+        }
+        Intent intent = new Intent(getBaseContext(), Activity_Roles.class);
+        intent.putExtra("user", currentUser.getEmail());
+        startActivity(intent);
     }
 
     @Override
@@ -297,7 +472,6 @@ public class Activity_EditarPerfil extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ImageView image = (ImageView) findViewById(R.id.imagenFotoPerfil);
         switch (requestCode) {
             case 1: {
                 if (resultCode == RESULT_OK) {
@@ -305,7 +479,9 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                         final Uri imageUri = data.getData();
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                        image.setImageBitmap(selectedImage);
+                        mImageView.setImageBitmap(selectedImage);
+                        imagenUri = imageUri;
+                        uploadImageToFirebase(imagenUri);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -315,7 +491,7 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                 if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    image.setImageBitmap(imageBitmap);
+                    mImageView.setImageBitmap(imageBitmap);
                 }
             }
         }

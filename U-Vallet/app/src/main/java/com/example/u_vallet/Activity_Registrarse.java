@@ -272,9 +272,11 @@ public class Activity_Registrarse extends AppCompatActivity {
             }
             case 2: {
                 if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+                    final Uri imageUri = data.getData();
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     mImageView.setImageBitmap(imageBitmap);
+                    imagenUri = imageUri;
                 }
             }
         }
@@ -362,6 +364,7 @@ public class Activity_Registrarse extends AppCompatActivity {
             if(validateForm()) {
 
                 Usuario usuario = new Usuario();
+
                 usuario.setUsername(mUserName.getText().toString());
                 usuario.setName(mUser.getText().toString());
                 usuario.setContraseña(mPassword.getText().toString());
@@ -371,7 +374,10 @@ public class Activity_Registrarse extends AppCompatActivity {
                 usuario.setDireccion(mDireccion.getText().toString());
 
                 myRef = database.getReference(PATH_USERS + currentUser.getUid());
+
                 String key = myRef.push().getKey();
+                usuario.setUid(key);
+                Log.d("UID_GET",key);
                 myRef = database.getReference(PATH_USERS + key);
                 myRef.setValue(usuario);
             }

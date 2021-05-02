@@ -1,8 +1,11 @@
 package com.example.u_vallet;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Usuario {
+    String uid;
     String username;
     String name;
     String contraseñaAntigua;
@@ -13,11 +16,21 @@ public class Usuario {
     String contraseña;
     String confimarContraseña;
 
-    public Usuario (String username, String name, String contraseñaAntigua, String contraseñaNueva, Date fechaNacimiento, long telefono, String direccion) {
+    public Usuario (String uid, String username, String name, String contraseñaAntigua, String contraseñaNueva, Date fechaNacimiento, long telefono, String direccion) {
+        this.uid = uid;
         this.username = username;
         this.name = name;
         this.contraseñaAntigua = contraseñaAntigua;
         this.contraseñaNueva = contraseñaNueva;
+        this.fechaNacimiento = fechaNacimiento;
+        this.telefono = telefono;
+        this.direccion = direccion;
+    }
+    public Usuario (String uid, String username, String name, String contraseña, Date fechaNacimiento, long telefono, String direccion) {
+        this.uid = uid;
+        this.username = username;
+        this.name = name;
+        this.contraseña = contraseña;
         this.fechaNacimiento = fechaNacimiento;
         this.telefono = telefono;
         this.direccion = direccion;
@@ -31,6 +44,14 @@ public class Usuario {
         this.direccion = direccion;
     }
     public Usuario(){
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getUsername() {
@@ -103,5 +124,16 @@ public class Usuario {
 
     public void setConfimarContraseña(String confimarContraseña) {
         this.confimarContraseña = confimarContraseña;
+    }
+    public Map<String, Object> toMap(){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("uid", uid);
+        result.put("username",username);
+        result.put("name",name);
+        result.put("contraseña",contraseña);
+        result.put("fechaNacimiento",fechaNacimiento);
+        result.put("telefono",telefono);
+        result.put("direccion",direccion);
+        return result;
     }
 }

@@ -146,6 +146,7 @@
                 android:layout_marginTop="-2dp"
                 android:layout_marginEnd="31dp"
                 android:layout_marginRight="31dp"
+                android:editable="false"
                 android:ems="10"
                 android:inputType="" />
 
@@ -160,7 +161,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginStart="33dp"
                 android:layout_marginLeft="33dp"
-                android:layout_marginTop="56dp"
+                android:layout_marginTop="60dp"
                 android:layout_marginEnd="31dp"
                 android:layout_marginRight="31dp"
                 android:ems="10"
@@ -216,9 +217,8 @@
                 android:layout_marginTop="116dp"
                 android:layout_marginEnd="31dp"
                 android:layout_marginRight="31dp"
-                android:ems="10"
-                android:inputType="textPassword" />
-
+                android:ems="10"/>
+                <!--android:inputType="textPassword"-->
 
             <EditText
                 android:id="@+id/contrasenaNuevaText"
@@ -238,7 +238,7 @@
                 android:inputType="textPassword" />
 
             <TextView
-                android:id="@+id/aontrasenaNuevaView"
+                android:id="@+id/contrasenaNuevaView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/nombreCompletoText"
@@ -253,7 +253,8 @@
                 android:layout_marginRight="116dp"
                 android:text="Contraseña Nueva"
                 android:textColor="#000000"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:ems="10"/>
 
             <TextView
                 android:id="@+id/fechaNacimientoView"
@@ -291,6 +292,7 @@
                 android:gravity="center"
                 android:hint="DD/MM/YYYY"
                 android:inputType="date"
+                android:textColor="#050505"
                 android:textSize="18sp" />
 
             <TextView
@@ -365,30 +367,30 @@
 
             <Button
                 android:id="@+id/botonGuardar"
-                android:layout_width="120dp"
+                android:layout_width="195dp"
                 android:layout_height="35dp"
                 android:layout_below="@+id/direccionText"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginStart="33dp"
-                android:layout_marginLeft="33dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
                 android:background="#EEBC0B"
                 android:text="Guardar"
                 app:backgroundTint="#EEBC0B" />
 
             <Button
                 android:id="@+id/cancelar"
-                android:layout_width="120dp"
+                android:layout_width="195dp"
                 android:layout_height="35dp"
                 android:layout_below="@+id/direccionText"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginStart="57dp"
-                android:layout_marginLeft="57dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="31dp"
-                android:layout_marginRight="31dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="6dp"
                 android:layout_toEndOf="@+id/botonGuardar"
                 android:layout_toRightOf="@+id/botonGuardar"
                 android:background="#EE0B0B"
