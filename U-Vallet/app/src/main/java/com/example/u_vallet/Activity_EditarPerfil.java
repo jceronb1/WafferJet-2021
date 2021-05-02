@@ -276,9 +276,8 @@ public class Activity_EditarPerfil extends AppCompatActivity {
         String nombreusuario = mNombreUsuario.getHint().toString();
         String contra =mContraseñaAntigua.getText().toString();
         String nueva = mContraseñaNueva.getText().toString();
-        Log.d("hello",nombreusuario);
+        Log.d("hello",nombreusuario + "/"+ contra);
         AuthCredential credential = EmailAuthProvider.getCredential(nombreusuario,contra);
-
         // Prompt the user to re-provide their sign-in credentials
         user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -432,7 +431,7 @@ public class Activity_EditarPerfil extends AppCompatActivity {
         Log.d("UID_GET",uid);
         if(validateForm()){
             Date fecha = new SimpleDateFormat("dd/MM/yyyy").parse(mFechaNacimiento.getText().toString());
-            if(mContraseñaNueva != null){
+            if(!mContraseñaNueva.getText().toString().isEmpty()){
                 overWriteUserInfo(currentUser,uid,mNombreUsuario.getHint().toString(),mNombreCompleto.getText().toString(),mContraseñaNueva.getText().toString(),
                         fecha,Long.parseLong(mTelefono.getText().toString()),mDireccion.getText().toString());
                 Log.d("hello", "entramos");
