@@ -1,5 +1,8 @@
 package com.example.u_vallet;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class Carro {
     //----------------------------------------------
     //----------------  Attributes  ----------------

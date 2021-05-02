@@ -40,6 +40,16 @@ public class Activity_MisCarros extends AppCompatActivity {
         ListView carrosListView = (ListView) findViewById(R.id.Cars_ListView);
         carrosListView.setAdapter(carrosAdapter);
 
+        //----- Get the button to add a new car and add event listener -------
+        Button btnAgregarCarro = (Button) findViewById(R.id.btn_MisCarros_AgregarCarro);
+        btnAgregarCarro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create and launch the new activity with an Intent
+                Intent agregarCarro = new Intent(v.getContext(), Activity_AgregarCarro.class);
+                startActivity(agregarCarro);
+            }
+        });
 
 
         Button botonMiViaje = (Button) findViewById(R.id.buttonMiViajeMV2);
