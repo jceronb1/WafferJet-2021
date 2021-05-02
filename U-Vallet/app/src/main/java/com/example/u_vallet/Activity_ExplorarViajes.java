@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 public class Activity_ExplorarViajes extends AppCompatActivity {
@@ -142,7 +144,7 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             carBrand.setText(ActiveTrips.get(position).carroQueRealizaElViaje.marcaCarro);
             carPlate.setText(ActiveTrips.get(position).carroQueRealizaElViaje.placa);
 
-            // Set event listeners to teh buttons
+            // Set event listeners to the buttons
             Button seeRoute = (Button) convertView.findViewById(R.id.Button_See_Route);
             Button reserveTrip = (Button) convertView.findViewById(R.id.Button_Reserve_Trip);
             seeRoute.setOnClickListener(new View.OnClickListener() {

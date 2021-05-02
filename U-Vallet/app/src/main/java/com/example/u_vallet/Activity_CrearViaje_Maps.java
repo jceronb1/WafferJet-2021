@@ -1,11 +1,18 @@
 package com.example.u_vallet;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +26,8 @@ import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,6 +38,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
@@ -64,6 +74,14 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     String originLocation;
     String destinationLocation;
 
+    // Location
+    private static final int REQUEST_LOCATION = 410;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private double userLastKnownLocationLat;
+    private double userLastKnownLocationLong;
+
+
+    // Description of the method
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,23 +94,22 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         searchViewDestination = findViewById(R.id.sv_destination);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         int originCloseButtonId = searchViewOrigin.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
-        int destinationButtonID = searchViewDestination.getContext().getResources().getIdentifier("android:id/search_close_btn",null,null);
+        int destinationButtonID = searchViewDestination.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
         ImageView originCloseButton = (ImageView) searchViewOrigin.findViewById(originCloseButtonId);
         ImageView destinationCloseButton = (ImageView) searchViewDestination.findViewById(destinationButtonID);
 
         originCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchViewOrigin.setQuery("",false);
-                if(markerOrigin!= null){
+                searchViewOrigin.setQuery("", false);
+                if (markerOrigin != null) {
                     mMarkerPoints.remove(markerOrigin.getPosition());
                     markerOrigin.remove();
                     markerOrigin = null;
                 }
-                if(polylines!= null){
-                    for(int i = 0; i<polylines.size(); i++)
-                    {
-                            polylines.get(i).remove();
+                if (polylines != null) {
+                    for (int i = 0; i < polylines.size(); i++) {
+                        polylines.get(i).remove();
                     }
                 }
             }
@@ -101,15 +118,14 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         destinationCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchViewDestination.setQuery("",false);
-                if(markerDestination != null){
+                searchViewDestination.setQuery("", false);
+                if (markerDestination != null) {
                     mMarkerPoints.remove(markerDestination.getPosition());
                     markerDestination.remove();
                     markerDestination = null;
                 }
-                if(polylines!= null){
-                    for(int i = 0; i<polylines.size(); i++)
-                    {
+                if (polylines != null) {
+                    for (int i = 0; i < polylines.size(); i++) {
                         polylines.get(i).remove();
                     }
                 }
@@ -118,19 +134,19 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         searchViewOrigin.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if(markerOrigin!= null){
+                if (markerOrigin != null) {
                     markerOrigin.remove();
                 }
-                if(mMarkerPoints.size()>1){
+                if (mMarkerPoints.size() > 1) {
                     mMarkerPoints.clear();
                 }
                 originLocation = searchViewOrigin.getQuery().toString();
-                if(!originLocation.contains(",")){
-                    originLocation = originLocation +", Bogotá";
+                if (!originLocation.contains(",")) {
+                    originLocation = originLocation + ", Bogotá";
                 }
                 List<Address> addressListOrigin = null;
 
-                if(originLocation != null || !originLocation.equals("")) {
+                if (originLocation != null || !originLocation.equals("")) {
                     Geocoder geocoder = new Geocoder(Activity_CrearViaje_Maps.this);
                     try {
                         addressListOrigin = geocoder.getFromLocationName(originLocation, 1);
@@ -144,13 +160,13 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         markerOrigin.remove();
                     }
                     markerOrigin = mMap.addMarker(new MarkerOptions().position(originLatLng).title(originLocation));
-                    Log.d("LatLng", String.valueOf(addressOrigin.getLatitude())+","+String.valueOf(addressOrigin.getLongitude()));
+                    Log.d("LatLng", String.valueOf(addressOrigin.getLatitude()) + "," + String.valueOf(addressOrigin.getLongitude()));
                     /*markerOrigin.position(originLatLng).title(originLocation);
                     mMap.addMarker(markerOrigin);*/
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(originLatLng, 17));
                     mMarkerPoints.add(originLatLng);
 
-                    if(mMarkerPoints.size() >= 2){
+                    if (mMarkerPoints.size() >= 2) {
                         mOrigin = originLatLng;
                         drawRoute();
                     }
@@ -168,22 +184,22 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         searchViewDestination.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if(markerDestination != null){
+                if (markerDestination != null) {
                     markerDestination.remove();
                 }
-                if(mMarkerPoints.size()>1){
+                if (mMarkerPoints.size() > 1) {
                     mMarkerPoints.clear();
                 }
 
                 destinationLocation = searchViewDestination.getQuery().toString();
-                if(!destinationLocation.contains(",")){
-                    destinationLocation = destinationLocation +", Bogotá";
+                if (!destinationLocation.contains(",")) {
+                    destinationLocation = destinationLocation + ", Bogotá";
                 }
                 List<Address> addressListDestination = null;
 
-                if(destinationLocation != null || !destinationLocation.equals("")){
+                if (destinationLocation != null || !destinationLocation.equals("")) {
                     Geocoder geocoder = new Geocoder(Activity_CrearViaje_Maps.this);
-                    try{
+                    try {
 
                         addressListDestination = geocoder.getFromLocationName(destinationLocation, 1);
                     } catch (IOException e) {
@@ -192,12 +208,12 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                     Address addressDestination = addressListDestination.get(0);
                     destinationLatLng = new LatLng(addressDestination.getLatitude(), addressDestination.getLongitude());
                     markerDestination = mMap.addMarker(new MarkerOptions().position(destinationLatLng).title(destinationLocation));
-                    Log.d("LatLng", String.valueOf(addressDestination.getLatitude())+","+String.valueOf(addressDestination.getLongitude()));
+                    Log.d("LatLng", String.valueOf(addressDestination.getLatitude()) + "," + String.valueOf(addressDestination.getLongitude()));
                     /*mMap.addMarker(markerDestination);*/
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destinationLatLng, 17));
                     mMarkerPoints.add(destinationLatLng);
 
-                    if(mMarkerPoints.size() >= 2){
+                    if (mMarkerPoints.size() >= 2) {
                         mOrigin = originLatLng;
                         mDestination = destinationLatLng;
                         drawRoute();
@@ -226,22 +242,23 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
             }
         });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
 
         mMarkerPoints = new ArrayList<>();
+
+
+
+        //--------  Get last known location from the user  --------------   TODO : Get current location, not the last known
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
     }
 
+    // Description of the method
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        double latitudeInicial = 4.6584796;
-        double longitudeInicial = -74.0934579;
-        LatLng mapaInicial = new LatLng(latitudeInicial, longitudeInicial);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng( mapaInicial));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(13));
 
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -252,7 +269,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
             @Override
             public void onMapClick(LatLng point) {
                 // Already two locations
-                if(mMarkerPoints.size()>1){
+                if (mMarkerPoints.size() > 1) {
                     mMarkerPoints.clear();
                     mMap.clear();
                 }
@@ -270,11 +287,11 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                  * For the start location, the color of marker is GREEN and
                  * for the end location, the color of marker is RED.
                  */
-                if(mMarkerPoints.size()==1){
+                if (mMarkerPoints.size() == 1) {
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                }else if(mMarkerPoints.size() == 2 && markerOrigin == null){
+                } else if (mMarkerPoints.size() == 2 && markerOrigin == null) {
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                }else if(mMarkerPoints.size()==2){
+                } else if (mMarkerPoints.size() == 2) {
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 }
 
@@ -290,9 +307,9 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 double lng = Double.parseDouble(ltlg[1]);
                 String completeAdd = null;
                 String finalAdd = null;
-                try{
-                    addresses = geocoder.getFromLocation(lat,lng, 1);
-                }catch(IOException e){
+                try {
+                    addresses = geocoder.getFromLocation(lat, lng, 1);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
@@ -302,29 +319,28 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 Log.d("FINAL_ADD", addName[0]);
                 finalAdd = addName[0];
                 Log.d("FINAL_ADD", finalAdd);
-                if(searchViewOrigin.getQuery().length()>0 && searchViewDestination.getQuery().length()>0){
+                if (searchViewOrigin.getQuery().length() > 0 && searchViewDestination.getQuery().length() > 0) {
                     searchViewOrigin.setQuery(finalAdd, false);
-                    searchViewDestination.setQuery("",false);
-                }
-                else if(searchViewOrigin.getQuery().length()==0){
+                    searchViewDestination.setQuery("", false);
+                } else if (searchViewOrigin.getQuery().length() == 0) {
                     searchViewOrigin.setQuery(finalAdd, false);
-                }else{
+                } else {
                     searchViewDestination.setQuery(finalAdd, false);
                 }
-                if(mMarkerPoints.size() == 1){
+                if (mMarkerPoints.size() == 1) {
                     originLatLng = point;
                     markerOrigin = mMap.addMarker(options.title(finalAdd));
-                }else if(mMarkerPoints.size() == 2 && markerOrigin == null){
+                } else if (mMarkerPoints.size() == 2 && markerOrigin == null) {
                     originLatLng = point;
                     markerOrigin = mMap.addMarker(options.title(finalAdd));
-                }else if (mMarkerPoints.size() == 2){
+                } else if (mMarkerPoints.size() == 2) {
                     destinationLatLng = point;
                     markerDestination = mMap.addMarker(options.title(finalAdd));
                 }
 
 
                 // Checks, whether start and end locations are captured
-                if(mMarkerPoints.size() >= 2){
+                if (mMarkerPoints.size() >= 2) {
                     mOrigin = originLatLng;
                     mDestination = destinationLatLng;
                     drawRoute();
@@ -343,13 +359,12 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 Log.e("Polyline id", polyline.getId());
                 //ArrayList<Polyline> polylinesAux = new ArrayList<>();
                 //polylinesAux = polylines;
-                for(int i = 0; i<polylines.size(); i++)
-                {
+                for (int i = 0; i < polylines.size(); i++) {
                     //polylines.get(i).getId();
-                     if(polylines.get(i).getId().equals(polyline.getId())){
+                    if (polylines.get(i).getId().equals(polyline.getId())) {
                         polyline.setColor(-10052106); //ligthblue
                         //polyline.remove();
-                    }else{
+                    } else {
                         Log.e("Polyline id FOR", polylines.get(i).getId());
                         polylines.get(i).setColor(-4473409); //grey
                     }
@@ -358,8 +373,36 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 //onButtonShowPopupWindowClick("  " + polyline.getTag());
             }
         });
+
+        //--------   Move the camera to the location of the user  ------------
+        // Check if Location permissions are already granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Get last know user's location
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        // Get Longitude and Latitude
+                        userLastKnownLocationLat = location.getLatitude();
+                        userLastKnownLocationLong = location.getLongitude();
+                        // Center the map camera into current user location
+                        LatLng mapaInicial = new LatLng(userLastKnownLocationLat, userLastKnownLocationLong);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(mapaInicial));
+                        mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+                    } else {
+                        Log.i("Location", "Location is null");
+                    }
+                }
+            });
+        } else {
+            // If permissions have not been granted, request required permissions
+            String[] location_permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(this, location_permissions, REQUEST_LOCATION);
+        }
     }
 
+    // Description of the method
     private void drawRoute(){
 
         // Getting URL to the Google Directions API
@@ -371,7 +414,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         downloadTask.execute(url);
     }
 
-
+    // Description of the Method
     private String getDirectionsUrl(LatLng origin,LatLng dest){
 
         // Origin of route
@@ -468,70 +511,6 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         }
     }
 
-    /** A class to parse the Google Directions in JSON format */
-    /*private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
-
-        // Parsing the data in non-ui thread
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-
-            JSONObject jObject;
-            List<List<HashMap<String, String>>> routes = null;
-
-            try{
-                jObject = new JSONObject(jsonData[0]);
-                DirectionsJSONParser parser = new DirectionsJSONParser();
-
-                // Starts parsing data
-                routes = parser.parse(jObject);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        // Executes in UI thread, after the parsing process
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList<LatLng> points = null;
-            PolylineOptions lineOptions = null;
-
-            // Traversing through all the routes
-            for(int i=0;i<result.size();i++){
-                points = new ArrayList<LatLng>();
-                lineOptions = new PolylineOptions();
-
-                // Fetching i-th route
-                List<HashMap<String, String>> path = result.get(i);
-
-                // Fetching all the points in i-th route
-                for(int j=0;j<path.size();j++){
-                    HashMap<String,String> point = path.get(j);
-
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-
-                    points.add(position);
-                }
-
-                // Adding all the points in the route to LineOptions
-                lineOptions.addAll(points);
-                lineOptions.width(8);
-                lineOptions.color(Color.RED);
-            }
-
-            // Drawing polyline in the Google Map for the i-th route
-            if(lineOptions != null) {
-                if(mPolyline != null){
-                    mPolyline.remove();
-                }
-                mPolyline = mMap.addPolyline(lineOptions);
-
-            }else
-                Toast.makeText(getApplicationContext(),"No route is found", Toast.LENGTH_LONG).show();
-        }
-    }*/
     private class ParserTask1 extends AsyncTask<String, Integer, List<List<List<HashMap<String, String>>>>> {
 
         // Parsing the data in non-ui thread
@@ -888,8 +867,6 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
             }
 
         }
-
-
 
 
     }
