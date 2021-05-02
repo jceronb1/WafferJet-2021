@@ -13,21 +13,12 @@ public class Activity_Mi_Viaje_Pasajero_Alterantivo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__mi__viaje__pasajero__alterantivo);
-        Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViajeMC2);
-        Button botonMisCarros = (Button) findViewById(R.id.buttonMisCarrosMV3);
+        Button ExplorarViajes = (Button) findViewById(R.id.buttonMiViajeMV6);
 
-        botonCrearViaje.setOnClickListener(new View.OnClickListener() {
+        ExplorarViajes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentCrearViaje = new Intent(v.getContext(), Activity_CrearViaje_Maps.class);
-                startActivity(intentCrearViaje);
-            }
-        });
-
-        botonMisCarros.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentMisCarros = new Intent(v.getContext(), Activity_MisCarros.class);
+                Intent intentMisCarros = new Intent(v.getContext(), Activity_ExplorarViajes.class);
                 startActivity(intentMisCarros);
             }
         });

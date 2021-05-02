@@ -42,6 +42,16 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
         ListView tripsListView = (ListView) findViewById(R.id.Trips_ListView);
         tripsListView.setAdapter(tripsAdapter);
 
+        Button botonMiViaje = (Button) findViewById(R.id.buttonCrearViajeMC3);
+
+        botonMiViaje.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero.class);
+                startActivity(intentMiViaje);
+            }
+        });
+
     }
 
     //----------------------------------------------

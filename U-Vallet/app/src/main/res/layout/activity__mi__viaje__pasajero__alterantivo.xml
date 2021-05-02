@@ -8,6 +8,85 @@
     android:background="@drawable/fondo">
 
 
+    <Button
+        android:id="@+id/buttonMiViajeMV6"
+        android:layout_width="178dp"
+        android:layout_height="44dp"
+        android:layout_below="@+id/Trips_ListView"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="41dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginBottom="6dp"
+        android:layout_toEndOf="@+id/buttonCrearViajeMC3"
+        android:layout_toRightOf="@+id/buttonCrearViajeMC3"
+        android:text="Explorar viaje"
+        android:textColor="#FFFFFFFF"
+        android:textSize="13sp"
+        app:backgroundTint="#2B3BD2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar5"
+        android:layout_width="433dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/Trips_ListView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="41dp"
+        android:layout_marginBottom="-2dp"
+        android:background="#2B3BD2"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonCrearViajeMC6"
+        android:layout_width="198dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="6dp"
+        android:layout_toStartOf="@+id/buttonMisCarrosMV"
+        android:layout_toLeftOf="@+id/buttonMisCarrosMV"
+        android:layout_toEndOf="@+id/buttonMiViajeMV"
+        android:layout_toRightOf="@+id/buttonMiViajeMV"
+        android:text="Mi Viaje"
+        android:textColor="#BDFFFFFF"
+        android:textSize="13sp"
+        app:backgroundTint="#2B3BD2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonMisCarrosCV"
+        app:layout_constraintHorizontal_bias="0.454"
+        app:layout_constraintStart_toEndOf="@+id/buttonMiViajeCV" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="192dp"
+        android:layout_height="17dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginBottom="-5dp"
+        app:backgroundTint="#EEBC0B"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
     <TextView
         android:id="@+id/Uvallet"
         android:layout_width="271dp"

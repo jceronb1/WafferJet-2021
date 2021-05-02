@@ -30,13 +30,14 @@
         app:layout_constraintHorizontal_bias="0.111"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
         android:layout_width="433dp"
         android:layout_height="60dp"
         android:layout_below="@+id/Trips_ListView"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="33dp"
+        android:layout_marginTop="41dp"
         android:layout_marginBottom="-2dp"
         android:background="#2B3BD2"
         android:minHeight="?attr/actionBarSize"
@@ -44,6 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/buttonCrearViajeMC3"
         android:layout_width="198dp"
@@ -53,7 +55,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="0dp"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="13dp"
         android:layout_toStartOf="@+id/buttonMisCarrosMV"
         android:layout_toLeftOf="@+id/buttonMisCarrosMV"
         android:layout_toEndOf="@+id/buttonMiViajeMV"
@@ -66,7 +68,6 @@
         app:layout_constraintEnd_toStartOf="@+id/buttonMisCarrosCV"
         app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toEndOf="@+id/buttonMiViajeCV" />
-
 
     <Button
         android:id="@+id/button3"

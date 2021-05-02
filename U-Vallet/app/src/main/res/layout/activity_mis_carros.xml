@@ -70,7 +70,7 @@
         android:layout_width="130dp"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="-9dp"
+        android:layout_marginBottom="-3dp"
         android:text="Mi Viaje"
         android:textColor="#FFFFFFFF"
         android:textSize="13sp"
