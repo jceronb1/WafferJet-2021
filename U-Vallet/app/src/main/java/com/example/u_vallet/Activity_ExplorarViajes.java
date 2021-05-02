@@ -63,17 +63,17 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
                 123,
                 "Origen X",
                 "Destino Y",
-                new Carro("Juan Diego", "Renault", "XYZ-123", 123)));
+                new Carro("Gabriel Gomez","Mazda","JNL 373","CX5",5,123)));
         testData.add(new Viaje("Campos Neira",
                 456,
                 "Origen X",
                 "Destino Y",
-                new Carro("Campos Neira", "Bugati", "ABC-456", 456)));
+                new Carro("Joaquin Perez","Renault","HLK 819","Koleos",5,456)));
         testData.add(new Viaje("Campos Neira",
                 456,
                 "Origen X",
                 "Destino Y",
-                new Carro("Campos Neira", "Bugati", "ABC-456", 456)));
+                new Carro("Pablo Manrique","Chevrolet","FVL 652","TrailBlazer",7,789)));
         return testData;
     }
 
