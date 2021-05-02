@@ -218,9 +218,9 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), Activity_CrearViaje.class);
-                intent.putExtra("Origen", searchViewOrigin.getQuery());
-                intent.putExtra("Destino", searchViewDestination.getQuery());
+                Intent intent = new Intent(v.getContext(), Activity_Seleccionar_Carro.class);
+                //intent.putExtra("Origen", searchViewOrigin.getQuery());
+                //intent.putExtra("Destino", searchViewDestination.getQuery());
                 Intent intent2 = new Intent(v.getContext(), Activity_ExplorarViajes.class);
                 startActivity(intent);
             }
