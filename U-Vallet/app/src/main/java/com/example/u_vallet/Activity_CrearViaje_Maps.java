@@ -103,6 +103,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         originCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("pruEBA", "ENTRAMOS");
                 searchViewOrigin.setQuery("", false);
                 if (markerOrigin != null) {
                     mMarkerPoints.remove(markerOrigin.getPosition());
@@ -281,6 +282,9 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 @Override
                 public void onSuccess(Location location) {
                     if (location != null) {
+                        if (markerOrigin != null)
+                            markerOrigin.remove();
+
                         mMarkerPoints.clear();
                         // Get Longitude and Latitude
                         userLastKnownLocationLat = location.getLatitude();
@@ -448,13 +452,41 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         @Override
                         public void onSuccess(Location location) {
                             if (location != null) {
+                                if (markerOrigin != null)
+                                    markerOrigin.remove();
+
+                                mMarkerPoints.clear();
                                 // Get Longitude and Latitude
                                 userLastKnownLocationLat = location.getLatitude();
                                 userLastKnownLocationLong = location.getLongitude();
-                                // Center the map camera into current user location
+
                                 LatLng mapaInicial = new LatLng(userLastKnownLocationLat, userLastKnownLocationLong);
+                                mMarkerPoints.add(mapaInicial);
+                                Log.d("DEBCREARV_123", String.valueOf(mMarkerPoints.size()));
+                                MarkerOptions options = new MarkerOptions();
+                                options.position(mapaInicial);
+                                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+                                List<Address> addresses = null;
+                                String completeAdd = null;
+                                String finalAdd = null;
+                                Geocoder geocoder;
+                                geocoder = new Geocoder(Activity_CrearViaje_Maps.this, Locale.getDefault());
+                                try {
+                                    addresses = geocoder.getFromLocation(userLastKnownLocationLat, userLastKnownLocationLong, 1);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                completeAdd = addresses.get(0).getAddressLine(0);
+                                String[] addName = completeAdd.split(",");
+                                finalAdd = addName[0];
+
+                                searchViewOrigin.setQuery(finalAdd, false);
+                                originLatLng = mapaInicial;
+                                markerOrigin = mMap.addMarker(options.title(finalAdd));
+                                // Center the map camera into current user location
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(mapaInicial));
-                                mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+                                mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
                             } else {
                                 Log.i("Location", "Location is null");
                             }

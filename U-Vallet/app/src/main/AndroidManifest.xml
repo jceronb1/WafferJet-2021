@@ -24,7 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
-        <activity android:name=".Activity_EditarCarro"></activity>
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -40,18 +40,21 @@
         <activity
             android:name=".Activity_CrearViaje_Maps"
             android:label="@string/title_activity__crear_viaje__maps" />
-        <activity android:name=".Activity_Mi_Viaje_Pasajero" />
-        <activity android:name=".Activity_MisCarros" />
         <activity android:name=".Activity_AgregarCarro" />
+        <activity android:name=".Activity_CrearViaje" />
+        <activity android:name=".Activity_EditarCarro"/>
+        <activity android:name=".Activity_EditarPerfil" />
+        <activity android:name=".Activity_ExplorarViaje" />
         <activity android:name=".Activity_ExplorarViajes" />
-        <activity android:name=".Activity_Mi_Viaje_Pasajero_Alterantivo" />
         <activity android:name=".Activity_Mi_Viaje_Condcutor_Alternativo" />
         <activity android:name=".Activity_Mi_Viaje_Conductor" />
-        <activity android:name=".Activity_CrearViaje" />
-        <activity android:name=".Activity_Roles" />
+        <activity android:name=".Activity_Mi_Viaje_Pasajero" />
+        <activity android:name=".Activity_Mi_Viaje_Pasajero_Alterantivo" />
+        <activity android:name=".Activity_MisCarros" />
         <activity android:name=".Activity_Registrarse" />
-        <activity android:name=".Activity_ExplorarViaje" />
-        <activity android:name=".Activity_EditarPerfil" />
+        <activity android:name=".Activity_Roles" />
+        <activity android:name=".Activity_Seleccionar_Carro" />
+
         <activity android:name=".Activity_Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
