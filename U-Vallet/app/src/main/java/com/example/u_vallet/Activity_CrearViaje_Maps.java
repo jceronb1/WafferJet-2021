@@ -265,8 +265,67 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
+        LatLng mapaInicial = new LatLng(4.6584796, -74.0934579);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng( mapaInicial));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(13));
+
         Geocoder geocoder;
         geocoder = new Geocoder(this, Locale.getDefault());
+
+        //--------   Move the camera to the location of the user  ------------
+        // Check if Location permissions are already granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Get last know user's location
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        mMarkerPoints.clear();
+                        // Get Longitude and Latitude
+                        userLastKnownLocationLat = location.getLatitude();
+                        userLastKnownLocationLong = location.getLongitude();
+
+                        LatLng mapaInicial = new LatLng(userLastKnownLocationLat, userLastKnownLocationLong);
+                        mMarkerPoints.add(mapaInicial);
+                        Log.d("DEBCREARV_123", String.valueOf(mMarkerPoints.size()));
+                        MarkerOptions options = new MarkerOptions();
+                        options.position(mapaInicial);
+                        options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+                        List<Address> addresses = null;
+                        String completeAdd = null;
+                        String finalAdd = null;
+                        try {
+                            addresses = geocoder.getFromLocation(userLastKnownLocationLat, userLastKnownLocationLong, 1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        completeAdd = addresses.get(0).getAddressLine(0);
+                        String[] addName = completeAdd.split(",");
+                        finalAdd = addName[0];
+
+                        searchViewOrigin.setQuery(finalAdd, false);
+                        originLatLng = mapaInicial;
+                        markerOrigin = mMap.addMarker(options.title(finalAdd));
+                        // Center the map camera into current user location
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(mapaInicial));
+                        mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
+                    } else {
+                        LatLng mapaInicial = new LatLng(4.6584796, -74.0934579);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng( mapaInicial));
+                        mMap.moveCamera(CameraUpdateFactory.zoomTo(13));
+                        Log.i("Location", "Location is null");
+                    }
+                }
+            });
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            Toast.makeText(this, "Location permissions are required", Toast.LENGTH_SHORT).show();
+        } else {
+            // If permissions have not been granted, request required permissions
+            ActivityCompat.requestPermissions(this, location_permissions, REQUEST_LOCATION);
+        }
+
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
@@ -298,10 +357,8 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 }
 
                 // Add new marker to the Google Map Android API V2
-
                 List<Address> addresses = null;
                 String address = String.valueOf(point);
-                Log.d("ADD", address);
                 String[] aux = address.split("\\(");
                 String[] aux2 = aux[1].split("\\)");
                 String[] ltlg = aux2[0].split(",");
@@ -316,11 +373,11 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 }
 
                 completeAdd = addresses.get(0).getAddressLine(0);
-                Log.d("FINAL_ADD", completeAdd);
+
                 String[] addName = completeAdd.split(",");
-                Log.d("FINAL_ADD", addName[0]);
+
                 finalAdd = addName[0];
-                Log.d("FINAL_ADD", finalAdd);
+
                 if (searchViewOrigin.getQuery().length() > 0 && searchViewDestination.getQuery().length() > 0) {
                     searchViewOrigin.setQuery(finalAdd, false);
                     searchViewDestination.setQuery("", false);
@@ -339,7 +396,6 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                     destinationLatLng = point;
                     markerDestination = mMap.addMarker(options.title(finalAdd));
                 }
-
 
                 // Checks, whether start and end locations are captured
                 if (mMarkerPoints.size() >= 2) {
@@ -376,33 +432,6 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
             }
         });
 
-        //--------   Move the camera to the location of the user  ------------
-        // Check if Location permissions are already granted
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // Get last know user's location
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        // Get Longitude and Latitude
-                        userLastKnownLocationLat = location.getLatitude();
-                        userLastKnownLocationLong = location.getLongitude();
-                        // Center the map camera into current user location
-                        LatLng mapaInicial = new LatLng(userLastKnownLocationLat, userLastKnownLocationLong);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(mapaInicial));
-                        mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
-                    } else {
-                        Log.i("Location", "Location is null");
-                    }
-                }
-            });
-        } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            Toast.makeText(this, "Location permissions are required", Toast.LENGTH_SHORT).show();
-        } else {
-            // If permissions have not been granted, request required permissions
-            ActivityCompat.requestPermissions(this, location_permissions, REQUEST_LOCATION);
-        }
     }
 
     @Override
