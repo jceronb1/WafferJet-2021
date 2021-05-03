@@ -17,6 +17,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -59,6 +60,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -89,6 +91,9 @@ public class Activity_EditarPerfil extends AppCompatActivity {
     private ImageView mImageView;
     private Button mPassword;
     private Uri imagenUri;
+
+    private boolean imageInclude = false;
+
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
 
@@ -345,7 +350,12 @@ public class Activity_EditarPerfil extends AppCompatActivity {
             }
         });
     }
-
+    public Uri getImageUri(Context inContext, Bitmap inImage){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
     private void uploadImageToFirebase(Uri imagenUri){
         StorageReference fileRef = mStorageRef.child("users/"+mAuth.getCurrentUser().getUid()+"/profile.jpg");
         fileRef.putFile(imagenUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -375,7 +385,10 @@ public class Activity_EditarPerfil extends AppCompatActivity {
         String fechaNacimiento = mFechaNacimiento.getText().toString();
         String telefono = mTelefono.getText().toString();
         String direccion = mDireccion.getText().toString();
-
+        if(imageInclude == false){
+            Toast.makeText(getBaseContext(), "Debe seleccionar una foto de perfil", Toast.LENGTH_SHORT).show();
+            valid = false;
+        }
         if(TextUtils.isEmpty(nombre)){
             mNombreCompleto.setError("Required");
             valid = false;
@@ -430,6 +443,7 @@ public class Activity_EditarPerfil extends AppCompatActivity {
     private void updateUserInfo(FirebaseUser currentUser) throws ParseException {
         Log.d("UID_GET",uid);
         if(validateForm()){
+            uploadImageToFirebase(imagenUri);
             Date fecha = new SimpleDateFormat("dd/MM/yyyy").parse(mFechaNacimiento.getText().toString());
             if(!mContraseñaNueva.getText().toString().isEmpty()){
                 overWriteUserInfo(currentUser,uid,mNombreUsuario.getHint().toString(),mNombreCompleto.getText().toString(),mContraseñaNueva.getText().toString(),
@@ -480,7 +494,7 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                         mImageView.setImageBitmap(selectedImage);
                         imagenUri = imageUri;
-                        uploadImageToFirebase(imagenUri);
+                        imageInclude = true;
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -490,7 +504,10 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                 if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    final Uri imageUri = getImageUri(getApplicationContext(),imageBitmap);
                     mImageView.setImageBitmap(imageBitmap);
+                    imagenUri = imageUri;
+                    imageInclude = true;
                 }
             }
         }

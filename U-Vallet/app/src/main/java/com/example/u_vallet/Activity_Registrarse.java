@@ -5,11 +5,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +21,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -50,6 +53,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -78,6 +83,8 @@ public class Activity_Registrarse extends AppCompatActivity {
     private ImageView mImageView;
     private DatePickerDialog.OnDateSetListener mFechaSetListener;
     private Uri imagenUri;
+
+    private boolean imageInclude = false;
 
     int IMAGE_PICKER_REQUEST = 1;
     int REQUEST_IMAGE_CAPTURE = 2;
@@ -118,7 +125,7 @@ public class Activity_Registrarse extends AppCompatActivity {
             public void onClick(View v) {
                 if(ContextCompat.checkSelfPermission( Activity_Registrarse.this,
                         Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(Activity_Registrarse.this, "You have already granted this permission!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Activity_Registrarse.this, "You have already granted this permission!", Toast.LENGTH_SHORT).show();
                     Intent pickImage = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     pickImage.setType("image/*");
                     startActivityForResult(pickImage, IMAGE_PICKER_REQUEST);
@@ -134,7 +141,7 @@ public class Activity_Registrarse extends AppCompatActivity {
             public void onClick(View v) {
                 if(ContextCompat.checkSelfPermission(Activity_Registrarse.this,
                         Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(Activity_Registrarse.this, "You have already granted this permission!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Activity_Registrarse.this, "You have already granted this permission!", Toast.LENGTH_SHORT).show();
                     takeImage();
                 }else{
                     requestCamaraPermission();
@@ -246,7 +253,7 @@ public class Activity_Registrarse extends AppCompatActivity {
         }
     }
     private void takeImage() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);//, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(takePictureIntent,REQUEST_IMAGE_CAPTURE);
     }
 
@@ -263,6 +270,7 @@ public class Activity_Registrarse extends AppCompatActivity {
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                         mImageView.setImageBitmap(selectedImage);
                         //mImageView.setImageURI(imageUri);
+                        imageInclude = true;
                         imagenUri = imageUri;
 
                     } catch (FileNotFoundException e) {
@@ -272,16 +280,22 @@ public class Activity_Registrarse extends AppCompatActivity {
             }
             case 2: {
                 if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-                    final Uri imageUri = data.getData();
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    final Uri imageUri = getImageUri(getApplicationContext(),imageBitmap);
+                    imageInclude = true;
                     mImageView.setImageBitmap(imageBitmap);
                     imagenUri = imageUri;
                 }
             }
         }
     }
-
+    public Uri getImageUri(Context inContext, Bitmap inImage){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
     private void uploadImageToFirebase(Uri imageUri){
         StorageReference fileRef = mSotorageRef.child("users/"+mAuth.getCurrentUser().getUid()+"/profile.jpg");
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -291,7 +305,7 @@ public class Activity_Registrarse extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         Picasso.get().load(uri).into(mImageView);
-                        Toast.makeText(Activity_Registrarse.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(Activity_Registrarse.this, "Image uploaded", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -312,6 +326,10 @@ public class Activity_Registrarse extends AppCompatActivity {
         String fechaNacimiento = mFechaNacimiento.getText().toString();
         String telefono = mTelefono.getText().toString();
         String direccion = mDireccion.getText().toString();
+        if(imageInclude == false){
+            Toast.makeText(getBaseContext(), "Debe seleccionar una foto de perfil", Toast.LENGTH_SHORT).show();
+            valid = false;
+        }
         if(TextUtils.isEmpty(user)){
             mUserName.setError("Required");
             valid = false;
@@ -360,9 +378,9 @@ public class Activity_Registrarse extends AppCompatActivity {
     private void updateUI(FirebaseUser currentUser) throws ParseException {
         if(currentUser != null){
             currentUser = mAuth.getCurrentUser();
-            uploadImageToFirebase(imagenUri);
-            if(validateForm()) {
 
+            if(validateForm()) {
+                uploadImageToFirebase(imagenUri);
                 Usuario usuario = new Usuario();
 
                 usuario.setUsername(mUserName.getText().toString());
@@ -382,6 +400,7 @@ public class Activity_Registrarse extends AppCompatActivity {
                 myRef.setValue(usuario);
             }
             Intent intent = new Intent(getBaseContext(), Activity_Roles.class);
+            Toast.makeText(getBaseContext(), "Registro exitoso", Toast.LENGTH_SHORT).show();
             intent.putExtra("user", currentUser.getEmail());
             loadUsersSuscripcion();
             startActivity(intent);
@@ -436,7 +455,7 @@ public class Activity_Registrarse extends AppCompatActivity {
                     Log.i("Suscripcion Usuarios", "Encontró usuario: " + usuario.getName());
                     String name = usuario.getName();
                     String contraseña = usuario.getContraseña();
-                    Toast.makeText(getBaseContext(), name + " /" + contraseña, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getBaseContext(), name + " /" + contraseña, Toast.LENGTH_SHORT).show();
 
                 }
             }
