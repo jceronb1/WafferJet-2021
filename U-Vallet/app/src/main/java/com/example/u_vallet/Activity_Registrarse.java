@@ -91,6 +91,7 @@ public class Activity_Registrarse extends AppCompatActivity {
 
     private int STORAGE_PERMISSION_CODE = 1;
     private int CAMERA_PERMISSION_CODE = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +120,7 @@ public class Activity_Registrarse extends AppCompatActivity {
                 }
             }
         });
+
         Button botonCambiarImagen = (Button) findViewById(R.id.botonCambiarImagen2);
         botonCambiarImagen.setOnClickListener(new View.OnClickListener() {
             @Override

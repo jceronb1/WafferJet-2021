@@ -41,7 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/AgregarCarro_ImagenCarro"
         android:layout_width="115dp"
         android:layout_height="101dp"
         android:layout_marginStart="68dp"
@@ -56,7 +56,7 @@
         app:srcCompat="@drawable/car_icon" />
 
     <Button
-        android:id="@+id/btn_EditarCarro_EditarFoto"
+        android:id="@+id/btn_AgrgarCarro_AgregarFoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="41dp"
@@ -67,11 +67,11 @@
         android:text="Agregar foto"
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/AgregarCarro_ImagenCarro"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <EditText
-        android:id="@+id/EditarCarro_Placa"
+        android:id="@+id/AgregarCarro_Placa"
         android:layout_width="340dp"
         android:layout_height="40dp"
         android:layout_marginStart="35dp"
@@ -97,9 +97,9 @@
         android:text="Placa"
         android:textColor="#000000"
         android:textSize="23sp"
-        app:layout_constraintBottom_toTopOf="@+id/EditarCarro_Placa"
+        app:layout_constraintBottom_toTopOf="@+id/AgregarCarro_Placa"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/AgregarCarro_ImagenCarro" />
 
     <TextView
         android:id="@+id/textView4"
@@ -112,7 +112,7 @@
         android:textColor="#000000"
         android:textSize="23sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EditarCarro_Placa" />
+        app:layout_constraintTop_toBottomOf="@+id/AgregarCarro_Placa" />
 
     <TextView
         android:id="@+id/textView5"
@@ -125,7 +125,7 @@
         android:textColor="#000000"
         android:textSize="23sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EditarCarro_Marca" />
+        app:layout_constraintTop_toBottomOf="@+id/AgregarCarro_Marca" />
 
     <TextView
         android:id="@+id/textView7"
@@ -138,10 +138,10 @@
         android:textColor="#000000"
         android:textSize="23sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EditarCarro_Modelo" />
+        app:layout_constraintTop_toBottomOf="@+id/AgregarCarro_Modelo" />
 
     <EditText
-        android:id="@+id/EditarCarro_Marca"
+        android:id="@+id/AgregarCarro_Marca"
         android:layout_width="340dp"
         android:layout_height="40dp"
         android:layout_marginStart="35dp"
@@ -156,7 +156,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <EditText
-        android:id="@+id/EditarCarro_Modelo"
+        android:id="@+id/AgregarCarro_Modelo"
         android:layout_width="340dp"
         android:layout_height="40dp"
         android:layout_marginStart="35dp"
@@ -186,7 +186,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <Button
-        android:id="@+id/btn_EditarCarro_GuardarCambios"
+        android:id="@+id/btn_AgregarCarro_GuardarCambios"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="157dp"
