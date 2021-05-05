@@ -56,13 +56,13 @@
             android:label="Mi viaje" />
         <activity android:name=".Activity_Mi_Viaje_Pasajero_Alterantivo" />
         <activity android:name=".Activity_MisCarros"
-            android:label="Mis carros"/>
+            android:label="U-Vallet - Mis carros"/>
         <activity android:name=".Activity_Registrarse"
             android:label="Registrarse"/>
         <activity android:name=".Activity_Roles"
             android:label="Roles"/>
         <activity android:name=".Activity_Seleccionar_Carro"
-            android:label="Seleccionar vehiculo"/>
+            android:label="U-Vallet - Seleccionar vehiculo"/>
 
         <activity android:name=".Activity_Login">
             <intent-filter>

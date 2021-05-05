@@ -84,60 +84,20 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/Uvallet"
-        android:layout_width="266dp"
-        android:layout_height="77dp"
-        android:layout_marginStart="79dp"
-        android:layout_marginLeft="69dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="66dp"
-        android:layout_marginRight="66dp"
-        android:background="#000C0808"
-        android:text="U Vallet"
-        android:textColor="#3F51B5"
-        android:textSize="70sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/viewMisCarros"
-        android:layout_width="145dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="138dp"
-        android:layout_marginLeft="138dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="128dp"
-        android:layout_marginRight="128dp"
-        android:text="Mis Carros"
-        android:textColor="#050505"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Uvallet" />
-
     <ListView
         android:id="@+id/Cars_ListView"
-        android:layout_width="395dp"
-        android:layout_height="413dp"
-        android:layout_marginTop="162dp"
+        android:layout_width="398dp"
+        android:layout_height="482dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="51dp"
         android:layout_marginEnd="7dp"
         android:layout_marginRight="7dp"
-        android:layout_marginBottom="136dp"
+        android:layout_marginBottom="199dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.818"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.828" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_MisCarros_AgregarCarro"

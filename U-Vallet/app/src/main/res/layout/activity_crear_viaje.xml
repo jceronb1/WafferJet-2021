@@ -46,20 +46,20 @@
             android:id="@+id/origen"
             android:layout_width="302dp"
             android:layout_height="52dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="250dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="184dp"
             android:text="Origen"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/destino"
-            android:layout_width="306dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="37dp"
-            android:layout_marginLeft="37dp"
-            android:layout_marginTop="187dp"
+            android:layout_width="302dp"
+            android:layout_height="49dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="244dp"
             android:text="Destino"
             android:textColor="#000000"
             app:layout_constraintStart_toStartOf="parent"
@@ -68,16 +68,12 @@
         <EditText
             android:id="@+id/editCupos"
             android:layout_width="145dp"
-            android:layout_height="41dp"
-            android:layout_marginStart="161dp"
-            android:layout_marginLeft="161dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="198dp"
+            android:layout_marginLeft="198dp"
             android:layout_marginTop="312dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginRight="40dp"
             android:ems="10"
             android:inputType=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.79"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -87,7 +83,7 @@
             android:layout_height="25dp"
             android:layout_marginStart="40dp"
             android:layout_marginLeft="40dp"
-            android:layout_marginTop="312dp"
+            android:layout_marginTop="324dp"
             android:text="Cupos disponibles:"
             android:textColor="#000000"
             android:textSize="16sp"
@@ -100,13 +96,14 @@
             android:layout_height="41dp"
             android:layout_marginStart="161dp"
             android:layout_marginLeft="161dp"
-            android:layout_marginTop="359dp"
+            android:layout_marginTop="360dp"
             android:layout_marginEnd="40dp"
             android:layout_marginRight="40dp"
             android:ems="10"
             android:inputType=""
             android:text="__ : __"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -284,11 +281,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="344dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
