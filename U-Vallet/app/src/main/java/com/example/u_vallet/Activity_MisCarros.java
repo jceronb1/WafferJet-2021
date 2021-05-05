@@ -144,16 +144,17 @@ public class Activity_MisCarros extends AppCompatActivity {
             capacidad.setText(String.valueOf(MisCarros.get(position).capacidad));
 
             // Set event listeners to the buttons
+            /*
             Button seleccionarCarro = (Button) convertView.findViewById(R.id.botonSeleccionarCarro);
             seleccionarCarro.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.i("TAG","Carro seleccionado");
                 }
-            });
+            });*/
 
             //------ Get button to edit a car and add event listener --------
-            Button btnEditarCarro = (Button) convertView.findViewById(R.id.btn_ListViewCarro_EditarCarro);
+            Button btnEditarCarro = (Button) convertView.findViewById(R.id.botonEditarCarro);
             btnEditarCarro.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

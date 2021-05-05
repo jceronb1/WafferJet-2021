@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,10 @@ public class Activity_Seleccionar_Carro extends AppCompatActivity {
         carrosListView.setAdapter(carrosAdapter);
     }
     //funciones para listview------------------------------------
+
+    public void alertas(View v){
+        Toast.makeText(v.getContext(), "Seleccione un carro para continuar", Toast.LENGTH_SHORT).show();
+    }
 
     public ArrayList<Carro> getCarrosFromDB() {
         ArrayList<Carro> testData = new ArrayList<Carro>();
@@ -61,7 +66,7 @@ public class Activity_Seleccionar_Carro extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             //
-            convertView = getLayoutInflater().inflate(R.layout.listview_carros, null);
+            convertView = getLayoutInflater().inflate(R.layout.listview_carros_seleccionar, null);
             // Get information fields of the view
             TextView placa = (TextView) convertView.findViewById(R.id.campoPlaca);
             TextView marca = (TextView) convertView.findViewById(R.id.campoMarca);

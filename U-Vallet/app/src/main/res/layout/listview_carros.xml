@@ -195,25 +195,16 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/botonSeleccionarCarro"
-            android:layout_width="140dp"
-            android:layout_height="40dp"
-            android:text="Seleccionar"
+            android:id="@+id/botonEditarCarro"
+            android:layout_width="196dp"
+            android:layout_height="match_parent"
+            android:text="Editar vehiculo"
             android:textAllCaps="false"
             app:backgroundTint="@android:color/black" />
 
         <Space
             android:layout_width="20dp"
             android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/btn_ListViewCarro_EditarCarro"
-            android:layout_width="140dp"
-            android:layout_height="40dp"
-            android:layout_weight="0"
-            android:text="Editar carro"
-            android:textAllCaps="false"
-            app:backgroundTint="#000000" />
 
     </LinearLayout>
 
