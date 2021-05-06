@@ -110,7 +110,7 @@
         <EditText
             android:id="@+id/editPuntoEncuentro"
             android:layout_width="302dp"
-            android:layout_height="38dp"
+            android:layout_height="42dp"
             android:layout_marginStart="40dp"
             android:layout_marginLeft="40dp"
             android:layout_marginTop="444dp"
@@ -150,7 +150,7 @@
         <EditText
             android:id="@+id/editValorViaje"
             android:layout_width="300dp"
-            android:layout_height="44dp"
+            android:layout_height="42dp"
             android:layout_marginStart="40dp"
             android:layout_marginLeft="40dp"
             android:layout_marginTop="524dp"

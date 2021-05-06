@@ -208,12 +208,13 @@ public class Activity_AgregarCarro extends AppCompatActivity {
     // Method to validate user input
     private boolean validateForm(String marcaCarro, String placaCarro,String modeloCarro, String capacidadCarro ) {
         // Check for empty fields
-        if (marcaCarro.isEmpty()) {
-            marca.setError("Vacío");
-            return false;
-        }
+
         if (placaCarro.isEmpty()) {
             placa.setError("Vacío o inválido");
+            return false;
+        }
+        if (marcaCarro.isEmpty()) {
+            marca.setError("Vacío");
             return false;
         }
         if (modeloCarro.isEmpty()) {
@@ -233,7 +234,7 @@ public class Activity_AgregarCarro extends AppCompatActivity {
         Pattern pattern = Pattern.compile("[a-zA-Z]{3} ?- ?[0-9]{3}");
         Matcher matcher = pattern.matcher(placaCarro);
         if (!matcher.find()) {
-            marca.setError("Placa inválida, abc - 123");
+            placa.setError("Placa inválida, abc - 123");
             return false;
         }
 

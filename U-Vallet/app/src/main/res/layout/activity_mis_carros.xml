@@ -86,18 +86,19 @@
 
     <ListView
         android:id="@+id/Cars_ListView"
-        android:layout_width="398dp"
-        android:layout_height="482dp"
+        android:layout_width="391dp"
+        android:layout_height="555dp"
         android:layout_marginStart="6dp"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="51dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="7dp"
         android:layout_marginRight="7dp"
-        android:layout_marginBottom="199dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_MisCarros_AgregarCarro"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btn_MisCarros_AgregarCarro"
