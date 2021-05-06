@@ -1,86 +1,126 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/Roles_botonPasajero"
+    android:id="@+id/scrollLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".Activity_Roles">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/Uvallet"
+        android:layout_width="263dp"
         android:layout_height="wrap_content"
-        android:text="U-Vallet"
+        android:layout_marginStart="79dp"
+        android:layout_marginLeft="69dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="69dp"
+        android:layout_marginRight="69dp"
+        android:background="#000C0808"
+        android:text="U Vallet"
         android:textColor="#3F51B5"
-        android:textSize="55sp"
+        android:textSize="70sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.085" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/textViewRoles"
         android:layout_width="286dp"
         android:layout_height="72dp"
+        android:layout_marginStart="62dp"
+        android:layout_marginLeft="62dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="63dp"
+        android:layout_marginRight="63dp"
         android:gravity="center_horizontal|center_vertical"
         android:text="Seleciona el rol con el que deseas ingresar."
         android:textSize="23sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25" />
+        app:layout_constraintTop_toBottomOf="@+id/Uvallet" />
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="389dp"
-        android:layout_height="128dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/imageViewConductor"
+        android:layout_width="164dp"
+        android:layout_height="152dp"
+
+        android:layout_marginStart="123dp"
+        android:layout_marginLeft="123dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="123dp"
+        android:layout_marginRight="123dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.417"
+        app:layout_constraintTop_toBottomOf="@+id/textViewRoles"
         app:srcCompat="@drawable/conductor" />
 
     <Button
-        android:id="@+id/Roles_botonConductor"
-        android:layout_width="wrap_content"
+        android:id="@+id/Roles_BotonConductor"
+        android:layout_width="166dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
+        android:layout_marginStart="123dp"
+        android:layout_marginLeft="123dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="123dp"
+        android:layout_marginRight="123dp"
         android:text="Conductor"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="#000000"
+        app:backgroundTint="#EEBC0B"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewConductor"
+        app:rippleColor="#FFFFFF" />
 
     <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="134dp"
-        android:layout_height="124dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/imageViewPasajero"
+        android:layout_width="164dp"
+        android:layout_height="153dp"
+
+        android:layout_marginStart="123dp"
+        android:layout_marginLeft="123dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="123dp"
+        android:layout_marginRight="123dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.738"
+        app:layout_constraintTop_toBottomOf="@+id/Roles_BotonConductor"
         app:srcCompat="@drawable/pasajero" />
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
+        android:id="@+id/Roles_BotonPasajero"
+        android:layout_width="166dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
+        android:layout_marginStart="123dp"
+        android:layout_marginLeft="123dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="123dp"
+        android:layout_marginRight="123dp"
         android:text="Pasajero"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="#000000"
+        app:backgroundTint="#EEBC0B"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPasajero" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

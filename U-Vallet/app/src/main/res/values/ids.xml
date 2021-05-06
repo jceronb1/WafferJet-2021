@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="miViaje" type="id" />
+    <item name="miViajeSubtitulo" type="id" />
+    <item name="miViajeInformacion" type="id" />
+    <item name="miViajeID" type="id" />
+    <item name="viajeIDText" type="id" />
+    <item name="miViajeOrigen" type="id" />
+    <item name="viajeOrigenText" type="id" />
+    <item name="miViajeDestino" type="id" />
+    <item name="miViajeDestinoText" type="id" />
+    <item name="miViajePasajerosConfirmados" type="id" />
+    <item name="miViajeHoraPartida" type="id" />
+    <item name="horaPartidaText" type="id" />
+    <item name="miViajePuntoPartida" type="id" />
+    <item name="puntoEncuentroText" type="id" />
+    <item name="botonSeleccionarCarro" type="id"/>
+</resources>

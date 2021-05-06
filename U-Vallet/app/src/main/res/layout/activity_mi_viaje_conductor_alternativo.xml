@@ -1,0 +1,155 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout10"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondo"
+    tools:context=".Activity_Mi_Viaje_Condcutor_Alternativo">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="433dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="-2dp"
+        android:background="#2B3BD2"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonMiViajeMV3"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="5dp"
+        android:text="Mi Viaje"
+        android:textColor="#FFFFFFFF"
+        android:textSize="13sp"
+        app:backgroundTint="#2B3BD2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonCrearViajeMC2"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginRight="13dp"
+        android:layout_marginBottom="3dp"
+        android:text="Crear Viejae"
+        android:textColor="#BDFFFFFF"
+        android:textSize="13sp"
+        app:backgroundTint="#2B3BD2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonMisCarrosMV3"
+        app:layout_constraintHorizontal_bias="0.454"
+        app:layout_constraintLeft_toRightOf="@+id/buttonMiViajeMV3"
+        app:layout_constraintRight_toLeftOf="@+id/buttonMisCarrosMV3"
+        app:layout_constraintStart_toEndOf="@+id/buttonMiViajeMV3" />
+
+    <Button
+        android:id="@+id/buttonMisCarrosMV3"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginBottom="5dp"
+        android:text="Mis Carros"
+        android:textColor="#BDFFFFFF"
+        android:textSize="13sp"
+        app:backgroundTint="#2B3BD2"
+        app:iconTint="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="129dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="-2dp"
+        app:backgroundTint="#EEBC0B"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/Uvallet"
+        android:layout_width="266dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="79dp"
+        android:layout_marginLeft="69dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="66dp"
+        android:layout_marginRight="66dp"
+        android:background="#000C0808"
+        android:text="U Vallet"
+        android:textColor="#3F51B5"
+        android:textSize="70sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/miViaje"
+        android:layout_width="166dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="121dp"
+        android:layout_marginLeft="121dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="78dp"
+        android:layout_marginRight="78dp"
+        android:text="Mi Viaje"
+        android:textColor="#050505"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Uvallet" />
+
+
+    <TextView
+        android:id="@+id/miViajeInformacion"
+        android:layout_width="376dp"
+        android:layout_height="182dp"
+        android:layout_marginStart="17.5dp"
+        android:layout_marginLeft="19dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="17.5dp"
+        android:layout_marginRight="16dp"
+        android:background="#D5F5E3"
+        android:text=""
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/miViaje" />
+
+    <TextView
+        android:id="@+id/mensaje"
+        android:layout_width="228dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="70dp"
+        android:text="Usted no tiene viajes activos"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/miViaje" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
