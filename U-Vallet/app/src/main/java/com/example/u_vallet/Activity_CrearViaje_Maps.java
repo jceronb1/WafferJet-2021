@@ -6,24 +6,16 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -41,6 +33,9 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONObject;
 
@@ -51,12 +46,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapReadyCallback {
+
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
@@ -66,6 +63,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     private LatLng mDestination;
     private Polyline mPolyline;
     ArrayList<LatLng> mMarkerPoints;
+    List<LatLng> routeSelected;
     private Marker markerOrigin;
     private Marker markerDestination;
     ArrayList<Polyline> polylines;
@@ -88,6 +86,8 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__crear_viaje__maps);
+        mAuth = FirebaseAuth.getInstance();
+
         polylines = new ArrayList<>();
         markerOrigin = null;
         markerDestination = null;
@@ -237,9 +237,24 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), Activity_Seleccionar_Carro.class);
-                //intent.putExtra("Origen", searchViewOrigin.getQuery());
-                //intent.putExtra("Destino", searchViewDestination.getQuery());
+
+                for (int i = 0; i < polylines.size(); i++) {
+                    if(polylines.get(i).getColor() == -10052106) {
+                        routeSelected = polylines.get(i).getPoints();
+                    }
+                }
+                Ruta ruta = new Ruta();
+                ruta.setRoute(routeSelected);
+                ruta.setOriginLocation(mOrigin);
+                ruta.setDestinationLocation(mDestination);
+                ruta.setUidConductor(mAuth.getUid());
+                mDatabase = FirebaseDatabase.getInstance().getReference("routes");
+                String key = mDatabase.push().getKey();
+                ruta.setKey(key);
+                mDatabase = FirebaseDatabase.getInstance().getReference("routes/"+key);
+                mDatabase.setValue(ruta);
                 Intent intent2 = new Intent(v.getContext(), Activity_ExplorarViajes.class);
+                intent.putExtra("Route", key);
                 startActivity(intent);
             }
         });
@@ -291,7 +306,6 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
                         LatLng mapaInicial = new LatLng(userLastKnownLocationLat, userLastKnownLocationLong);
                         mMarkerPoints.add(mapaInicial);
-                        Log.d("DEBCREARV_123", String.valueOf(mMarkerPoints.size()));
                         MarkerOptions options = new MarkerOptions();
                         options.position(mapaInicial);
                         options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -765,7 +779,6 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         line1.addAll(aline1);
                         line2.addAll(aline2);
                         line3.addAll(aline3);
-
                         Polyline lineA = mMap.addPolyline(line1);
                         Polyline lineB = mMap.addPolyline(line2);
                         Polyline lineC = mMap.addPolyline(line3);
@@ -775,7 +788,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         lineB.setTag("lineB");
                         lineC.setClickable(true);
                         lineC.setTag("lineC");
-
+                        Log.d("Polyline", String.valueOf(lineA.getPoints()+ String.valueOf(lineA.getWidth())));
                         polylines.add(lineA);
                         polylines.add(lineB);
                         polylines.add(lineC);
