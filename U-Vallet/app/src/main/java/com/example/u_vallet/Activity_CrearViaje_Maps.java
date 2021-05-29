@@ -103,7 +103,6 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         originCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("pruEBA", "ENTRAMOS");
                 searchViewOrigin.setQuery("", false);
                 if (markerOrigin != null) {
                     mMarkerPoints.remove(markerOrigin.getPosition());
