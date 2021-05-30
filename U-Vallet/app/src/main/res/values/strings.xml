@@ -17,4 +17,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity__crear_viaje__maps">Map</string>
 
+    <!-- Api keys -->
+    <string name="APP_ID">MNxqnqFdLROq2GhAKiZGJ91pR350e2oGl0uK1EBB</string>
+    <string name="API_KEY">DDd7L9EAAV7fg28CmLMTsrlCeLgGCT07KbYnuTyy</string>
+
 </resources>

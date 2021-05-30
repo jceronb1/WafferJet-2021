@@ -125,7 +125,7 @@
         android:textColor="#000000"
         android:textSize="23sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/AgregarCarro_Marca" />
+        app:layout_constraintTop_toBottomOf="@+id/AgregarCarro_Marcas" />
 
     <TextView
         android:id="@+id/textView7"
@@ -141,21 +141,6 @@
         app:layout_constraintTop_toBottomOf="@+id/AgregarCarro_Modelo" />
 
     <EditText
-        android:id="@+id/AgregarCarro_Marca"
-        android:layout_width="340dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="35dp"
-        android:layout_marginLeft="35dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginRight="36dp"
-        android:ems="10"
-        android:hint="Mazda"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-    <EditText
         android:id="@+id/AgregarCarro_Modelo"
         android:layout_width="340dp"
         android:layout_height="40dp"
@@ -164,7 +149,7 @@
         android:layout_marginEnd="36dp"
         android:layout_marginRight="36dp"
         android:ems="10"
-        android:hint="CX - 5"
+        android:hint="Modelo"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -204,6 +189,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/AgregarCarro_Capacidad" />
+
+    <Spinner
+        android:id="@+id/AgregarCarro_Marcas"
+        android:layout_width="340dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginRight="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
