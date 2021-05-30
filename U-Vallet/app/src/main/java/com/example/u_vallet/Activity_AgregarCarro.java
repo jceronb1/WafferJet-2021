@@ -8,10 +8,15 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,16 +34,25 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.JsonParser;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -59,7 +73,9 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
     private DatabaseReference firebaseDB;
     private FirebaseAuth userAuth;
     String currentUserId;
-
+    private FirebaseAuth mAuth;
+    private StorageReference mStorageRef;
+    private Uri imagenUri;
     // Permissions
     private static final int MEDIA_PERMISSION_CODE = 311;
     private static final int SELECT_IMAGE_CODE = 312;
@@ -92,7 +108,8 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         firebaseDB = FirebaseDatabase.getInstance().getReference("cars");
         userAuth = FirebaseAuth.getInstance();
         currentUserId = userAuth.getUid();
-
+        mAuth = FirebaseAuth.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         // Car image
         imagenCarro = (ImageView) findViewById(R.id.AgregarCarro_ImagenCarro);
 
@@ -214,8 +231,20 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         //
         if (resultCode == RESULT_OK &&  requestCode == SELECT_IMAGE_CODE) {
             Log.i("Called", "called");
-            imagenCarro.setImageURI(data.getData());
-            imagenSeleccionada = true;
+            try {
+                final Uri imageUri = data.getData();
+                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                imagenCarro.setImageBitmap(selectedImage);
+                //mImageView.setImageURI(imageUri);
+                imagenSeleccionada = true;
+                imagenUri = imageUri;
+            }catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            //imagenCarro.setImageURI(data.getData());
+            //imagenSeleccionada = true;
         }
     }
 
@@ -231,6 +260,7 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         carro.put("capacidad", capacidad);
 
         // Save car in DB
+        uploadImageToFirebase(imagenUri);
         firebaseDB.child(currentUserId).child(placa).setValue(carro);
     }
 
@@ -278,6 +308,32 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         Intent selectImageIntent = new Intent(Intent.ACTION_PICK);
         selectImageIntent.setType("image/*");
         startActivityForResult(selectImageIntent, SELECT_IMAGE_CODE);
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+    private void uploadImageToFirebase(Uri imagenUri){
+        StorageReference fileRef = mStorageRef.child("cars/"+mAuth.getCurrentUser().getUid()+"/"+placa.getText().toString()+"/car.jpg");
+        fileRef.putFile(imagenUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(imagenCarro);
+                        Toast.makeText(Activity_AgregarCarro.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Activity_AgregarCarro.this, "Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void restServiceCarBrands() {
