@@ -1,5 +1,6 @@
 package com.example.u_vallet;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -18,6 +19,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +33,13 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
     //----------------------------------------------
     //----------------  Attributes  ----------------
     //----------------------------------------------
-    private ArrayList<Viaje> ActiveTrips;
+    private ArrayList<Viaje> ActiveTrips = new ArrayList<>();
+    private ArrayList<String> idRutas = new ArrayList<>();
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mDataBase;
+    private DatabaseReference mRef;
+    private DatabaseReference mRef2;
+    public static final String PathRoute = "routes/";
 
     //----------------------------------------------
     //-----------------  On Create  ----------------
@@ -37,14 +49,13 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explorar_viajes);
 
-        // Get all active trips from DB
-        ActiveTrips = getActiveTripsFromDB();
+        mAuth = FirebaseAuth.getInstance();
+        mDataBase = FirebaseDatabase.getInstance();
 
-        // Create the custom adapter for the trips
-        TripsCustomAdapter tripsAdapter = new TripsCustomAdapter();
-        // Create and bind list view with TripsCustomAdapter
-        ListView tripsListView = (ListView) findViewById(R.id.Trips_ListView);
-        tripsListView.setAdapter(tripsAdapter);
+        // Get all active trips from DB
+        getRoutesFromDB();
+
+
 
         Button botonMiViaje = (Button) findViewById(R.id.buttonCrearViajeMC3);
 
@@ -61,24 +72,55 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
     //----------------------------------------------
     //--------- Methods that involves DB -----------
     //----------------------------------------------
-    private ArrayList<Viaje> getActiveTripsFromDB() {
-        ArrayList<Viaje> testData = new ArrayList<Viaje>();
-        testData.add(new Viaje("Juan Diego",
-                123,
-                "Origen X",
-                "Destino Y",
-                new Carro("Gabriel Gomez","Mazda","JNL 373","CX5",5,123)));
-        testData.add(new Viaje("Campos Neira",
-                456,
-                "Origen X",
-                "Destino Y",
-                new Carro("Joaquin Perez","Renault","HLK 819","Koleos",5,456)));
-        testData.add(new Viaje("Campos Neira",
-                456,
-                "Origen X",
-                "Destino Y",
-                new Carro("Pablo Manrique","Chevrolet","FVL 652","TrailBlazer",7,789)));
-        return testData;
+
+    private void getRoutesFromDB(){
+        mRef = mDataBase.getReference(PathRoute);
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int size = ActiveTrips.size();
+                for(DataSnapshot singlesnapshot : snapshot.getChildren() ){
+                    Viaje viaje = new Viaje();
+                    String status =  singlesnapshot.child("status").getValue(String.class);
+                    String uidConductor =  singlesnapshot.child("uidConductor").getValue(String.class);
+
+
+                    String key = singlesnapshot.child("key").getValue(String.class);;
+                    if(status.equals("active") && !uidConductor.equals(mAuth.getUid()) && !idRutas.contains(key)){
+
+                        String origen = singlesnapshot.child("originDirection").getValue(String.class);
+                        String destino = singlesnapshot.child("destinationDirection").getValue(String.class);
+                        String marca = singlesnapshot.child("carro").child("marca").getValue(String.class);
+                        String placa = singlesnapshot.child("carro").child("placa").getValue(String.class);
+                        Integer valorCupo = singlesnapshot.child("valorViaje").getValue(Integer.class);
+                        Integer capacidad = singlesnapshot.child("cuposDisponibles").getValue(Integer.class);
+                        viaje.setIdConductor(uidConductor);
+                        viaje.setOrigen(origen);
+                        viaje.setDestino(destino);
+                        viaje.setMarca(marca);
+                        viaje.setPlaca(placa);
+                        viaje.setValorCupo(valorCupo);
+                        viaje.setCapacidad(capacidad);
+                        ActiveTrips.add(viaje);
+                        idRutas.add(key);
+                    }
+                }
+
+                if(size != ActiveTrips.size()){
+                    // Create the custom adapter for the trips
+                    TripsCustomAdapter tripsAdapter = new TripsCustomAdapter();
+                    // Create and bind list view with TripsCustomAdapter
+                    ListView tripsListView = (ListView) findViewById(R.id.Trips_ListView);
+                    tripsListView.setAdapter(tripsAdapter);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     //----------------------------------------------
@@ -137,12 +179,16 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             TextView destinyDirection = (TextView) convertView.findViewById(R.id.Destiny_Direction);
             TextView carBrand = (TextView) convertView.findViewById(R.id.Car_Brand);
             TextView carPlate = (TextView) convertView.findViewById(R.id.Car_Plate);
+            TextView cuposDisponibles = (TextView)   convertView.findViewById(R.id.cupos);
+            TextView valorCupo = (TextView)   convertView.findViewById(R.id.valorCupo);
             // Set information to the view
             driverName.setText(ActiveTrips.get(position).NombreDelConductor);
             originDirection.setText(ActiveTrips.get(position).origen);
             destinyDirection.setText(ActiveTrips.get(position).destino);
-            carBrand.setText(ActiveTrips.get(position).carroQueRealizaElViaje.marcaCarro);
-            carPlate.setText(ActiveTrips.get(position).carroQueRealizaElViaje.placa);
+            carBrand.setText(ActiveTrips.get(position).marca);
+            carPlate.setText(ActiveTrips.get(position).placa);
+            cuposDisponibles.setText(String.valueOf(ActiveTrips.get(position).capacidad));
+            valorCupo.setText(String.valueOf(ActiveTrips.get(position).valorCupo));
 
             // Set event listeners to the buttons
             Button seeRoute = (Button) convertView.findViewById(R.id.Button_See_Route);
@@ -161,6 +207,8 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Log.i("Reserve ", v.getContext().toString());
+                    Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);
+                    startActivity(intent);
                 }
             });
 

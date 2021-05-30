@@ -1,0 +1,179 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/campoCantReservas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondo"
+    android:fillViewport="true"
+    tools:context=".Activity_Reservar_Viaje">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/Uvallet"
+            android:layout_width="244dp"
+            android:layout_height="75dp"
+            android:layout_marginStart="78dp"
+            android:layout_marginLeft="78dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="87dp"
+            android:layout_marginRight="87dp"
+            android:background="#000C0808"
+            android:text="U Vallet"
+            android:textColor="#3F51B5"
+            android:textSize="70sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/reservar"
+            android:layout_width="162dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="134dp"
+            android:layout_marginLeft="134dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="115dp"
+            android:layout_marginRight="115dp"
+            android:text="Reservar"
+            android:textColor="#050505"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Uvallet" />
+
+        <Button
+            android:id="@+id/cancelarReserva"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:layout_below="@+id/direccionText"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="76dp"
+            android:layout_marginRight="76dp"
+            android:layout_marginBottom="20dp"
+            android:layout_toEndOf="@+id/botonGuardar"
+            android:layout_toRightOf="@+id/botonGuardar"
+            android:background="#EE0B0B"
+            android:text="Cancelar"
+            app:backgroundTint="#EE0B0B"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/campoPunEncuentro" />
+
+        <Button
+            android:id="@+id/botonReservar"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:layout_below="@+id/direccionText"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="20dp"
+            android:background="#EEBC0B"
+            android:text="Reservar"
+            app:backgroundTint="#EEBC0B"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/cancelar2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/campoPunEncuentro" />
+
+        <TextView
+            android:id="@+id/viewCantidadReservas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="150dp"
+            android:layout_marginRight="150dp"
+            android:text="Ingrese la cantidad de reservas:"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reservar" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="31dp"
+            android:layout_marginLeft="31dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="170dp"
+            android:layout_marginRight="170dp"
+            android:ems="10"
+            android:inputType="number"
+            android:text=""
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/viewCantidadReservas" />
+
+        <TextView
+            android:id="@+id/viewValorTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="44dp"
+            android:layout_marginLeft="44dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="309dp"
+            android:layout_marginRight="309dp"
+            android:text="Valor total: "
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+
+        <EditText
+            android:id="@+id/campoValorTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="31dp"
+            android:layout_marginLeft="31dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="170dp"
+            android:layout_marginRight="170dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/viewValorTotal" />
+
+        <TextView
+            android:id="@+id/viewPuntoEncuentroRes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="37dp"
+            android:layout_marginLeft="37dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="260dp"
+            android:layout_marginRight="260dp"
+            android:text="Punto de encuentro"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/campoValorTotal" />
+
+        <EditText
+            android:id="@+id/campoPunEncuentro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="33dp"
+            android:layout_marginLeft="33dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="168dp"
+            android:layout_marginRight="168dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/viewPuntoEncuentroRes" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</androidx.core.widget.NestedScrollView>
