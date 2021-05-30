@@ -101,18 +101,16 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot singleSnapshot : snapshot.getChildren()){
-                    String child = singleSnapshot.child("uidConductor").getValue(String.class);
+                    String uid = singleSnapshot.child("uidConductor").getValue(String.class);
                     String status = singleSnapshot.child("status").getValue(String.class);
-                    Log.d("USPRUEBA", child);
-                    Log.d("USPRUEBA", status);
-                    if(status.equals("canceled") && child.equals(mAuth.getUid())){
+                    if(status.equals("canceled") && uid.equals(mAuth.getUid())){
                         idEt.setText("");
                         origenEt.setText("");
                         destinoEt.setText("");
                         horaEt.setText("");
                         puntoEt.setText("");
                         active = false;
-                    }else if(status.equals("active") && child.equals(mAuth.getUid())){
+                    }else if(status.equals("active") && uid.equals(mAuth.getUid())){
                         active = true;
                         keyAux = singleSnapshot.child("key").getValue(String.class);
                         idEt.setText(keyAux);

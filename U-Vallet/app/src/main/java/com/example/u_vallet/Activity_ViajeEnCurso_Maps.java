@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +17,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,12 +24,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.type.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Activity_RutaViaje_Maps extends FragmentActivity implements OnMapReadyCallback {
+public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -42,7 +41,7 @@ public class Activity_RutaViaje_Maps extends FragmentActivity implements OnMapRe
 
     private LatLng mOrigin;
     private LatLng mDestination;
-    private Button botonIniciarViaje;
+    private Button botonFinalizarViaje;
     private PolylineOptions line;
 
     SupportMapFragment mapFragment;
@@ -50,7 +49,7 @@ public class Activity_RutaViaje_Maps extends FragmentActivity implements OnMapRe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity__ruta_viaje__maps);
+        setContentView(R.layout.activity__viaje_en_curso__maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -59,22 +58,20 @@ public class Activity_RutaViaje_Maps extends FragmentActivity implements OnMapRe
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
 
-        botonIniciarViaje = (Button)findViewById(R.id.buttonIniciarViaje);
-
-        String key = getIntent().getExtras().getString("Route_4");
-        Log.d("USPRUEBA", key + "0");
+        botonFinalizarViaje = (Button)findViewById(R.id.buttonFinalizarViaje);
+        String key = getIntent().getExtras().getString("Trip");
+        Log.d("USPRUBAF", key);
         setRoute(key);
 
-        botonIniciarViaje.setOnClickListener(new View.OnClickListener() {
+        botonFinalizarViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent viaje = new Intent(v.getContext(), Activity_ViajeEnCurso_Maps.class);
-                startRoute(key);
-                viaje.putExtra("Trip", key);
-                startActivity(viaje);
+                Intent finalizar = new Intent(v.getContext(), Activity_Roles.class);
+                endRoute(key);
+                finalizar.putExtra("KeyEnd", key);
+                startActivity(finalizar);
             }
         });
-
     }
 
     /**
@@ -91,13 +88,10 @@ public class Activity_RutaViaje_Maps extends FragmentActivity implements OnMapRe
         mMap = googleMap;
 
     }
-
-    private void startRoute(String key){
+    private void endRoute(String key){
         mRef = mDatabase.getReference(PATH_ROUTES).child(key);
-        mRef.child("status").setValue("onCourse");
-
+        mRef.child("status").setValue("finished");
     }
-
     private void setRoute(String key){
         mRef = mDatabase.getReference(PATH_ROUTES).child(key);
         mRef.addValueEventListener(new ValueEventListener() {
@@ -125,7 +119,6 @@ public class Activity_RutaViaje_Maps extends FragmentActivity implements OnMapRe
 
             }
         });
-
         mRefList = mDatabase.getReference(PATH_ROUTES).child(key).child("route");
         mRefList.addValueEventListener(new ValueEventListener() {
             @Override
@@ -152,6 +145,5 @@ public class Activity_RutaViaje_Maps extends FragmentActivity implements OnMapRe
 
             }
         });
-
     }
 }

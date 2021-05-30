@@ -41,8 +41,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".Activity_ViajeEnCurso_Maps"
+            android:label="@string/title_activity__viaje_en_curso__maps"></activity>
+        <activity
             android:name=".Activity_RutaViaje_Maps"
-            android:label="@string/title_activity__ruta_viaje__maps"></activity>
+            android:label="@string/title_activity__ruta_viaje__maps" />
         <activity
             android:name=".Activity_CrearViaje_Maps"
             android:label="@string/title_activity__crear_viaje__maps" />

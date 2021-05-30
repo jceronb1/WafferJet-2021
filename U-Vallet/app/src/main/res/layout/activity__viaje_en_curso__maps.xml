@@ -5,7 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity_RutaViaje_Maps">
+    tools:context=".Activity_ViajeEnCurso_Maps">
 
     <fragment
         android:id="@+id/map"
@@ -16,17 +16,16 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
-        android:id="@+id/buttonIniciarViaje"
+        android:id="@+id/buttonFinalizarViaje"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="64dp"
-        android:background="#EEBC0B"
-        android:text="Iniciar Viaje"
+        android:background="#EE0B0B"
+        android:text="Finalizar Viaje"
         android:textColor="#FFFFFF"
-        app:backgroundTint="#EEBC0B"
+        app:backgroundTint="#EE0B0B"
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
