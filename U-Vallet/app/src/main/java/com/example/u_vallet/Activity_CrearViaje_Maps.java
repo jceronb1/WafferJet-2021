@@ -1,6 +1,7 @@
 package com.example.u_vallet;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -50,7 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapReadyCallback {
+public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMapReadyCallback {
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -79,6 +81,11 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     String[] location_permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
     private double userLastKnownLocationLat;
     private double userLastKnownLocationLong;
+    public String durationA;
+    public String durationB;
+    public String durationC;
+    private TextView viewDuration;
+
 
 
     // Description of the method
@@ -88,6 +95,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         setContentView(R.layout.activity__crear_viaje__maps);
         mAuth = FirebaseAuth.getInstance();
 
+        viewDuration = (TextView)findViewById(R.id.viewDuration);
         polylines = new ArrayList<>();
         markerOrigin = null;
         markerDestination = null;
@@ -432,6 +440,18 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 Log.e("Polyline color", String.valueOf(polyline.getColor()));
                 Log.e("Polyline colors", String.valueOf(R.color.grey));
 
+
+                if(polyline.getTag().equals("lineA")){
+                    //Toast.makeText(getBaseContext(), "durationA", Toast.LENGTH_SHORT).show();
+                    viewDuration.setText("Tiempo: "+durationA);
+                }else if(polyline.getTag().equals("lineB")){
+                    //Toast.makeText(getBaseContext(), "durationB", Toast.LENGTH_SHORT).show();
+                    viewDuration.setText("Tiempo: "+durationB);
+                }else{
+                    //Toast.makeText(getBaseContext(), "durationC", Toast.LENGTH_SHORT).show();
+                    viewDuration.setText("Tiempo: "+durationC);
+                }
+
                 //polyline.getId();
                 Log.e("Polyline id", polyline.getId());
                 //ArrayList<Polyline> polylinesAux = new ArrayList<>();
@@ -524,6 +544,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
+
 
     }
 
@@ -641,8 +662,17 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 // Starts parsing data
                 routes = parser.parse(jObject).getRoutes1();
                 durations = parser.parse(jObject).getDurations();
+                int indice = 0;
                 for(String duration : durations){
                     Log.i("Tiempo: ",duration);
+                    if(indice==0){
+                        durationA = duration;
+                    }else if(indice==1){
+                        durationB = duration;
+                    }else{
+                        durationC = duration;
+                    }
+                    indice++;
                 }
                 /*int tam = routes.size()-1;
                 routesAux = routes.get(tam);
@@ -982,6 +1012,10 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 lineA.setTag("lineA");
                 polylines.add(lineA);
             }
+
+            viewDuration.setText("Tiempo: "+durationA);
+
+
 
         }
 
