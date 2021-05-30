@@ -66,16 +66,19 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
 
     // Input fields
     EditText placa;
-    EditText modelo;
     EditText capacidad;
-    ImageView imagenCarro;
+    String modeloCarro = null;
     String marcaCarro = null;
+    ImageView imagenCarro;
     boolean imagenSeleccionada = false;
     boolean marcaSeleccionada = false;
+    boolean modeloSeleccionado = false;
 
     // JSON api response
     JSONObject JSONModelosCarros = null;
-    HashSet<String> modelosCarros = new HashSet<String>();
+    HashSet<String> marcasCarros = new HashSet<String>();
+    ArrayList<String> carBrands = new ArrayList<String>();
+    HashMap<String, ArrayList<String>> carModels = new HashMap<String, ArrayList<String>>();
 
     //-----------------------------------------------
     //---------------  On create  -------------------
@@ -98,12 +101,10 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         agregarCarro.setOnClickListener( view -> {
             // Get input fields
             placa = (EditText) findViewById(R.id.AgregarCarro_Placa);
-            modelo = (EditText) findViewById(R.id.AgregarCarro_Modelo);
             capacidad = (EditText) findViewById(R.id.AgregarCarro_Capacidad);
 
             // Convert values in input
             String placaCarro = placa.getText().toString();
-            String modeloCarro = modelo.getText().toString();
             String capacidadCarro = capacidad.getText().toString();
 
             // Validate form
@@ -112,12 +113,9 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
                 return;
             }
 
-            // Get user info
-            String nombreConductor = "Pedro Perez";
-            int idConductor = 123;
 
             // Write new car
-            writeNewCar(nombreConductor, marcaCarro, placaCarro, modeloCarro, Integer.parseInt(capacidadCarro), idConductor);
+            writeNewCar(marcaCarro, placaCarro, modeloCarro, Integer.parseInt(capacidadCarro));
             Log.i("Carro", "New car added");
 
             // Create dialog to inform the user that a new car was added
@@ -168,7 +166,7 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         });
 
         //-----------  Volley REST service call  -------------
-        restService();
+        restServiceCarBrands();
 
     }
 
@@ -224,7 +222,7 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
     //-----------------------------------------------
     //-------------  Methods for DB  ----------------
     //-----------------------------------------------
-    public void writeNewCar(String nombreConductor, String marcaCarro, String placa, String modelo, int capacidad, int idConductor) {
+    public void writeNewCar(String marcaCarro, String placa, String modelo, int capacidad) {
         // Create instance of Car
         HashMap<String, Object> carro = new HashMap<String, Object>();
         carro.put("marca", marcaCarro);
@@ -240,19 +238,19 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
     //----------------  Methods  --------------------
     //-----------------------------------------------
     // Method to validate user input
-    private boolean validateForm(String marcaCarro, String placaCarro,String modeloCarro, String capacidadCarro ) {
+    private boolean validateForm(String marcaCarro, String placaCarro, String modeloCarro, String capacidadCarro ) {
 
         // Check for empty fields
         if (placaCarro.isEmpty()) {
             placa.setError("Vacío o inválido");
             return false;
         }
-        if (marcaCarro.equals(null)) {
-//            marca.setError("Vacío");
+        if (!marcaSeleccionada) {
+            Toast.makeText(Activity_AgregarCarro.this, "Marca inválida", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (modeloCarro.isEmpty()) {
-            modelo.setError("Vacío o inválido");
+        if (!modeloSeleccionado) {
+            Toast.makeText(Activity_AgregarCarro.this, "Modelo inválido", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (capacidadCarro.isEmpty()) {
@@ -282,12 +280,11 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         startActivityForResult(selectImageIntent, SELECT_IMAGE_CODE);
     }
 
-    private void restService() {
-
+    private void restServiceCarBrands() {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getMakes&year=2000&sold_in_us=1";
-
+        // Request URL
+        String url ="https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getMakes&year=2015&sold_in_us=1";
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -305,7 +302,11 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
                             e.printStackTrace();
                         }
 
-                        inflateSpinner();
+                        // Inflate car brands spinner
+                        inflateBrandsSpinner();
+
+                        // Make request to get the models from all cars
+                        restServiceCarModels();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -314,12 +315,75 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
                 Log.i("VOLLEY", error.toString());
             }
         });
-
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
 
-    private void inflateSpinner() {
+    private void restServiceCarModels() {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        // Travers cars brands and make request to get the car models
+        for (String brand : carBrands) {
+            // Request URL
+            String url ="https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getModels&make=" + brand.toLowerCase() + "&year=2015&sold_in_us=1";
+            // Request a string response from the provided URL.
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // Display the first 500 characters of the response string.
+                            Log.i("RESP", String.valueOf(response.length()));
+                            Log.i("RESP", response);
+
+                            // Convert String to JSONObject
+                            response = response.substring(2, response.length() - 2);
+                            JSONObject JSONCarModels = null;
+                            try {
+                                JSONCarModels = new JSONObject(response);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            // Store information about car models in hashmap
+                            ArrayList<String> models = new ArrayList<String>();
+                            // Parse JSON data from API response
+                            try {
+                                JSONArray carModelsArray = JSONCarModels.getJSONArray("Models");
+                                for (int i = 0; i < carModelsArray.length(); i++) {
+                                    // Traverse JSON object by keys
+                                    JSONObject car = carModelsArray.getJSONObject(i);
+                                    Iterator key = car.keys();
+                                    while (key.hasNext()) {
+                                        String k = key.next().toString();
+                                        String val = car.getString(k);
+                                        if (k.equals("model_name")) {
+                                            models.add(val);
+                                        }
+                                    }
+                                }
+                            } catch ( Exception e ) {
+                                Log.i("ERROR", "Getting car models : " + e.toString());
+                            }
+
+                            // Store information in hashmap
+                            carModels.put(brand, models);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(Activity_AgregarCarro.this, "Fallo al consumir los servicios REST", Toast.LENGTH_SHORT).show();
+                    Log.i("VOLLEY", error.toString());
+                }
+            });
+            // Add the request to the RequestQueue.
+            queue.add(stringRequest);
+
+        }
+
+    }
+
+    private void inflateBrandsSpinner() {
 
         Log.i("SPINNER", "SPINNER CALLED");
 
@@ -334,7 +398,7 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
                     String k = key.next().toString();
                     String val = car.getString(k);
                     if (k.equals("make_display")) {
-                        modelosCarros.add(val);
+                        marcasCarros.add(val);
                     }
                 }
             }
@@ -343,18 +407,19 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         }
 
         // Debug
-        Log.d("VALUE", modelosCarros.toString());
+        Log.d("VALUE", marcasCarros.toString());
 
         // Convert HashSet into an array of Strings
-        ArrayList<String> cars = new ArrayList<String>();
-        for (String marca : modelosCarros) {
-            cars.add(marca);
+        carBrands = new ArrayList<String>();
+        carBrands.add("Seleccione una marca");
+        for (String marca : marcasCarros) {
+            carBrands.add(marca);
         }
 
         // Inflate Spinner
         Spinner carsSpinner = (Spinner) findViewById(R.id.AgregarCarro_Marcas);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, cars);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, carBrands);
         // Specify the layout to use when the list of choices appears
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -365,12 +430,51 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         Log.i("Spinner", "Finished inflating spinner");
     }
 
+    private void inflateModelsSpinner(String carBrand) {
+        ArrayList<String> models;
+        // If is the default value
+        if (carBrand.equals("Seleccione una marca")) {
+            models = new ArrayList<String>();
+            models.add("Seleccione primero una marca");
+        }
+        // Otherwise, get models from hashmap
+        else {
+            models = carModels.get(carBrand);
+            models.add(0, "Seleccione un modelo");
+        }
+        // Inflate Spinner
+        Spinner modelsSpinner = (Spinner) findViewById(R.id.AgregarCarro_Modelo);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, models);
+        // Specify the layout to use when the list of choices appears
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        modelsSpinner.setAdapter(arrayAdapter);
+        //
+        modelsSpinner.setOnItemSelectedListener(this);
+    }
+
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
         Log.i("ITEM", String.valueOf(parent.getItemAtPosition(pos)));
-        marcaSeleccionada = true;
-        marcaCarro = String.valueOf(parent.getItemAtPosition(pos));
+        // Check which spinner was activated
+        switch (parent.getId()) {
+            // Car brand
+            case R.id.AgregarCarro_Marcas:
+                marcaCarro = String.valueOf(parent.getItemAtPosition(pos));
+                marcaSeleccionada = (marcaCarro.equals("Seleccione una marca")) ? false : true;
+                // Inflate car models spinner based on item selected
+                inflateModelsSpinner(marcaCarro);
+                return;
+
+            // Car model
+            case R.id.AgregarCarro_Modelo:
+                modeloCarro = String.valueOf(parent.getItemAtPosition(pos));
+                modeloSeleccionado = (modeloCarro.equals("Seleccione primero una marca") || modeloCarro.equals("Seleccione un modelo")) ? false : true;
+                return;
+        }
+
     }
 
     @Override
