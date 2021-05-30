@@ -245,28 +245,31 @@ public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMap
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), Activity_Seleccionar_Carro.class);
-
-                for (int i = 0; i < polylines.size(); i++) {
-                    if(polylines.get(i).getColor() == -10052106) {
-                        routeSelected = polylines.get(i).getPoints();
+                if(mMarkerPoints.size() == 2) {
+                    for (int i = 0; i < polylines.size(); i++) {
+                        if (polylines.get(i).getColor() == -10052106) {
+                            routeSelected = polylines.get(i).getPoints();
+                        }
                     }
+                    Ruta ruta = new Ruta();
+                    ruta.setRoute(routeSelected);
+                    ruta.setOriginLocation(mOrigin);
+                    ruta.setDestinationLocation(mDestination);
+                    ruta.setUidConductor(mAuth.getUid());
+                    ruta.setStatus("onCreate");
+                    mDatabase = FirebaseDatabase.getInstance().getReference("routes");
+                    String key = mDatabase.push().getKey();
+                    ruta.setKey(key);
+                    mDatabase = FirebaseDatabase.getInstance().getReference("routes/" + key);
+                    mDatabase.setValue(ruta);
+                    Intent intent2 = new Intent(v.getContext(), Activity_ExplorarViajes.class);
+                    intent.putExtra("Route", key);
+                    intent.putExtra("direccionO", searchViewOrigin.getQuery().toString());
+                    intent.putExtra("direccionD", searchViewDestination.getQuery().toString());
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(getBaseContext(), "Debe seleccionar una dirección de origen y una dirección de destino para poder avanzar.", Toast.LENGTH_SHORT).show();
                 }
-                Ruta ruta = new Ruta();
-                ruta.setRoute(routeSelected);
-                ruta.setOriginLocation(mOrigin);
-                ruta.setDestinationLocation(mDestination);
-                ruta.setUidConductor(mAuth.getUid());
-                ruta.setStatus("onCreate");
-                mDatabase = FirebaseDatabase.getInstance().getReference("routes");
-                String key = mDatabase.push().getKey();
-                ruta.setKey(key);
-                mDatabase = FirebaseDatabase.getInstance().getReference("routes/"+key);
-                mDatabase.setValue(ruta);
-                Intent intent2 = new Intent(v.getContext(), Activity_ExplorarViajes.class);
-                intent.putExtra("Route", key);
-                intent.putExtra("direccionO",searchViewOrigin.getQuery().toString());
-                intent.putExtra("direccionD", searchViewDestination.getQuery().toString());
-                startActivity(intent);
             }
         });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
