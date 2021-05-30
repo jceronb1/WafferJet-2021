@@ -102,7 +102,6 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
             capacidad = (EditText) findViewById(R.id.AgregarCarro_Capacidad);
 
             // Convert values in input
-            String marcaCarro = "Marca carro";
             String placaCarro = placa.getText().toString();
             String modeloCarro = modelo.getText().toString();
             String capacidadCarro = capacidad.getText().toString();
@@ -248,7 +247,7 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
             placa.setError("Vacío o inválido");
             return false;
         }
-        if (marcaCarro.isEmpty()) {
+        if (marcaCarro.equals(null)) {
 //            marca.setError("Vacío");
             return false;
         }
