@@ -13,16 +13,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 public class Activity_Seleccionar_Carro extends AppCompatActivity {
 
-    private ArrayList<Carro> MisCarros;
+    DatabaseReference mRef;
 
+    private ArrayList<Carro> MisCarros;
+    private String key;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__seleccionar__carro);
+        key = getIntent().getExtras().getString("Route");
 
         MisCarros = getCarrosFromDB();
         // Create the custom adapter for the trips
@@ -85,11 +91,18 @@ public class Activity_Seleccionar_Carro extends AppCompatActivity {
                 public void onClick(View v) {
                     Log.i("TAG","Carro seleccionado");
                     Intent intentContinuarViaje = new Intent (v.getContext(), Activity_CrearViaje.class);
+                    String direccionO = getIntent().getExtras().getString("direccionO");
+                    String direccionD = getIntent().getExtras().getString("direccionD");
+                    intentContinuarViaje.putExtra("Route_2", key);
+                    intentContinuarViaje.putExtra("direccionO_2", direccionO);
+                    intentContinuarViaje.putExtra("direccionD_2", direccionD);
+                    mRef = FirebaseDatabase.getInstance().getReference("routes/").child(key);
+                    mRef.child("carro").child("marca").setValue(marca.getText().toString());
+                    mRef.child("carro").child("placa").setValue(placa.getText().toString());
                     intentContinuarViaje.putExtra("placa", marca.getText().toString() +" : "+ placa.getText().toString());
                     startActivity(intentContinuarViaje);
                 }
             });
-
             // Return view
             return convertView;
         }

@@ -9,8 +9,11 @@ public class Ruta {
     List<LatLng> route;
     LatLng originLocation;
     LatLng destinationLocation;
+    String origen;
+    String destino;
     String key;
     String uidConductor;
+    String status;
     ArrayList<String> uidsPasajeros;
 
     public Ruta(List<LatLng> route, LatLng originLocation, LatLng destinationLocation, String key, String uidConductor, ArrayList<String> uidsPasajeros) {
@@ -22,12 +25,15 @@ public class Ruta {
         this.uidsPasajeros = uidsPasajeros;
     }
 
-    public Ruta(List<LatLng> route, LatLng originLocation, LatLng destinationLocation, String key, String uidConductor){
+    public Ruta(List<LatLng> route, LatLng originLocation, LatLng destinationLocation, String key, String uidConductor, String origen, String destino, String status){
         this.route = route;
         this.originLocation = originLocation;
         this.destinationLocation = destinationLocation;
         this.key = key;
         this.uidConductor = uidConductor;
+        this.origen = origen;
+        this.destino = destino;
+        this.status = status;
     }
 
     public Ruta(){
@@ -81,4 +87,27 @@ public class Ruta {
         this.uidsPasajeros = uidsPasajeros;
     }
 
+    public String getOrigen() {
+        return origen;
+    }
+
+    public void setOrigen(String origen) {
+        this.origen = origen;
+    }
+
+    public String getDestino() {
+        return destino;
+    }
+
+    public void setDestino(String destino) {
+        this.destino = destino;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

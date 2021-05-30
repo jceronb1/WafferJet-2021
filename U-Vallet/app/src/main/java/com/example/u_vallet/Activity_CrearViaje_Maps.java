@@ -256,6 +256,7 @@ public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMap
                 ruta.setOriginLocation(mOrigin);
                 ruta.setDestinationLocation(mDestination);
                 ruta.setUidConductor(mAuth.getUid());
+                ruta.setStatus("onCreate");
                 mDatabase = FirebaseDatabase.getInstance().getReference("routes");
                 String key = mDatabase.push().getKey();
                 ruta.setKey(key);

@@ -13,284 +13,33 @@
 
 
         <TextView
-            android:id="@+id/Uvallet"
-            android:layout_width="266dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="79dp"
-            android:layout_marginLeft="69dp"
-            android:layout_marginTop="34dp"
-            android:layout_marginEnd="66dp"
-            android:layout_marginRight="66dp"
-            android:background="#000C0808"
-            android:text="U Vallet"
-            android:textColor="#3F51B5"
-            android:textSize="70sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/miViaje"
-            android:layout_width="124dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="153dp"
-            android:layout_marginLeft="121dp"
-            android:layout_marginTop="13dp"
-            android:layout_marginEnd="134dp"
-            android:layout_marginRight="134dp"
-            android:text="Mi Viaje"
-            android:textColor="#050505"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Uvallet" />
-
-        <TextView
             android:id="@+id/miViajeSubtitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginLeft="18dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="135dp"
-            android:layout_marginRight="135dp"
+            android:layout_marginTop="48dp"
             android:text="Información sobre mi viaje activo"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/miViaje" />
-
-
-        <TextView
-            android:id="@+id/miViajeInformacion"
-            android:layout_width="350dp"
-            android:layout_height="302dp"
-            android:layout_marginStart="31dp"
-            android:layout_marginLeft="31dp"
-            android:layout_marginTop="214dp"
-            android:background="#D5F5E3"
-            android:text=""
-            android:textStyle="bold"
-            app:backgroundTint="#D5F5E3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/puntoEncuentroText"
-            android:layout_width="181dp"
-            android:layout_height="26dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="80dp"
-            android:layout_marginRight="163dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toRightOf="@+id/miViajePuntoPartida"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/miViajePuntoPartida"
-            app:layout_constraintTop_toBottomOf="@+id/horaPartidaText" />
-
-        <TextView
-            android:id="@+id/miViajePasajerosConfirmados"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="20dp"
-            android:text="Pasajeros Confirmados:"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/miViajeDestino" />
-
-        <EditText
-            android:id="@+id/horaPartidaText"
-            android:layout_width="211dp"
-            android:layout_height="26dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="80dp"
-            android:layout_marginRight="188dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.2"
-            app:layout_constraintLeft_toRightOf="@+id/miViajeHoraPartida"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/miViajeHoraPartida"
-            app:layout_constraintTop_toBottomOf="@+id/miViajePasajerosConfirmados" />
-
-        <EditText
-            android:id="@+id/horaPartidaText2"
-            android:layout_width="137dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="22dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="80dp"
-            android:layout_marginRight="118dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toRightOf="@+id/miViajePasajerosConfirmados"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/miViajePasajerosConfirmados"
-            app:layout_constraintTop_toBottomOf="@+id/miViajeDestinoText" />
-
-        <TextView
-            android:id="@+id/miViajeOrigen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="281dp"
-            android:text="Origen:"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/miViajeID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="241dp"
-            android:text="ID:"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/miViajeDestinoText"
-            android:layout_width="244dp"
-            android:layout_height="31dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="43dp"
-            android:layout_marginRight="167dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="@+id/miViajeInformacion"
-            app:layout_constraintHorizontal_bias="0.264"
-            app:layout_constraintLeft_toRightOf="@+id/miViajeDestino"
-            app:layout_constraintRight_toRightOf="@+id/miViajeInformacion"
-            app:layout_constraintStart_toEndOf="@+id/miViajeDestino"
-            app:layout_constraintTop_toBottomOf="@+id/viajeOrigenText" />
-
-        <TextView
-            android:id="@+id/miViajePuntoPartida"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="20dp"
-            android:text="Punto de partida:"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/miViajeHoraPartida" />
-
-        <EditText
-            android:id="@+id/viajeIDText"
-            android:layout_width="281dp"
-            android:layout_height="34dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="80dp"
-            android:layout_marginRight="243dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toRightOf="@+id/miViajeID"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/miViajeID"
-            app:layout_constraintTop_toBottomOf="@+id/miViajeSubtitulo" />
-
-        <TextView
-            android:id="@+id/miViajeDestino"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="24dp"
-            android:text="Destino:"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/miViajeOrigen" />
-
-        <EditText
-            android:id="@+id/viajeOrigenText"
-            android:layout_width="249dp"
-            android:layout_height="31dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="-25dp"
-            android:layout_marginEnd="80dp"
-            android:layout_marginRight="193dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toRightOf="@+id/miViajeOrigen"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/miViajeOrigen"
-            app:layout_constraintTop_toBottomOf="@+id/viajeIDText" />
-
-        <TextView
-            android:id="@+id/miViajeHoraPartida"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="24dp"
-            android:text="Hora Partida:"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/miViajePasajerosConfirmados" />
 
         <Button
             android:id="@+id/botonCancelarViaje"
-            android:layout_width="200dp"
+            android:layout_width="165dp"
             android:layout_height="40dp"
-            android:layout_marginStart="127dp"
-            android:layout_marginLeft="127dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="39dp"
-            android:layout_marginRight="39dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="56dp"
             android:background="#FFC107"
             android:text="Cancelar Viaje"
             android:textColor="#000000"
             android:textColorHighlight="#FFC107"
             android:textColorHint="#FFC107"
             app:backgroundTint="#EEBC0B"
+            app:layout_constraintBottom_toTopOf="@+id/buttonMisCarrosMV"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.577"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_bias="0.952"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/miViajeInformacion" />
+            app:layout_constraintStart_toEndOf="@+id/buttonVerRutaC" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar2"
@@ -372,6 +121,185 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_begin="340dp" />
+
+        <Button
+            android:id="@+id/buttonVerRutaC"
+            android:layout_width="165dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:background="#FFC107"
+            android:text="Ver Ruta"
+            android:textColor="#000000"
+            app:backgroundTint="#EEBC0B"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/botonCancelarViaje" />
+
+        <Spinner
+            android:id="@+id/spinnerPasajeros"
+            android:layout_width="350dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="452dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.475"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/viajeIDText"
+            android:layout_width="350dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="4dp"
+
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            android:editable="false"
+            app:layout_constraintBottom_toTopOf="@+id/miViajeOrigen"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.475"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/viajeOrigenText"
+            android:layout_width="350dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="5dp"
+
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            android:editable="false"
+            app:layout_constraintBottom_toTopOf="@+id/miViajeDestino"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.459"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/miViajeDestinoText"
+            android:layout_width="350dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="4dp"
+
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            android:editable="false"
+            app:layout_constraintBottom_toTopOf="@+id/miViajeHoraPartida"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.475"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/horaPartidaText"
+            android:layout_width="350dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="4dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            android:editable="false"
+            app:layout_constraintBottom_toTopOf="@+id/miViajePuntoPartida"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.475"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/puntoEncuentroText"
+            android:layout_width="350dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="4dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            android:editable="false"
+            app:layout_constraintBottom_toTopOf="@+id/miViajePasajerosConfirmados"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.475"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/miViajeID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="139dp"
+            android:layout_marginBottom="5dp"
+            android:text="ID:"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/viajeIDText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/miViajeSubtitulo"
+            app:layout_constraintVertical_bias="0.969" />
+
+        <TextView
+            android:id="@+id/miViajeOrigen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="5dp"
+            android:text="Origen:"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/viajeOrigenText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/miViajeDestino"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="5dp"
+            android:text="Destino:"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/miViajeDestinoText"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/miViajeHoraPartida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="5dp"
+            android:text="Fecha y Hora Partida:"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/horaPartidaText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/miViajePuntoPartida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="5dp"
+            android:text="Punto de partida:"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/puntoEncuentroText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/miViajePasajerosConfirmados"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="5dp"
+            android:text="Pasajeros Confirmados:"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/spinnerPasajeros"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

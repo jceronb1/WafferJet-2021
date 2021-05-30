@@ -1,10 +1,12 @@
 package com.example.u_vallet;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,12 +16,29 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.Calendar;
 
 public class Activity_CrearViaje extends AppCompatActivity implements View.OnClickListener {
 
-    Button botonHora;
-    EditText campoHora;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+
+    private EditText origenET;
+    private EditText destinoET;
+    private EditText cuposET;
+    private EditText puntoDeEncuentroET;
+    private EditText valorViajeET;
+    private Button botonHora;
+    private EditText campoHora;
+
+
     private int dia,mes,anio,hora,minutos;
     private TimePickerDialog.OnTimeSetListener mTimeListener;
     @Override
@@ -27,6 +46,8 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_viaje);
 
+        String direccionO = getIntent().getExtras().getString("direccionO_2");
+        String direccionD = getIntent().getExtras().getString("direccionD_2");
         String placaCarro = getIntent().getExtras().getString("placa");
         TextView placa = (TextView)findViewById(R.id.campoPlacaCarro);
         //Log.i("PLACA",placaCarro);
@@ -36,10 +57,14 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
         Button botonMisCarros = (Button) findViewById(R.id.buttonMisCarrosCV);
         Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViaje);
 
-        EditText origenET = (EditText) findViewById(R.id.origen);
-        EditText destinoET = (EditText)findViewById(R.id.destino);
+        origenET = (EditText) findViewById(R.id.origen);
+        destinoET = (EditText)findViewById(R.id.destino);
+        cuposET = (EditText)findViewById(R.id.editCupos);
+        puntoDeEncuentroET = (EditText)findViewById(R.id.editPuntoEncuentro);
+        valorViajeET = (EditText)findViewById(R.id.editValorViaje);
 
-
+        origenET.setText(direccionO);
+        destinoET.setText(direccionD);
         botonMiViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,11 +89,63 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
         botonCrearViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentMiViajeConduc = new Intent(v.getContext(), Activity_Mi_Viaje_Conductor.class);
-                startActivity(intentMiViajeConduc);
+                loadViaje();
+
             }
         });
 
+    }
+
+    private void loadViaje(){
+        String key = getIntent().getExtras().getString("Route_2");
+        mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(key);
+        if(validateForm()) {
+            mDatabase.child("originDirection").setValue(origenET.getText().toString());
+            mDatabase.child("destinationDirection").setValue(destinoET.getText().toString());
+            mDatabase.child("cuposDisponibles").setValue(Double.parseDouble(cuposET.getText().toString()));
+            mDatabase.child("horaViaje").setValue(campoHora.getText().toString());
+            mDatabase.child("puntoEncuentro").setValue(puntoDeEncuentroET.getText().toString());
+            mDatabase.child("valorViaje").setValue(Double.parseDouble(valorViajeET.getText().toString()));
+            mDatabase.child("status").setValue("active");
+            Intent intentMiViajeConduc = new Intent(getApplicationContext(), Activity_Mi_Viaje_Conductor.class);
+            intentMiViajeConduc.putExtra("Route_3", key);
+            startActivity(intentMiViajeConduc);
+        }
+    }
+
+    private boolean validateForm(){
+        boolean valid = true;
+
+        String cupos = cuposET.getText().toString();
+        String hora =  campoHora.getText().toString();
+        String puntoE = puntoDeEncuentroET.getText().toString();
+        String valor = valorViajeET.getText().toString();
+        if(TextUtils.isEmpty(cupos)){
+            cuposET.setError("Requerido");
+            valid = false;
+        }else{
+            cuposET.setError(null);
+        }
+        if(TextUtils.isEmpty(hora)){
+            campoHora.setError("Requerido");
+            valid = false;
+        }else{
+            campoHora.setError(null);
+        }
+        if(TextUtils.isEmpty(puntoE)){
+            puntoDeEncuentroET.setError("Requerido");
+            valid = false;
+        }else{
+            puntoDeEncuentroET.setError(null);
+        }
+        if(TextUtils.isEmpty(valor)){
+            valorViajeET.setError("Requerido");
+            valid = false;
+        }else{
+            valorViajeET.setError(null);
+        }
+
+        return valid;
     }
 
     @Override
@@ -100,7 +177,10 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
             TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                    campoHora.setText(hourOfDay+" : "+minute);
+                    if(minute <10)
+                        campoHora.setText(hourOfDay+":"+"0"+minute);
+                    else
+                        campoHora.setText(hourOfDay+":"+minute);
                 }
             },hora,minutos,false);
             timePickerDialog.show();
