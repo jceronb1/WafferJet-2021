@@ -255,6 +255,8 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 mDatabase.setValue(ruta);
                 Intent intent2 = new Intent(v.getContext(), Activity_ExplorarViajes.class);
                 intent.putExtra("Route", key);
+                intent.putExtra("direccionO",searchViewOrigin.getQuery().toString());
+                intent.putExtra("direccionD", searchViewDestination.getQuery().toString());
                 startActivity(intent);
             }
         });
@@ -513,7 +515,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     }
 
     // Description of the method
-    private void drawRoute(){
+    private void drawRoute() {
 
         // Getting URL to the Google Directions API
         String url = getDirectionsUrl(mOrigin, mDestination);
@@ -522,6 +524,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
+
     }
 
     // Description of the Method
@@ -629,13 +632,18 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
             JSONObject jObject;
             List<List<List<HashMap<String, String>>>> routes = null;
+            List<String> durations = new ArrayList<>();
             List<List<HashMap<String, String>>> routesAux = null;
             try {
                 jObject = new JSONObject(jsonData[0]);
                 DirectionsJSONParser parser = new DirectionsJSONParser();
 
                 // Starts parsing data
-                routes = parser.parse(jObject);
+                routes = parser.parse(jObject).getRoutes1();
+                durations = parser.parse(jObject).getDurations();
+                for(String duration : durations){
+                    Log.i("Tiempo: ",duration);
+                }
                 /*int tam = routes.size()-1;
                 routesAux = routes.get(tam);
                 routes.remove(tam);
@@ -684,7 +692,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                     List<List<HashMap<String, String>>> path1 = result.get(i);
 
                     HashMap<String, String>pathAux = (HashMap<String, String>) path1.get(0);
-                    Log.d("JSON AUX",String.valueOf(pathAux));
+                    Log.i("JSON AUX",String.valueOf(pathAux));
                     path1.remove(0);
                     duration = pathAux.get("dur");
 
@@ -700,7 +708,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         Log.d("pathsize", path.size() + "");
                         //Log.d("JSON B", point.get("dur"));
                         // Fetching all the points in i-th route
-
+                        String duracion = "duro";
                         for (int j = 0; j < path.size(); j++) {
                             lineOptions1 = new PolylineOptions();
                             HashMap<String, String> point = path.get(j);
@@ -718,14 +726,14 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
                             double lat = Double.parseDouble(point.get("lat"));
                             double lng = Double.parseDouble(point.get("lng"));
-                            /*String durationB = point.get("dur");
-                            Log.d("JSON DURATION", durationB);*/
+
                             LatLng position = new LatLng(lat, lng);
                             Log.d("latlng", position.toString());
                             points.add(position);
 
 
                         }
+                        Log.i("JSON DURATION", duracion);
                         //                lineOptions.addAll(points);
                         //                lineOptions.width(5);
                         //                lineOptions.color(Color.BLUE);

@@ -18,7 +18,9 @@ public class DirectionsJSONParser {
      * Receives a JSONObject and returns a list of lists containing latitude and
      * longitude
      */
-    public List<List<List<HashMap<String,String>>>> parse(JSONObject jObject){
+    public directionsReturn parse(JSONObject jObject){
+
+        directionsReturn retorno = new directionsReturn();
 
         List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String,String>>>() ;
         List<List<List<HashMap<String,String>>>> routes1 = new ArrayList<List<List<HashMap<String,String>>>>() ;
@@ -43,6 +45,7 @@ public class DirectionsJSONParser {
                     jLegsDuration = (jLegs.getJSONObject(j));
                     String duration = jLegsDuration.getJSONObject("duration").getString("text");
                     Log.d("JSON DURATION", duration);
+                    retorno.getDurations().add(duration);
                     hmd.put("dur", duration);
                     jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
                     // Log.d("steps",jSteps.toString());
@@ -85,7 +88,8 @@ public class DirectionsJSONParser {
         }catch (Exception e){
         }
 
-        return routes1;
+        retorno.setRoutes1(routes1);
+        return retorno;
     }
 
     /**
