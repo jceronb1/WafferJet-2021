@@ -29,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.JsonParser;
@@ -43,6 +44,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -53,11 +55,15 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
     //-----------------------------------------------
     //---------------  Attributes  ------------------
     //-----------------------------------------------
-    // Database
+    // Firebase
     private DatabaseReference firebaseDB;
+    private FirebaseAuth userAuth;
+    String currentUserId;
+
     // Permissions
     private static final int MEDIA_PERMISSION_CODE = 311;
     private static final int SELECT_IMAGE_CODE = 312;
+
     // Input fields
     EditText placa;
     EditText modelo;
@@ -66,6 +72,7 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
     String marcaCarro = null;
     boolean imagenSeleccionada = false;
     boolean marcaSeleccionada = false;
+
     // JSON api response
     JSONObject JSONModelosCarros = null;
     HashSet<String> modelosCarros = new HashSet<String>();
@@ -78,8 +85,10 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_carro);
 
-        // Create Firebase Data Base instance
-        firebaseDB = FirebaseDatabase.getInstance().getReference();
+        // Firebase configurations
+        firebaseDB = FirebaseDatabase.getInstance().getReference("cars");
+        userAuth = FirebaseAuth.getInstance();
+        currentUserId = userAuth.getUid();
 
         // Car image
         imagenCarro = (ImageView) findViewById(R.id.AgregarCarro_ImagenCarro);
@@ -109,7 +118,7 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
             int idConductor = 123;
 
             // Write new car
-            // writeNewCar(nombreConductor, marcaCarro, placaCarro, modeloCarro, capacidadCarro, idConductor);
+            writeNewCar(nombreConductor, marcaCarro, placaCarro, modeloCarro, Integer.parseInt(capacidadCarro), idConductor);
             Log.i("Carro", "New car added");
 
             // Create dialog to inform the user that a new car was added
@@ -216,11 +225,16 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
     //-----------------------------------------------
     //-------------  Methods for DB  ----------------
     //-----------------------------------------------
-    public void writeNewCar(String nombreConductor, String marcaCarro, String placa,String modelo,int capacidad ,int idConductor) {
+    public void writeNewCar(String nombreConductor, String marcaCarro, String placa, String modelo, int capacidad, int idConductor) {
         // Create instance of Car
-        Carro carro = new Carro(nombreConductor, marcaCarro, placa, modelo, capacidad, idConductor);
+        HashMap<String, Object> carro = new HashMap<String, Object>();
+        carro.put("marca", marcaCarro);
+        carro.put("placa", placa);
+        carro.put("modelo", modelo);
+        carro.put("capacidad", capacidad);
+
         // Save car in DB
-        firebaseDB.child("Carros").child(String.valueOf(idConductor)).setValue(carro);
+        firebaseDB.child(currentUserId).child(placa).setValue(carro);
     }
 
     //-----------------------------------------------
