@@ -1,44 +1,57 @@
 package com.example.u_vallet;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 
 public class Activity_MisCarros extends AppCompatActivity {
 
-    private ArrayList<Carro> MisCarros;
+    private ArrayList<Carro> MisCarros = new ArrayList<>();
+    private DatabaseReference myRef;
+    private FirebaseDatabase database;
+    private FirebaseAuth mAuth;
+    private StorageReference mStorageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mis_carros);
-
-        MisCarros = getCarrosFromDB();
+        database = FirebaseDatabase.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        getCarrosFromDB();
         // Create the custom adapter for the trips
-        CarrosCustomAdapter carrosAdapter = new CarrosCustomAdapter();
+        //CarrosCustomAdapter carrosAdapter = new CarrosCustomAdapter();
         // Create and bind list view with TripsCustomAdapter
-        ListView carrosListView = (ListView) findViewById(R.id.Cars_ListView);
-        carrosListView.setAdapter(carrosAdapter);
+        //ListView carrosListView = (ListView) findViewById(R.id.Cars_ListView);
+        //carrosListView.setAdapter(carrosAdapter);
 
         //----- Get the button to add a new car and add event listener -------
         Button btnAgregarCarro = (Button) findViewById(R.id.btn_MisCarros_AgregarCarro);
@@ -97,12 +110,42 @@ public class Activity_MisCarros extends AppCompatActivity {
 
     //funciones para listview------------------------------------
 
-    public ArrayList<Carro> getCarrosFromDB() {
+    public void getCarrosFromDB() {
         ArrayList<Carro> testData = new ArrayList<Carro>();
-        testData.add(new Carro("Gabriel Gomez","Mazda","JNL 373","CX5",5,123));
-        testData.add(new Carro("Joaquin Perez","Renault","HLK 819","Koleos",5,456));
-        testData.add(new Carro("Pablo Manrique","Chevrolet","FVL 652","TrailBlazer",7,789));
-        return testData;
+
+        myRef = database.getReference("cars/"+mAuth.getCurrentUser().getUid()+"/");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    String marca = singleSnapshot.child("marca").getValue(String.class);
+                    Integer capacidad = singleSnapshot.child("capacidad").getValue(Integer.class);
+                    String modelo = singleSnapshot.child("modelo").getValue(String.class);
+                    String placa = singleSnapshot.child("placa").getValue(String.class);
+                    Carro carro = new Carro();
+                    carro.setMarcaCarro(marca);
+                    carro.setCapacidad(capacidad);
+                    carro.setModelo(modelo);
+                    carro.setPlaca(placa);
+
+                    MisCarros.add(carro);
+                    //testData.add(carro);
+
+                }
+                CarrosCustomAdapter carrosAdapter = new CarrosCustomAdapter();
+                ListView carrosListView = (ListView) findViewById(R.id.Cars_ListView);
+                carrosListView.setAdapter(carrosAdapter);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("LOADUSER", "Error en la consulta", databaseError.toException());
+            }
+        });
+
+        //testData.add(new Carro("Gabriel Gomez","Mazda","JNL 373","CX5",5,123));
+        //testData.add(new Carro("Joaquin Perez","Renault","HLK 819","Koleos",5,456));
+        //testData.add(new Carro("Pablo Manrique","Chevrolet","FVL 652","TrailBlazer",7,789));
+        //return testData;
     }
 
     //----------------------------------------------
@@ -128,21 +171,31 @@ public class Activity_MisCarros extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             //
+            Log.i("perro", String.valueOf(MisCarros.size()));
             convertView = getLayoutInflater().inflate(R.layout.listview_carros, null);
             // Get information fields of the view
+            ImageView fotocarro = (ImageView) convertView.findViewById(R.id.fotocarro);
             TextView placa = (TextView) convertView.findViewById(R.id.campoPlaca);
             TextView marca = (TextView) convertView.findViewById(R.id.campoMarca);
             TextView modelo = (TextView) convertView.findViewById(R.id.campoModelo);
             TextView capacidad = (TextView) convertView.findViewById(R.id.campoCapacidad);
-            Log.i("Placa",placa.getText().toString());
-            Log.i("Marca",marca.getText().toString());
-            Log.i("Modelo",modelo.getText().toString());
+
+
+            //Log.i("Marca",marca.getText().toString());
+            //Log.i("Modelo",modelo.getText().toString());
             // Set information to the view
             placa.setText(MisCarros.get(position).placa);
             marca.setText(MisCarros.get(position).marcaCarro);
             modelo.setText(MisCarros.get(position).modelo);
+            Log.i("Placa",placa.getText().toString());
             capacidad.setText(String.valueOf(MisCarros.get(position).capacidad));
-
+            StorageReference profileRef = mStorageRef.child("cars/"+mAuth.getCurrentUser().getUid()+"/"+placa.getText().toString()+"/car.jpg");
+            profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Picasso.get().load(uri).into(fotocarro);
+                }
+            });
             // Set event listeners to the buttons
             /*
             Button seleccionarCarro = (Button) convertView.findViewById(R.id.botonSeleccionarCarro);
