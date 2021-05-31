@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +30,7 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
     private DatabaseReference mRef2;
     public static final String PathRoute = "routes/";
 
-    String IDViaje = " ";
+    String IDViaje;
     private String correoUserAutenticado;
     private int disponibles;
     private String uidconductor;
@@ -41,13 +42,17 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mDataBase = FirebaseDatabase.getInstance();
-
+        String direccion = getIntent().getExtras().getString("direccion");
+        String latlng = getIntent().getExtras().getString("LatLng");
         String valor = getIntent().getExtras().getString("precio");
         IDViaje = getIntent().getExtras().getString("idviaje");
-        disponibles = Integer.parseInt(getIntent().getExtras().getString("cupos"));
+        disponibles = Integer.parseInt(getIntent().getExtras().getString("cuposDisponibles"));
+        Log.d("USPUEBA", "Disponibles:" + String.valueOf(disponibles));
         uidconductor = getIntent().getExtras().getString("uidconductor");
         Log.i("IDCONDUCTOR:",uidconductor);
         EditText valorTotal = (EditText)findViewById(R.id.campoValorTotal);
+        TextView ubicacionPasajero = (TextView)findViewById(R.id.tvUbicacionPasajero);
+        ubicacionPasajero.setText(direccion);
         valorTotal.setEnabled(false);
 
 
@@ -59,6 +64,22 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
                 EditText valorTotal = (EditText)findViewById(R.id.campoValorTotal);
                 int total = Integer.parseInt(reservas.getText().toString()) * Integer.parseInt(valor);
                 valorTotal.setText(String.valueOf(total));
+            }
+        });
+
+        Button buttonUbicacion = (Button)findViewById(R.id.buttonSeleccionarUbicacion);
+        buttonUbicacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), Activity_ReservarViaje_Maps.class);
+                Log.d("USPUEBA", String.valueOf(disponibles));
+                intent.putExtra("uidconductor", uidconductor);
+                intent.putExtra("precio", valor);
+                intent.putExtra("Viaje", IDViaje);
+                String dispo = String.valueOf(disponibles);
+                Log.d("USPUEBA", dispo);
+                intent.putExtra("cuposDisponibles", dispo);
+                startActivity(intent);
             }
         });
 
@@ -84,8 +105,8 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
 
     private void agregarReservas(){
 
-
         mRef = mDataBase.getReference(PathRoute);
+
         correoUserAutenticado = mAuth.getCurrentUser().getEmail();
         EditText res = (EditText)findViewById(R.id.campoReservas);
         int reservas =  Integer.parseInt(res.getText().toString());

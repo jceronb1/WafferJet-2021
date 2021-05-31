@@ -60,7 +60,6 @@ public class Activity_Pasajero_RutaViaje_Maps extends FragmentActivity implement
         pasajeroOrigin = (TextView)findViewById(R.id.tVPasajeroOrigen);
         pasajeroDestination = (TextView)findViewById(R.id.tVPasajeroDestino);
         String key = getIntent().getExtras().getString("PasajeroKey");
-        Log.d("USPRUEBA", key + "0");
         setRoute(key);
     }
 
