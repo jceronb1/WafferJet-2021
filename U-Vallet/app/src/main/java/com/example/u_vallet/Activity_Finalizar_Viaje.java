@@ -15,7 +15,7 @@ public class Activity_Finalizar_Viaje extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finalizar__viaje);
 
-        finalizarViaje = (Button)findViewById(R.id.buttonFinalizarViaje);
+        finalizarViaje = (Button)findViewById(R.id.button7);
 
         finalizarViaje.setOnClickListener(new View.OnClickListener() {
             @Override

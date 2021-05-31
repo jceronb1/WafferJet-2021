@@ -29,6 +29,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -51,6 +52,7 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
     // Map
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
+    private Marker markerOrigin = null;
     // Firebase
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
@@ -71,6 +73,7 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
     // Routes
     private PolylineOptions line;
     String routeUid;
+
 
     //--------------------------------------------------------
     //                         On create
@@ -177,17 +180,20 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
         mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-
                 Double originLat = snapshot.child("originLocation").child("latitude").getValue(Double.class);
                 Double originLong = snapshot.child("originLocation").child("longitude").getValue(Double.class);
                 Double destinationLat = snapshot.child("destinationLocation").child("latitude").getValue(Double.class);
                 Double destinationLong = snapshot.child("destinationLocation").child("longitude").getValue(Double.class);
-                //String uidConductor = ruta.getUidConductor();
-                String keyF = snapshot.child("key").getValue(String.class);;
+
+                String keyF = snapshot.child("key").getValue(String.class);
+                if (markerOrigin != null) {
+                    markerOrigin.remove();
+                }
+
                 mOrigin = new LatLng(originLat,originLong);
                 mDestination = new LatLng(destinationLat, destinationLong);
 
-                mMap.addMarker(new MarkerOptions().position(mOrigin).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                markerOrigin = mMap.addMarker(new MarkerOptions().position(mOrigin).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 mMap.addMarker(new MarkerOptions().position(mDestination));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(14));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(mOrigin));
@@ -214,15 +220,12 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
 
                     count++;
                 }
-                Log.d("USPRUEBA", "Count final: "+String.valueOf(count));
-                Log.d("USPRUEBA", "Aline: "+String.valueOf(aline.size()));
                 line.addAll(aline);
                 mMap.addPolyline(line);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
