@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -74,32 +75,39 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
     }
 
     private void agregarReservas(){
+
+
         mRef = mDataBase.getReference(PathRoute);
         correoUserAutenticado = mAuth.getCurrentUser().getEmail();
         EditText res = (EditText)findViewById(R.id.campoReservas);
         int reservas =  Integer.parseInt(res.getText().toString());
-        disponibles = disponibles - reservas;
-        mRef.child(IDViaje).child("cuposDisponibles").setValue(disponibles);
+        if(disponibles != 0 && disponibles >= reservas){
+            disponibles = disponibles - reservas;
+            mRef.child(IDViaje).child("cuposDisponibles").setValue(disponibles);
 
-        mRef2 = FirebaseDatabase.getInstance().getReference("users/");
-        mRef2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot snap :snapshot.getChildren() ){
-                    String correo = snap.child("username").getValue(String.class);
-                    if(correo.equals(correoUserAutenticado)){
-                        //mRef.child("nombreConductor").setValue(snap.child("name").getValue(String.class));
-                        mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("nombre").setValue(snap.child("name").getValue(String.class));
-                        mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("cantidadReservas").setValue(reservas);
+            mRef2 = FirebaseDatabase.getInstance().getReference("users/");
+            mRef2.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot snap :snapshot.getChildren() ){
+                        String correo = snap.child("username").getValue(String.class);
+                        if(correo.equals(correoUserAutenticado)){
+                            //mRef.child("nombreConductor").setValue(snap.child("name").getValue(String.class));
+                            mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("nombre").setValue(snap.child("name").getValue(String.class));
+                            mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("cantidadReservas").setValue(reservas);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }else{
+            Toast.makeText(getBaseContext(), "No fue posible reservas cupo(s)", Toast.LENGTH_SHORT).show();
+        }
+
 
 
     }

@@ -68,7 +68,8 @@
             android:text="Cancelar"
             app:backgroundTint="#EE0B0B"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/botonCalcularTotal" />
 
         <Button
             android:id="@+id/botonReservar"
@@ -83,7 +84,8 @@
             app:backgroundTint="#EEBC0B"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cancelar2"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/botonCalcularTotal" />
 
         <TextView
             android:id="@+id/viewCantidadReservas"
