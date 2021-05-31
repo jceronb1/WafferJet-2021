@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,12 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
     EditText valorTotal;
     String lat;
     String lng;
+
+    private DatabaseReference mDatabase;
+    private String newStatus;
+    private String oldStatus = "active" ;
+    private DatabaseReference mRef3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +129,73 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        mRef3 = FirebaseDatabase.getInstance().getReference("routes").child(IDViaje);
+        ValueEventListener pasajeroInicioViajeListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+
+
+                Boolean shouldStartLocationActivity = shouldCreateNotification1(snapshot);
+                Log.i("STATE:", "INDEX ... " + String.valueOf(shouldStartLocationActivity));
+                Log.i("ENTRO2", "ENTRO DESPUES");
+                if (shouldStartLocationActivity == true && oldStatus.equals("onCourse")==false) {
+                    Log.i("ENTRO3", "ENTRE AL PRIMER IF");
+                    Log.i("STATE", "USER CHANGED ITS STATUS");
+                    oldStatus = "onCourse";
+                    crearNotificaion();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        };
+        mRef3.addValueEventListener(pasajeroInicioViajeListener);
+
+
+
     }
+
+    private Boolean shouldCreateNotification1(DataSnapshot snapshot) {
+
+        newStatus = snapshot.child("status").getValue(String.class);
+
+        if (newStatus.equals("onCourse")){
+            System.out.println("ENTRO A SHOULD Y EN TRUE");
+            return true;
+        }
+        System.out.println("ENTRO A SHOULD Y EN FALSO");
+        return false;
+    }
+
+    private void crearNotificaion() {
+
+        // Create an explicit intent for an Activity in your app
+        Intent showUserLocation = new Intent(this, Activity_ViajeEnCurso_Maps.class);
+
+
+        showUserLocation.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, showUserLocation, 0);
+
+        String notificationMessage = "Su viaje ha iniciado";
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);
+        notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
+        notificationBuilder.setContentTitle("NOTIFICACION DE USUARIO");
+        notificationBuilder.setColor(Color.BLUE);
+        notificationBuilder.setContentText(notificationMessage);
+        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        // Set the intent that will fire when the user taps the notification
+        notificationBuilder.setContentIntent(pendingIntent);
+        notificationBuilder.setAutoCancel(true);
+        System.out.println("CREO LA NOTIFICACIÓN");
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        notificationManager.notify(0,notificationBuilder.build());
+
+    }
+
     private void createNotification(){
         Intent reservaPasajero = new Intent(this, Activity_Mi_Viaje_Pasajero.class);
         reservaPasajero.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
