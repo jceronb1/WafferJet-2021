@@ -1,6 +1,5 @@
 package com.example.u_vallet;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,25 +7,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.String.valueOf;
 
@@ -43,10 +33,11 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
     // Firebase
     private FirebaseAuth userAuth;
     private String currentUserUid;
-    private String currentUserId;
     private DatabaseReference mDatabase;
     // Intent
     String tripReservationUid;
+    // Buttons
+    Button datosPago, cancelarViaje;
 
     //------------------------------------------------
     //                  On Create
@@ -56,14 +47,6 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__mi__viaje__pasajero);
 
-        //----------------- Intent -----------------
-        tripReservationUid = "-Mb-xsX7tvsQ8AiR6K2c"; // getIntent().getStringExtra("llaveReserva");
-
-        //----------------- Firebase -----------------
-        userAuth = FirebaseAuth.getInstance();
-        currentUserUid = userAuth.getUid();
-        mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid);
-
         //----------------- Form fields -----------------
         idViaje = findViewById(R.id.miViajeIDText);
         origen = findViewById(R.id.viajeOrigenText);
@@ -71,78 +54,53 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
         puntoPartida = findViewById(R.id.editPuntoPartida);
         horaPartida = findViewById(R.id.editHoraPartida);
 
-        //----------------- Fill form fields -----------------
-        ValueEventListener routeListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Reservation details
-                String _origen = dataSnapshot.child("originDirection").getValue( String.class );
-                String _destino = dataSnapshot.child("destinationDirection").getValue( String.class );
-                String _puntoPartida = dataSnapshot.child("puntoEncuentro").getValue( String.class );
-                String _horaPartida = dataSnapshot.child("horaViaje").getValue( String.class );
-                // Set values to form fields
-                idViaje.setText( tripReservationUid );
-                origen.setText( _origen );
-                destino.setText( _destino );
-                puntoPartida.setText( _puntoPartida );
-                horaPartida.setText( _horaPartida );
-            }
+        //----------------- Firebase -----------------
+        userAuth = FirebaseAuth.getInstance();
+        currentUserUid = userAuth.getUid();
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.i("loadPost:onCancelled", databaseError.toException().toString());
-            }
-        };
-        mDatabase.addValueEventListener(routeListener);
+        //----------------- Trip information -----------------
+        // Search for trip UID
+        getTripUid();
 
         //----------------- Button -----------------
         Button ExplorarViaje = findViewById(R.id.buttonMiViajeMV4);
         ExplorarViaje.setOnClickListener(v -> startActivity(new Intent(v.getContext(), Activity_ExplorarViajes.class)));
 
         //----------------- Cancel trip -----------------
-        Button cancelarViaje = findViewById(R.id.botonCancelarViaje);
+        cancelarViaje = findViewById(R.id.botonCancelarViaje);
         cancelarViaje.setOnClickListener( view -> {
             // If user press this button, the reserved seats, shuld be returned to
             // the original trip in the DB.
-
+            Log.i("Tuid", tripReservationUid);
             // Change 'ViajeAcitvo' in user
             mDatabase = FirebaseDatabase.getInstance().getReference("users").child(currentUserUid).child("viajeActivo");
             mDatabase.setValue("false");
 
             // Return reserved seats in trip
-            final int[] reservedSeats = {0};
             mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("pasajeros").child(currentUserUid).child("cantidadReservas");
-            mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                    if (!task.isSuccessful()) {
-                        Log.e("firebase", "Error getting data", task.getException());
-                    }
-                    else {
-                        String value = valueOf(task.getResult().getValue());
-                        reservedSeats[0] = Integer.parseInt(value);
+            mDatabase.get().addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    String value = valueOf(task.getResult().getValue());
+                    int reservedSeats = Integer.parseInt(value);
 
-                        final int[] availableSeats = {0};
-                        mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("cuposDisponibles");
-                        mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                if (!task.isSuccessful()) {
-                                    Log.e("firebase", "Error getting data", task.getException());
-                                }
-                                else {
-                                    String value = valueOf(task.getResult().getValue());
-                                    availableSeats[0] = Integer.parseInt(value);
-                                    int seats = reservedSeats[0] + availableSeats[0];
-                                    mDatabase.setValue(seats);
+                    mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("cuposDisponibles");
+                    mDatabase.get().addOnCompleteListener(task12 -> {
+                        if (!task12.isSuccessful()) {
+                            Log.e("firebase", "Error getting data", task12.getException());
+                        }
+                        else {
+                            String value1 = valueOf(task12.getResult().getValue());
+                            int availableSeats = Integer.parseInt(value1);
+                            int seats = reservedSeats + availableSeats;
+                            mDatabase.setValue(seats);
 
-                                    mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("pasajeros").child(currentUserUid);
-                                    mDatabase.removeValue();
-                                }
-                            }
-                        });
-                    }
+                            mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("pasajeros").child(currentUserUid);
+                            mDatabase.removeValue();
+                        }
+                    });
                 }
             });
 
@@ -150,53 +108,91 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
         });
 
         //----------------- Payment details -----------------
-        Button datosPago = findViewById(R.id.MiViaje_VerDatosPagoBtn);
+        datosPago = findViewById(R.id.MiViaje_VerDatosPagoBtn);
         datosPago.setOnClickListener( view -> {
             // Get payment info from DB
             mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("pasajeros").child(currentUserUid).child("cantidadReservas");
-            mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                                      @Override
-                                                      public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                                          if (!task.isSuccessful()) {
-                                                              Log.e("firebase", "Error getting data", task.getException());
-                                                          } else {
-                                                              int reservedSeats = Integer.parseInt(String.valueOf(task.getResult().getValue()));
+            mDatabase.get().addOnCompleteListener(task22 -> {
+                if (!task22.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task22.getException());
+                } else {
+                    Log.i("DATAP", task22.getResult().getValue().toString());
+                    int reservedSeats = Integer.parseInt(String.valueOf(task22.getResult().getValue()));
 
-                                                              mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("valorViaje");
-                                                              mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                                                                                          @Override
-                                                                                                          public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                                                                                              if (!task.isSuccessful()) {
-                                                                                                                  Log.e("firebase", "Error getting data", task.getException());
-                                                                                                              }
-                                                                                                              else {
-                                                                                                                  int tripCost = Integer.parseInt(String.valueOf(task.getResult().getValue()));
-                                                                                                                  String value = String.valueOf(tripCost * reservedSeats);
+                    mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("valorViaje");
+                    mDatabase.get().addOnCompleteListener(task1 -> {
+                        if (!task1.isSuccessful()) {
+                            Log.e("firebase", "Error getting data", task1.getException());
+                        }
+                        else {
+                            Log.i("DATA1", task1.getResult().getValue().toString());
+                            int tripCost = Integer.parseInt(String.valueOf(task1.getResult().getValue()));
+                            String value = String.valueOf(tripCost * reservedSeats);
 
-                                                                                                                  mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("uidConductor");
-                                                                                                                  mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                                                                                                                                              @Override
-                                                                                                                                                              public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                                                                                                                                                  if (!task.isSuccessful()) {
-                                                                                                                                                                      Log.e("firebase", "Error getting data", task.getException());
-                                                                                                                                                                  }
-                                                                                                                                                                  else {
-                                                                                                                                                                      String uidDriver = String.valueOf(task.getResult().getValue());
-                                                                                                                                                                      Intent pago = new Intent(view.getContext(), Activity_Pago.class);
-                                                                                                                                                                      pago.putExtra("costo", value);
-                                                                                                                                                                      pago.putExtra("llaveReserva", tripReservationUid);
-                                                                                                                                                                      pago.putExtra("conductor", uidDriver);
-                                                                                                                                                                      startActivity(pago);
-                                                                                                                                                                  }
-                                                                                                                                                              }
-                                                                                                                                                          });
-                                                                                                              }
-                                                                                                          }
-                                                                                                      });
-                                                          }
-                                                      }
-                                                  });
+                            mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("uidConductor");
+                            mDatabase.get().addOnCompleteListener(task11 -> {
+                                if (!task11.isSuccessful()) {
+                                    Log.e("firebase", "Error getting data", task11.getException());
+                                }
+                                else {
+                                    Log.i("DATA2", task11.getResult().getValue().toString());
+                                    String uidDriver = String.valueOf(task11.getResult().getValue());
+                                    Intent pago = new Intent(view.getContext(), Activity_Pago.class);
+                                    pago.putExtra("costo", value);
+                                    pago.putExtra("llaveReserva", tripReservationUid);
+                                    pago.putExtra("conductor", uidDriver);
+                                    startActivity(pago);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
 
+    }
+
+    //------------------------------------------------
+    //                 Methods
+    //------------------------------------------------
+    private void getTripUid() {
+        mDatabase = FirebaseDatabase.getInstance().getReference("routes");
+        mDatabase.get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.e("firebase", "Error getting data", task.getException());
+            }
+            else {
+                for (DataSnapshot d : task.getResult().getChildren()) {
+                    Boolean ok = false;
+                    for (DataSnapshot pasajero : d.child("pasajeros").getChildren()) {
+                        String p = String.valueOf(pasajero.getKey());
+                        if (currentUserUid.equals(p)) {
+                            tripReservationUid = p;
+                            Log.i("DATA", "encontrada");
+
+                            // Fill form fields
+                            // Get Reservation details
+                            DataSnapshot dataSnapshot = d;
+                            String _origen = dataSnapshot.child("originDirection").getValue( String.class );
+                            String _destino = dataSnapshot.child("destinationDirection").getValue( String.class );
+                            String _puntoPartida = dataSnapshot.child("puntoEncuentro").getValue( String.class );
+                            String _horaPartida = dataSnapshot.child("horaViaje").getValue( String.class );
+                            // Set values to form fields
+                            idViaje.setText( tripReservationUid );
+                            origen.setText( _origen );
+                            destino.setText( _destino );
+                            puntoPartida.setText( _puntoPartida );
+                            horaPartida.setText( _horaPartida );
+                            // Return value
+                            ok = true;
+                            break;
+                        }
+                    }
+                    if (ok) {
+                        break;
+                    }
+                }
+            }
         });
     }
 
