@@ -3,11 +3,16 @@ package com.example.u_vallet;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.hardware.TriggerEvent;
@@ -73,7 +78,9 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
     // Routes
     private PolylineOptions line;
     String routeUid;
-
+    private static final int NOTIFICATION_CODE = 200;
+    private static final String NOTIFICATION_CHANNEL = "NOTIFICATION";
+    private boolean initialState = true;
 
     //--------------------------------------------------------
     //                         On create
@@ -172,6 +179,8 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
     private void endRoute(){
         mRef = mDatabase.getReference(PATH_ROUTES).child(routeUid);
         mRef.child("status").setValue("finished");
+        createNotification();
+        createNotificationChannel();
     }
 
     private void setRoute(){
@@ -228,6 +237,34 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+    }
+    private void createNotification(){
+        Log.i("SUPERTAG","ENTRO A CREAR LA NOTIFICACION");
+        String notificationMessage = " Se finalizo el viaje exitosamente";
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);
+        notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
+        notificationBuilder.setContentTitle("NOTIFICACION DE CONDUCTOR");
+        notificationBuilder.setColor(Color.BLUE);
+        notificationBuilder.setContentText(notificationMessage);
+        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        notificationManager.notify(0,notificationBuilder.build());
+    }
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "NOTIFICATION";
+            String description = "NOTIFICATION";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager)getSystemService(NotificationManager.class);
+
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 }

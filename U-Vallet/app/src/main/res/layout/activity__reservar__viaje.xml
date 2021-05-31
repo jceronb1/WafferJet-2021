@@ -55,12 +55,12 @@
         <Button
             android:id="@+id/cancelarReserva"
             android:layout_width="120dp"
-            android:layout_height="35dp"
+            android:layout_height="40dp"
             android:layout_below="@+id/direccionText"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginEnd="76dp"
-            android:layout_marginRight="76dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginRight="50dp"
             android:layout_marginBottom="20dp"
             android:layout_toEndOf="@+id/botonGuardar"
             android:layout_toRightOf="@+id/botonGuardar"
@@ -68,24 +68,22 @@
             android:text="Cancelar"
             app:backgroundTint="#EE0B0B"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/botonCalcularTotal" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/botonReservar"
             android:layout_width="120dp"
-            android:layout_height="35dp"
+            android:layout_height="40dp"
             android:layout_below="@+id/direccionText"
-            android:layout_marginStart="30dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginLeft="50dp"
             android:layout_marginBottom="20dp"
             android:background="#EEBC0B"
             android:text="Reservar"
             app:backgroundTint="#EEBC0B"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cancelar2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/botonCalcularTotal" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/viewCantidadReservas"
@@ -140,6 +138,7 @@
             android:layout_marginRight="170dp"
             android:ems="10"
             android:inputType="textPersonName"
+            android:textColor="#000000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/viewValorTotal" />
@@ -157,6 +156,35 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/campoValorTotal" />
+
+        <TextView
+            android:id="@+id/tvUbicacionPasajero"
+            android:layout_width="384dp"
+            android:layout_height="52dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/bg_round_2"
+            android:editable="false"
+            android:elevation="5dp"
+            android:gravity="center"
+            android:iconifiedByDefault="false"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/buttonSeleccionarUbicacion"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.592"
+            app:layout_constraintStart_toStartOf="parent"></TextView>
+
+        <Button
+            android:id="@+id/buttonSeleccionarUbicacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
+            android:background="#070707"
+            android:text="Selecciona la ubicación"
+            app:backgroundTint="#000000"
+            app:layout_constraintBottom_toTopOf="@+id/botonReservar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
