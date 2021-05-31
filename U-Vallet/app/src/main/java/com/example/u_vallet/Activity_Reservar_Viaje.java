@@ -177,7 +177,7 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
             } else {
                 Toast.makeText(getBaseContext(), "No fue posible reservas cupo(s)", Toast.LENGTH_SHORT).show();
             }
-            Intent intent = new Intent( getBaseContext(), Activity_ExplorarViajes.class);
+            Intent intent = new Intent( getBaseContext(), Activity_Mi_Viaje_Pasajero.class);
             startActivity(intent);
         }
 

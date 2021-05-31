@@ -89,11 +89,12 @@
             android:id="@+id/viewCantidadReservas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="56dp"
             android:layout_marginEnd="150dp"
             android:layout_marginRight="150dp"
             android:text="Ingrese la cantidad de reservas:"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.693"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/reservar" />
 
@@ -185,6 +186,19 @@
             app:layout_constraintBottom_toTopOf="@+id/botonReservar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/instrucciones"
+            android:layout_width="227dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:text="Presione el boton para seleccionar el punto de destino en el mapa:"
+            android:textColor="#000000"
+            app:layout_constraintBottom_toTopOf="@+id/tvUbicacionPasajero"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.13"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/botonCalcularTotal" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

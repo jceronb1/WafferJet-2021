@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -243,17 +244,52 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             reserveTrip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);
-                    intent.putExtra("direccion", "");
-                    intent.putExtra("Lat", "");
-                    intent.putExtra("Lng", "");
-                    intent.putExtra("reserva","");
-                    intent.putExtra("precio",valorCupo.getText().toString());
-                    intent.putExtra("idviaje", ActiveTrips.get(position).getIdViaje());
-                    intent.putExtra("cuposDisponibles",cuposDisponibles.getText().toString());
-                    intent.putExtra("uidconductor",ActiveTrips.get(position).getIdConductor());
+                    correoUserAutenticado = mAuth.getCurrentUser().getEmail();
+                    mRef2 = FirebaseDatabase.getInstance().getReference("users/");
+                    mRef2.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot snap :snapshot.getChildren() ){
+                                String correo = snap.child("username").getValue(String.class);
+                                if(correo.equals(correoUserAutenticado)){
+                                    try {
+                                        String viajeactivo = snap.child("viajeActivo").getValue(String.class);
+                                        if(viajeactivo.equals("true")){
+                                            Toast.makeText(getBaseContext(), "usted ya tiene un viaje reservado", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);
+                                            intent.putExtra("direccion", "");
+                                            intent.putExtra("Lat", "");
+                                            intent.putExtra("Lng", "");
+                                            intent.putExtra("reserva","");
+                                            intent.putExtra("precio",valorCupo.getText().toString());
+                                            intent.putExtra("idviaje", ActiveTrips.get(position).getIdViaje());
+                                            intent.putExtra("cuposDisponibles",cuposDisponibles.getText().toString());
+                                            intent.putExtra("uidconductor",ActiveTrips.get(position).getIdConductor());
+                                            startActivity(intent);
+                                        }
+                                    }catch (Exception e){
+                                        Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);
+                                        intent.putExtra("direccion", "");
+                                        intent.putExtra("Lat", "");
+                                        intent.putExtra("Lng", "");
+                                        intent.putExtra("reserva","");
+                                        intent.putExtra("precio",valorCupo.getText().toString());
+                                        intent.putExtra("idviaje", ActiveTrips.get(position).getIdViaje());
+                                        intent.putExtra("cuposDisponibles",cuposDisponibles.getText().toString());
+                                        intent.putExtra("uidconductor",ActiveTrips.get(position).getIdConductor());
+                                        startActivity(intent);
+                                    }
 
-                    startActivity(intent);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             });
 
