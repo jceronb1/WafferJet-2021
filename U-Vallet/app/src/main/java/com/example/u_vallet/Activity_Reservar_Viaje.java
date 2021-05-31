@@ -2,8 +2,15 @@ package com.example.u_vallet;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,6 +37,7 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
     private DatabaseReference mRef;
     private DatabaseReference mRef2;
     public static final String PathRoute = "routes/";
+    private static final String NOTIFICATION_CHANNEL = "NOTIFICATION";
 
     String IDViaje;
     private String correoUserAutenticado;
@@ -98,6 +106,10 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
         botonReservar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                createNotification();
+                createNotificationChannel();
                 agregarReservas();
             }
         });
@@ -110,6 +122,37 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+    private void createNotification(){
+        Intent reservaPasajero = new Intent(this, Activity_Mi_Viaje_Pasajero.class);
+        reservaPasajero.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, reservaPasajero, 0);
+        String notificationMessage = " Reservo el viaje exitosamente";
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);
+        notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
+        notificationBuilder.setContentTitle("NOTIFICACION DE PASAJERO");
+        notificationBuilder.setColor(Color.BLUE);
+        notificationBuilder.setContentText(notificationMessage);
+        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        notificationBuilder.setContentIntent(pendingIntent);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        notificationManager.notify(0,notificationBuilder.build());
+    }
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "NOTIFICATION";
+            String description = "NOTIFICATION";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager)getSystemService(NotificationManager.class);
+
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private boolean validateForm(){
@@ -158,10 +201,13 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
                         for (DataSnapshot snap : snapshot.getChildren()) {
                             String correo = snap.child("username").getValue(String.class);
                             if (correo.equals(correoUserAutenticado)) {
+                                //mRef.child("nombreConductor").setValue(snap.child("name").getValue(String.class));
                                 mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("nombre").setValue(snap.child("name").getValue(String.class));
                                 mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("cantidadReservas").setValue(reservas);
                                 mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("latitude").setValue(lati);
                                 mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("longitude").setValue(longi);
+                                mRef2.child(mAuth.getUid()).child("viajeActivo").setValue("true");
+                                mRef2.child(uidconductor).child("viajeActivo").setValue("true");
                             }
                         }
                     }

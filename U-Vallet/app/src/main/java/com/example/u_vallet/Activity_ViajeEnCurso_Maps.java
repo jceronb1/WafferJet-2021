@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -127,6 +128,8 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
         //------------ Buttons ------------
         botonFinalizarViaje = findViewById(R.id.buttonFinalizarViaje);
         botonFinalizarViaje.setOnClickListener(v -> {
+            createNotificationFinalizar();
+            createNotificationChannelFinalizar();
             // End the courrent route
             endRoute();
             // Launch new activity with finish route info
@@ -140,6 +143,37 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
     //--------------------------------------------------------
     //                         Methods
     //--------------------------------------------------------
+    private void createNotificationFinalizar(){
+        Intent reservaPasajero = new Intent(this, Activity_Roles.class);
+        reservaPasajero.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, reservaPasajero, 0);
+        String notificationMessage = " finalizo el viaje exitosamente";
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);
+        notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
+        notificationBuilder.setContentTitle("NOTIFICACION DE CONDUCTOR");
+        notificationBuilder.setColor(Color.BLUE);
+        notificationBuilder.setContentText(notificationMessage);
+        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        notificationBuilder.setContentIntent(pendingIntent);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        notificationManager.notify(0,notificationBuilder.build());
+    }
+    private void createNotificationChannelFinalizar() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "NOTIFICATION";
+            String description = "NOTIFICATION";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager)getSystemService(NotificationManager.class);
+
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
     private void getUserLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 public class Activity_ExplorarViajes extends AppCompatActivity {
@@ -37,6 +39,7 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
     private DatabaseReference mRef2;
     public static final String PathRoute = "routes/";
     private String correoUserAutenticado;
+
 
     //----------------------------------------------
     //-----------------  On Create  ----------------
@@ -93,6 +96,7 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
 
             }
         });
+
 
     }
 
@@ -158,6 +162,8 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             }
         });
     }
+
+
 
     //----------------------------------------------
     //------------ Methods for the menu ------------
