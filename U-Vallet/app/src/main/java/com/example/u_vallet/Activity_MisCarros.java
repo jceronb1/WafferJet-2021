@@ -111,7 +111,6 @@ public class Activity_MisCarros extends AppCompatActivity {
     //funciones para listview------------------------------------
 
     public void getCarrosFromDB() {
-        ArrayList<Carro> testData = new ArrayList<Carro>();
 
         myRef = database.getReference("cars/"+mAuth.getCurrentUser().getUid()+"/");
         myRef.addValueEventListener(new ValueEventListener() {
@@ -142,10 +141,6 @@ public class Activity_MisCarros extends AppCompatActivity {
             }
         });
 
-        //testData.add(new Carro("Gabriel Gomez","Mazda","JNL 373","CX5",5,123));
-        //testData.add(new Carro("Joaquin Perez","Renault","HLK 819","Koleos",5,456));
-        //testData.add(new Carro("Pablo Manrique","Chevrolet","FVL 652","TrailBlazer",7,789));
-        //return testData;
     }
 
     //----------------------------------------------
@@ -196,15 +191,6 @@ public class Activity_MisCarros extends AppCompatActivity {
                     Picasso.get().load(uri).into(fotocarro);
                 }
             });
-            // Set event listeners to the buttons
-            /*
-            Button seleccionarCarro = (Button) convertView.findViewById(R.id.botonSeleccionarCarro);
-            seleccionarCarro.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.i("TAG","Carro seleccionado");
-                }
-            });*/
 
             //------ Get button to edit a car and add event listener --------
             Button btnEditarCarro = (Button) convertView.findViewById(R.id.botonEditarCarro);
@@ -212,6 +198,10 @@ public class Activity_MisCarros extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent editarCarro = new Intent(v.getContext(), Activity_EditarCarro.class);
+                    editarCarro.putExtra("placa" , placa.getText().toString());
+                    editarCarro.putExtra("marca" , marca.getText().toString());
+                    editarCarro.putExtra("modelo" , modelo.getText().toString());
+                    editarCarro.putExtra("capacidad" , capacidad.getText().toString());
                     startActivity(editarCarro);
                 }
             });

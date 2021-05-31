@@ -2,6 +2,9 @@ package com.example.u_vallet;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @IgnoreExtraProperties
 public class Carro {
     //----------------------------------------------
@@ -82,5 +85,13 @@ public class Carro {
 
     public void setIdConductor(int idConductor) {
         this.idConductor = idConductor;
+    }
+    public Map<String, Object> toMap(){
+        HashMap<String, Object> carro = new HashMap<>();
+        carro.put("marca", marcaCarro);
+        carro.put("placa", placa);
+        carro.put("modelo", modelo);
+        carro.put("capacidad", capacidad);
+        return carro;
     }
 }
