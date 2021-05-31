@@ -68,8 +68,7 @@
             android:text="Cancelar"
             app:backgroundTint="#EE0B0B"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/campoPunEncuentro" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/botonReservar"
@@ -84,8 +83,7 @@
             app:backgroundTint="#EEBC0B"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cancelar2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/campoPunEncuentro" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/viewCantidadReservas"
@@ -100,7 +98,7 @@
             app:layout_constraintTop_toBottomOf="@+id/reservar" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/campoReservas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="31dp"
@@ -127,7 +125,7 @@
             android:text="Valor total: "
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+            app:layout_constraintTop_toBottomOf="@+id/campoReservas" />
 
         <EditText
             android:id="@+id/campoValorTotal"
@@ -144,34 +142,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/viewValorTotal" />
 
-        <TextView
-            android:id="@+id/viewPuntoEncuentroRes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="37dp"
-            android:layout_marginLeft="37dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="260dp"
-            android:layout_marginRight="260dp"
-            android:text="Punto de encuentro"
+        <Button
+            android:id="@+id/botonCalcularTotal"
+            android:layout_width="319dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="38dp"
+            android:layout_marginLeft="38dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="80dp"
+            android:layout_marginRight="80dp"
+            android:text="Calcular total a pagar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/campoValorTotal" />
 
-        <EditText
-            android:id="@+id/campoPunEncuentro"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="33dp"
-            android:layout_marginLeft="33dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="168dp"
-            android:layout_marginRight="168dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewPuntoEncuentroRes" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

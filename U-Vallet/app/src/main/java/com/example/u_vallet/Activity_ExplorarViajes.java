@@ -215,8 +215,11 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             reserveTrip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("Reserve ", v.getContext().toString());
                     Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);
+                    intent.putExtra("precio",valorCupo.getText().toString());
+                    intent.putExtra("idviaje", ActiveTrips.get(position).getIdViaje());
+                    intent.putExtra("cupos",cuposDisponibles.getText().toString());
+
                     startActivity(intent);
                 }
             });
