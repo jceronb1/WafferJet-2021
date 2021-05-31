@@ -216,6 +216,7 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
                     intent.putExtra("precio",valorCupo.getText().toString());
                     intent.putExtra("idviaje", ActiveTrips.get(position).getIdViaje());
                     intent.putExtra("cupos",cuposDisponibles.getText().toString());
+                    intent.putExtra("uidconductor",ActiveTrips.get(position).getIdConductor());
 
                     startActivity(intent);
                 }
