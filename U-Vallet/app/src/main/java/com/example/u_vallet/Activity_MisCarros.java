@@ -39,6 +39,9 @@ public class Activity_MisCarros extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private StorageReference mStorageRef;
 
+    private String correoUserAutenticado;
+    private DatabaseReference mRef2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +72,37 @@ public class Activity_MisCarros extends AppCompatActivity {
         botonMiViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Conductor.class);
-                startActivity(intentMiViaje);
+                correoUserAutenticado = mAuth.getCurrentUser().getEmail();
+                mRef2 = FirebaseDatabase.getInstance().getReference("users/");
+                mRef2.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot snap :snapshot.getChildren() ){
+                            String correo = snap.child("username").getValue(String.class);
+                            if(correo.equals(correoUserAutenticado)){
+                                try {
+                                    String viajeactivo = snap.child("viajeActivo").getValue(String.class);
+                                    if(viajeactivo.equals("true")){
+                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Conductor.class);
+                                        startActivity(intentMiViaje);
+                                    }else{
+                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Condcutor_Alternativo.class);
+                                        startActivity(intentMiViaje);
+                                    }
+                                }catch (Exception e){
+                                    Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Condcutor_Alternativo.class);
+                                    startActivity(intentMiViaje);
+                                }
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
 

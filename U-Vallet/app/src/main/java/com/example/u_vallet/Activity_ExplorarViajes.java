@@ -35,6 +35,7 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
     private DatabaseReference mRef;
     private DatabaseReference mRef2;
     public static final String PathRoute = "routes/";
+    private String correoUserAutenticado;
 
     //----------------------------------------------
     //-----------------  On Create  ----------------
@@ -57,8 +58,38 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
         botonMiViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero.class);
-                startActivity(intentMiViaje);
+                correoUserAutenticado = mAuth.getCurrentUser().getEmail();
+                mRef2 = FirebaseDatabase.getInstance().getReference("users/");
+                mRef2.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot snap :snapshot.getChildren() ){
+                            String correo = snap.child("username").getValue(String.class);
+                            if(correo.equals(correoUserAutenticado)){
+                                try {
+                                    String viajeactivo = snap.child("viajeActivo").getValue(String.class);
+                                    if(viajeactivo.equals("true")){
+                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero.class);
+                                        startActivity(intentMiViaje);
+                                    }else{
+                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero_Alterantivo.class);
+                                        startActivity(intentMiViaje);
+                                    }
+                                }catch (Exception e){
+                                    Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero_Alterantivo.class);
+                                    startActivity(intentMiViaje);
+                                }
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
             }
         });
 

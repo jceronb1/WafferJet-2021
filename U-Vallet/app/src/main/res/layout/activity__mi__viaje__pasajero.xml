@@ -39,19 +39,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <Button
         android:id="@+id/buttonCrearViajeMC5"
         android:layout_width="195dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="8dp"
         android:text="Mi Viaje"
         android:textColor="#BDFFFFFF"
         android:textSize="13sp"
         app:backgroundTint="#2B3BD2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
     <Button
         android:id="@+id/button5"

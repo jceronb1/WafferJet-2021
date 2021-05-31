@@ -116,6 +116,7 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
                         String correo = snap.child("username").getValue(String.class);
                         if(correo.equals(correoUserAutenticado)){
                             mDatabase.child("nombreConductor").setValue(snap.child("name").getValue(String.class));
+                            mRef2.child(snap.child("uid").getValue(String.class)).child("viajeActivo").setValue("true");
                         }
                     }
                 }
