@@ -58,11 +58,13 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
     private Marker markerOrigin = null;
+    ArrayList<LatLng> mMarkerPoints;
     // Firebase
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mRef;
     private DatabaseReference mRefList;
+    private DatabaseReference mRefPasajeros;
     // Firebase Path(s)
     public static final String PATH_ROUTES = "routes/";
     // Hardware sensor (Accelerometer)
@@ -93,6 +95,7 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        mMarkerPoints = new ArrayList<>();
 
         //------------ Firebase ------------
         mAuth = FirebaseAuth.getInstance();
@@ -212,6 +215,43 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
 
             }
         });
+
+        mRefPasajeros = mDatabase.getReference(PATH_ROUTES).child(routeUid);
+        mRefPasajeros.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child("pasajeros").exists() && routeUid.equals(snapshot.child("key").getValue(String.class))){
+                    for(DataSnapshot singleSnapshot : snapshot.child("pasajeros").getChildren()){
+                        Double latitude = singleSnapshot.child("latitude").getValue(Double.class);
+                        Double longitude = singleSnapshot.child("longitude").getValue(Double.class);
+                        String name = singleSnapshot.child("nombre").getValue(String.class);
+                        Integer cantidad = singleSnapshot.child("cantidadReservas").getValue(Integer.class);
+                        String title = name + " - "+String.valueOf(cantidad);
+                        LatLng user = new LatLng(latitude,longitude);
+
+                        mMarkerPoints.add(user);
+                        if(mMarkerPoints.size() == 0)
+                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                        else if (mMarkerPoints.size() == 1)
+                           mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                        else if (mMarkerPoints.size() == 2)
+                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                        else if (mMarkerPoints.size() == 3)
+                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                        else if (mMarkerPoints.size() == 4)
+                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                        else if (mMarkerPoints.size() >= 5)
+                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
         //----------------- Draw the routes line -----------------
         mRefList = mDatabase.getReference(PATH_ROUTES).child(routeUid).child("route");

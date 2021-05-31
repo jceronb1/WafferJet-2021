@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -136,23 +138,23 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
     }
 
     private void loadPasajeros(String key){
+        ArrayList<String> pasajeros = new ArrayList<String>();
         mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(key);
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.child("pasajeros").exists()){
-                    Log.d("USPRUEBA", key);
-                        for(DataSnapshot singleSnapshot : snapshot.child("pasajeros").getChildren()){
-                            //String aux = snapshot.child("pasajeros").getValue(String.class);
-                           // Log.d("USPRUEBA", aux);
-                            String uid = "bw7QKQga7UMHVmt9H0xdWY0oTfq1";// singleSnapshot.getValue(String.class);
-                            Log.d("USPRUEBA", uid);
-                            String nombre = singleSnapshot.child("nombre").getValue(String.class);
-                            Integer cantidadReservas = singleSnapshot.child("cantidadReservas").getValue(Integer.class);
-                            Log.d("USPRUEBA", uid +" /"+nombre+"/ "+String.valueOf(cantidadReservas));
-                            spinnerAdapter.add(nombre + " - Cupos: "+String.valueOf(cantidadReservas));
-                        }
 
+                if(snapshot.child("pasajeros").exists() && key.equals(snapshot.child("key").getValue(String.class))){
+                    Log.d("USPRUEBA","Llave:"+ key);
+                    spinnerAdapter.clear();
+                    for(DataSnapshot singleSnapshot : snapshot.child("pasajeros").getChildren()){
+                        String nombre = singleSnapshot.child("nombre").getValue(String.class);
+                        Integer cantidadReservas = singleSnapshot.child("cantidadReservas").getValue(Integer.class);
+                        String pasajero = nombre + " - Cupos: "+String.valueOf(cantidadReservas);
+                        if(!pasajeros.contains(pasajero))
+                            pasajeros.add(pasajero);
+                    }
+                    spinnerAdapter.addAll(pasajeros);
                 }
 
 

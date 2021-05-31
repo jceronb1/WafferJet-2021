@@ -75,6 +75,7 @@ public class Activity_ReservarViaje_Maps extends FragmentActivity implements OnM
         Log.d("USPUEBA", "Mapa: "+String.valueOf(disponibles));
         String uidconductor = getIntent().getExtras().getString("uidconductor");
         String valor = getIntent().getExtras().getString("precio");
+        String res = getIntent().getExtras().getString("reserva");
         String key = getIntent().getExtras().getString("Viaje");
         setRoute(key);
         seleccionarUbicacion = (SearchView)findViewById(R.id.sVReserva);
@@ -144,7 +145,11 @@ public class Activity_ReservarViaje_Maps extends FragmentActivity implements OnM
             public void onClick(View v) {
                 Intent  intent = new Intent(v.getContext(), Activity_Reservar_Viaje.class);
                 intent.putExtra("direccion", reservaLocation);
-                intent.putExtra("LatLng", mReserva);
+                intent.putExtra("reserva",res);
+                String lat = String.valueOf(mReserva.latitude);
+                String lng = String.valueOf(mReserva.longitude);
+                intent.putExtra("Lat", lat);
+                intent.putExtra("Lng", lng);
                 String dispo = String.valueOf(disponibles);
                 intent.putExtra("cuposDisponibles", dispo);
                 intent.putExtra("uidconductor", uidconductor);

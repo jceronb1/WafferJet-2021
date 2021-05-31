@@ -245,7 +245,9 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);
                     intent.putExtra("direccion", "");
-                    intent.putExtra("LatLng", "");
+                    intent.putExtra("Lat", "");
+                    intent.putExtra("Lng", "");
+                    intent.putExtra("reserva","");
                     intent.putExtra("precio",valorCupo.getText().toString());
                     intent.putExtra("idviaje", ActiveTrips.get(position).getIdViaje());
                     intent.putExtra("cuposDisponibles",cuposDisponibles.getText().toString());
