@@ -37,6 +37,7 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
     private EditText horaEt;
     private EditText puntoEt;
     private Spinner pasajeros;
+    private DatabaseReference mRef2;
 
     ArrayAdapter<String> spinnerAdapter;
     private boolean active = false;
@@ -76,6 +77,8 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
         botonCancelarViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mRef2 = FirebaseDatabase.getInstance().getReference("users/");
+                mRef2.child(mAuth.getUid()).child("viajeActivo").setValue("false");
                 cancelRoute();
             }
         });

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -111,8 +112,36 @@ public class Activity_MisCarros extends AppCompatActivity {
         botonCrearViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentCrearViaje = new Intent(v.getContext(), Activity_CrearViaje_Maps.class);
-                startActivity(intentCrearViaje);
+                correoUserAutenticado = mAuth.getCurrentUser().getEmail();
+                mRef2 = FirebaseDatabase.getInstance().getReference("users/");
+                mRef2.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot snap :snapshot.getChildren() ){
+                            String correo = snap.child("username").getValue(String.class);
+                            if(correo.equals(correoUserAutenticado)){
+                                try {
+                                    String viajeActivo = snap.child("viajeActivo").getValue(String.class);
+                                    if(viajeActivo.equals("true")){
+                                        Toast.makeText(getBaseContext(), "Tiene un viaje activo, por lo que no puede crear otro.", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        Intent intentCrearViaje = new Intent(v.getContext(), Activity_CrearViaje_Maps.class);
+                                        startActivity(intentCrearViaje);
+                                    }
+                                }catch (Exception e){
+                                    Intent intentCrearViaje = new Intent(v.getContext(), Activity_CrearViaje_Maps.class);
+                                    startActivity(intentCrearViaje);
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
             }
         });
     }
