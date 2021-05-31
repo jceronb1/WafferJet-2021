@@ -2,9 +2,15 @@ package com.example.u_vallet;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -40,6 +46,10 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
     private EditText valorViajeET;
     private Button botonHora;
     private EditText campoHora;
+
+    private static final int NOTIFICATION_CODE = 200;
+    private static final String NOTIFICATION_CHANNEL = "NOTIFICATION";
+    private boolean initialState = true;
 
 
     private int dia,mes,anio,hora,minutos;
@@ -93,7 +103,10 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
         botonCrearViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                createNotification();
+                createNotificationChannel();
                 loadViaje();
+
 
             }
         });
@@ -210,6 +223,34 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
                 }
             },hora,minutos,false);
             timePickerDialog.show();
+        }
+    }
+    private void createNotification(){
+        Log.i("SUPERTAG","ENTRO A CREAR LA NOTIFICACION");
+        String notificationMessage = " Se creo el viaje exitosamente";
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);
+        notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
+        notificationBuilder.setContentTitle("NOTIFICACION DE CONDUCTOR");
+        notificationBuilder.setColor(Color.BLUE);
+        notificationBuilder.setContentText(notificationMessage);
+        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        notificationManager.notify(0,notificationBuilder.build());
+    }
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "NOTIFICATION";
+            String description = "NOTIFICATION";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager)getSystemService(NotificationManager.class);
+
+            notificationManager.createNotificationChannel(channel);
         }
     }
 }
