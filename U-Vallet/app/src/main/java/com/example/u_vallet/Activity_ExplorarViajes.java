@@ -4,9 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,8 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -97,19 +92,21 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
                         Integer capacidad = singlesnapshot.child("cuposDisponibles").getValue(Integer.class);
                         String puntoEncuentro = singlesnapshot.child("puntoEncuentro").getValue(String.class);
                         String hora = singlesnapshot.child("horaViaje").getValue(String.class);
-                        viaje.setIdConductor(uidConductor);
-                        viaje.setIdViaje(key);
-                        viaje.setNombreDelConductor(nombreConductor);
-                        viaje.setOrigen(origen);
-                        viaje.setDestino(destino);
-                        viaje.setMarca(marca);
-                        viaje.setPlaca(placa);
-                        viaje.setValorCupo(valorCupo);
-                        viaje.setCapacidad(capacidad);
-                        viaje.setPuntoEncuentro(puntoEncuentro);
-                        viaje.setHora(hora);
-                        ActiveTrips.add(viaje);
-                        idRutas.add(key);
+                        if(capacidad > 0) {
+                            viaje.setIdConductor(uidConductor);
+                            viaje.setIdViaje(key);
+                            viaje.setNombreDelConductor(nombreConductor);
+                            viaje.setOrigen(origen);
+                            viaje.setDestino(destino);
+                            viaje.setMarca(marca);
+                            viaje.setPlaca(placa);
+                            viaje.setValorCupo(valorCupo);
+                            viaje.setCapacidad(capacidad);
+                            viaje.setPuntoEncuentro(puntoEncuentro);
+                            viaje.setHora(hora);
+                            ActiveTrips.add(viaje);
+                            idRutas.add(key);
+                        }
                     }
                 }
 
@@ -207,7 +204,7 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             seeRoute.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent mapIntent = new Intent(getBaseContext(), Activity_Pasajaero_RutaViaje_Maps.class);
+                    Intent mapIntent = new Intent(getBaseContext(), Activity_Pasajero_RutaViaje_Maps.class);
                     mapIntent.putExtra("PasajeroKey", ActiveTrips.get(position).getIdViaje());
                     startActivity(mapIntent);
                 }

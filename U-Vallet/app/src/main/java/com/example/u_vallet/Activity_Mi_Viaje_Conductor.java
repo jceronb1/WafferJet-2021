@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -35,6 +36,7 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
     private EditText puntoEt;
     private Spinner pasajeros;
 
+    ArrayAdapter<String> spinnerAdapter;
     private boolean active = false;
     private String keyAux;
     @Override
@@ -48,7 +50,9 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
         horaEt = (EditText)findViewById(R.id.horaPartidaText);
         puntoEt = (EditText)findViewById(R.id.puntoEncuentroText);
         pasajeros = (Spinner)findViewById(R.id.spinnerPasajeros);
-
+        spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        pasajeros.setAdapter(spinnerAdapter);
         Button botonCrearViaje = (Button) findViewById(R.id.buttonCrearViajeMC);
         Button botonMisCarros = (Button) findViewById(R.id.buttonMisCarrosMV);
         Button botonCancelarViaje = (Button) findViewById(R.id.botonCancelarViaje);
@@ -118,9 +122,40 @@ public class Activity_Mi_Viaje_Conductor extends AppCompatActivity {
                         destinoEt.setText(singleSnapshot.child("destinationDirection").getValue(String.class));
                         horaEt.setText(singleSnapshot.child("horaViaje").getValue(String.class));
                         puntoEt.setText(singleSnapshot.child("puntoEncuentro").getValue(String.class));
+                        loadPasajeros(keyAux);
                     }
 
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void loadPasajeros(String key){
+        mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(key);
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child("pasajeros").exists()){
+                    Log.d("USPRUEBA", key);
+                        for(DataSnapshot singleSnapshot : snapshot.child("pasajeros").getChildren()){
+                            //String aux = snapshot.child("pasajeros").getValue(String.class);
+                           // Log.d("USPRUEBA", aux);
+                            String uid = "bw7QKQga7UMHVmt9H0xdWY0oTfq1";// singleSnapshot.getValue(String.class);
+                            Log.d("USPRUEBA", uid);
+                            String nombre = singleSnapshot.child("nombre").getValue(String.class);
+                            Integer cantidadReservas = singleSnapshot.child("cantidadReservas").getValue(Integer.class);
+                            Log.d("USPRUEBA", uid +" /"+nombre+"/ "+String.valueOf(cantidadReservas));
+                            spinnerAdapter.add(nombre + " - Cupos: "+String.valueOf(cantidadReservas));
+                        }
+
+                }
+
+
             }
 
             @Override

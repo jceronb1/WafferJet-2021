@@ -66,7 +66,7 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
         botonFinalizarViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent finalizar = new Intent(v.getContext(), Activity_Roles.class);
+                Intent finalizar = new Intent(v.getContext(), Activity_Finalizar_Viaje.class);
                 endRoute(key);
                 finalizar.putExtra("KeyEnd", key);
                 startActivity(finalizar);

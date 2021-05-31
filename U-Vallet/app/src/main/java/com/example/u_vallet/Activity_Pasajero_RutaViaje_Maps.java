@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,7 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Activity_Pasajaero_RutaViaje_Maps extends FragmentActivity implements OnMapReadyCallback {
+public class Activity_Pasajero_RutaViaje_Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -39,6 +40,8 @@ public class Activity_Pasajaero_RutaViaje_Maps extends FragmentActivity implemen
     private LatLng mOrigin;
     private LatLng mDestination;
     private Button botonIniciarViaje;
+    private TextView pasajeroOrigin;
+    private TextView pasajeroDestination;
     private PolylineOptions line;
 
     SupportMapFragment mapFragment;
@@ -46,7 +49,7 @@ public class Activity_Pasajaero_RutaViaje_Maps extends FragmentActivity implemen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity__pasajaero__ruta_viaje__maps);
+        setContentView(R.layout.activity__pasajero__ruta_viaje__maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -54,7 +57,8 @@ public class Activity_Pasajaero_RutaViaje_Maps extends FragmentActivity implemen
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-
+        pasajeroOrigin = (TextView)findViewById(R.id.tVPasajeroOrigen);
+        pasajeroDestination = (TextView)findViewById(R.id.tVPasajeroDestino);
         String key = getIntent().getExtras().getString("PasajeroKey");
         Log.d("USPRUEBA", key + "0");
         setRoute(key);
@@ -84,11 +88,15 @@ public class Activity_Pasajaero_RutaViaje_Maps extends FragmentActivity implemen
                 Double originLong = snapshot.child("originLocation").child("longitude").getValue(Double.class);
                 Double destinationLat = snapshot.child("destinationLocation").child("latitude").getValue(Double.class);
                 Double destinationLong = snapshot.child("destinationLocation").child("longitude").getValue(Double.class);
+                String originDriection = snapshot.child("originDirection").getValue(String.class);
+                String destinationDirection = snapshot.child("destinationDirection").getValue(String.class);
                 //String uidConductor = ruta.getUidConductor();
                 String keyF = snapshot.child("key").getValue(String.class);;
                 mOrigin = new LatLng(originLat,originLong);
                 mDestination = new LatLng(destinationLat, destinationLong);
 
+                pasajeroOrigin.setText(originDriection);
+                pasajeroDestination.setText(destinationDirection);
                 Log.d("USPRUEBA", keyF+ "/"+key );
 
                 mMap.addMarker(new MarkerOptions().position(mOrigin).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
