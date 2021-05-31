@@ -167,7 +167,7 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
                     for (DataSnapshot pasajero : d.child("pasajeros").getChildren()) {
                         String p = String.valueOf(pasajero.getKey());
                         if (currentUserUid.equals(p)) {
-                            tripReservationUid = p;
+                            tripReservationUid = d.getKey();
                             Log.i("DATA", "encontrada");
 
                             // Fill form fields
