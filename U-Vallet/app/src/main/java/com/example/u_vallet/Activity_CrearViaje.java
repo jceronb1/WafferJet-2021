@@ -29,6 +29,9 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private DatabaseReference mDataBase2;
+    private DatabaseReference mRef2;
+    private String correoUserAutenticado;
 
     private EditText origenET;
     private EditText destinoET;
@@ -45,6 +48,7 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_viaje);
+
 
         String direccionO = getIntent().getExtras().getString("direccionO_2");
         String direccionD = getIntent().getExtras().getString("direccionD_2");
@@ -99,7 +103,28 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
     private void loadViaje(){
         String key = getIntent().getExtras().getString("Route_2");
         mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(key);
+        mRef2 = FirebaseDatabase.getInstance().getReference("users/");
+        mAuth = FirebaseAuth.getInstance();
+        Log.i("CORREO",mAuth.getCurrentUser().getEmail());
+        correoUserAutenticado = mAuth.getCurrentUser().getEmail();
         if(validateForm()) {
+
+            mRef2.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot snap :snapshot.getChildren() ){
+                        String correo = snap.child("username").getValue(String.class);
+                        if(correo.equals(correoUserAutenticado)){
+                            mDatabase.child("nombreConductor").setValue(snap.child("name").getValue(String.class));
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
             mDatabase.child("originDirection").setValue(origenET.getText().toString());
             mDatabase.child("destinationDirection").setValue(destinoET.getText().toString());
             mDatabase.child("cuposDisponibles").setValue(Double.parseDouble(cuposET.getText().toString()));

@@ -12,6 +12,8 @@ public class Viaje {
     String placa;
     int capacidad;
     int valorCupo;
+    String puntoEncuentro;
+    String hora;
 
     //----------------------------------------------
     //---------------- Constructors ----------------
@@ -92,5 +94,21 @@ public class Viaje {
 
     public void setValorCupo(int valorCupo) {
         this.valorCupo = valorCupo;
+    }
+
+    public String getPuntoEncuentro() {
+        return puntoEncuentro;
+    }
+
+    public void setPuntoEncuentro(String puntoEncuentro) {
+        this.puntoEncuentro = puntoEncuentro;
+    }
+
+    public String getHora() {
+        return hora;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
     }
 }

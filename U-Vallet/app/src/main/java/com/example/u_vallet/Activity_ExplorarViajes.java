@@ -89,18 +89,24 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
                     if(status.equals("active") && !uidConductor.equals(mAuth.getUid()) && !idRutas.contains(key)){
 
                         String origen = singlesnapshot.child("originDirection").getValue(String.class);
+                        String nombreConductor = singlesnapshot.child("nombreConductor").getValue(String.class);
                         String destino = singlesnapshot.child("destinationDirection").getValue(String.class);
                         String marca = singlesnapshot.child("carro").child("marca").getValue(String.class);
                         String placa = singlesnapshot.child("carro").child("placa").getValue(String.class);
                         Integer valorCupo = singlesnapshot.child("valorViaje").getValue(Integer.class);
                         Integer capacidad = singlesnapshot.child("cuposDisponibles").getValue(Integer.class);
+                        String puntoEncuentro = singlesnapshot.child("puntoEncuentro").getValue(String.class);
+                        String hora = singlesnapshot.child("horaViaje").getValue(String.class);
                         viaje.setIdConductor(uidConductor);
+                        viaje.setNombreDelConductor(nombreConductor);
                         viaje.setOrigen(origen);
                         viaje.setDestino(destino);
                         viaje.setMarca(marca);
                         viaje.setPlaca(placa);
                         viaje.setValorCupo(valorCupo);
                         viaje.setCapacidad(capacidad);
+                        viaje.setPuntoEncuentro(puntoEncuentro);
+                        viaje.setHora(hora);
                         ActiveTrips.add(viaje);
                         idRutas.add(key);
                     }
@@ -181,6 +187,8 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             TextView carPlate = (TextView) convertView.findViewById(R.id.Car_Plate);
             TextView cuposDisponibles = (TextView)   convertView.findViewById(R.id.cupos);
             TextView valorCupo = (TextView)   convertView.findViewById(R.id.valorCupo);
+            TextView puntoEncuentro = (TextView)   convertView.findViewById(R.id.puntEncuentro);
+            TextView hora = (TextView)   convertView.findViewById(R.id.hora);
             // Set information to the view
             driverName.setText(ActiveTrips.get(position).NombreDelConductor);
             originDirection.setText(ActiveTrips.get(position).origen);
@@ -189,6 +197,8 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             carPlate.setText(ActiveTrips.get(position).placa);
             cuposDisponibles.setText(String.valueOf(ActiveTrips.get(position).capacidad));
             valorCupo.setText(String.valueOf(ActiveTrips.get(position).valorCupo));
+            puntoEncuentro.setText(ActiveTrips.get(position).puntoEncuentro);
+            hora.setText(ActiveTrips.get(position).hora);
 
             // Set event listeners to the buttons
             Button seeRoute = (Button) convertView.findViewById(R.id.Button_See_Route);
