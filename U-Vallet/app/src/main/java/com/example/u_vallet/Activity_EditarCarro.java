@@ -69,7 +69,7 @@ public class Activity_EditarCarro extends AppCompatActivity {
     private TextView modelo;
     private TextView capacidad;
     private boolean imageInclude = false;
-    boolean imagenSeleccionada = true;
+    boolean imagenSeleccionada = false;
     boolean marcaSeleccionada = false;
     boolean modeloSeleccionado = false;
     String modeloCarro = null;
@@ -150,7 +150,7 @@ public class Activity_EditarCarro extends AppCompatActivity {
     }
 
     // Method to validate user input
-    private boolean validateForm(String marcaCarro, String placaCarro, String modeloCarro, String capacidadCarro ) {
+    private boolean validateForm( String placaCarro, String capacidadCarro ) {
 
         // Check for empty fields
         if (placaCarro.isEmpty()) {
@@ -199,7 +199,7 @@ public class Activity_EditarCarro extends AppCompatActivity {
         myRef.updateChildren(actualizacionHijos);
     }
     private void updateCarInfo(FirebaseUser currentUser) throws ParseException {
-        if(validateForm(/*marca.getSelectedItem().toString()*/"Volkswagen",placa.getText().toString(),"Beetle"/*modelo.getSelectedItem().toString()*/,capacidad.getText().toString())){
+        if(validateForm(placa.getText().toString(),capacidad.getText().toString())){
             uploadImageToFirebase(imagenUri);
             overWriteCarInfo(currentUser);;
         }
