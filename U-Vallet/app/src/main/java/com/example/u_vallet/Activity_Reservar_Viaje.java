@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,7 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
     String IDViaje = " ";
     private String correoUserAutenticado;
     private int disponibles;
+    private String uidconductor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,8 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
         String valor = getIntent().getExtras().getString("precio");
         IDViaje = getIntent().getExtras().getString("idviaje");
         disponibles = Integer.parseInt(getIntent().getExtras().getString("cupos"));
+        uidconductor = getIntent().getExtras().getString("uidconductor");
+        Log.i("IDCONDUCTOR:",uidconductor);
         EditText valorTotal = (EditText)findViewById(R.id.campoValorTotal);
         valorTotal.setEnabled(false);
 
@@ -99,6 +103,8 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
                             //mRef.child("nombreConductor").setValue(snap.child("name").getValue(String.class));
                             mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("nombre").setValue(snap.child("name").getValue(String.class));
                             mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("cantidadReservas").setValue(reservas);
+                            mRef2.child(mAuth.getUid()).child("viajeActivo").setValue("true");
+                            mRef2.child(uidconductor).child("viajeActivo").setValue("true");
                         }
                     }
                 }
