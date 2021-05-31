@@ -43,6 +43,8 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
         String valor = getIntent().getExtras().getString("precio");
         IDViaje = getIntent().getExtras().getString("idviaje");
         disponibles = Integer.parseInt(getIntent().getExtras().getString("cupos"));
+        EditText valorTotal = (EditText)findViewById(R.id.campoValorTotal);
+        valorTotal.setEnabled(false);
 
 
         Button botonCalcularViaje = (Button) findViewById(R.id.botonCalcularTotal);
@@ -61,6 +63,8 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 agregarReservas();
+                Intent intent = new Intent( getBaseContext(), Activity_ExplorarViajes.class);
+                startActivity(intent);
             }
         });
 
