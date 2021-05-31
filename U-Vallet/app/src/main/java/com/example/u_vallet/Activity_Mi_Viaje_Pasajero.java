@@ -28,6 +28,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static java.lang.String.valueOf;
+
 public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
     //------------------------------------------------
     //                  Attributes
@@ -103,8 +105,46 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
         cancelarViaje.setOnClickListener( view -> {
             // If user press this button, the reserved seats, shuld be returned to
             // the original trip in the DB.
+
+            // Change 'ViajeAcitvo' in user
             mDatabase = FirebaseDatabase.getInstance().getReference("users").child(currentUserUid).child("viajeActivo");
             mDatabase.setValue("false");
+
+            // Return reserved seats in trip
+            final int[] reservedSeats = {0};
+            mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("pasajeros").child(currentUserUid).child("cantidadReservas");
+            mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    if (!task.isSuccessful()) {
+                        Log.e("firebase", "Error getting data", task.getException());
+                    }
+                    else {
+                        String value = valueOf(task.getResult().getValue());
+                        reservedSeats[0] = Integer.parseInt(value);
+
+                        final int[] availableSeats = {0};
+                        mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("cuposDisponibles");
+                        mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.e("firebase", "Error getting data", task.getException());
+                                }
+                                else {
+                                    String value = valueOf(task.getResult().getValue());
+                                    availableSeats[0] = Integer.parseInt(value);
+                                    int seats = reservedSeats[0] + availableSeats[0];
+                                    mDatabase.setValue(seats);
+
+                                    mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("pasajeros").child(currentUserUid);
+                                    mDatabase.removeValue();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
 
             Toast.makeText(this, "Se ha cancelado el viaje con éxito", Toast.LENGTH_SHORT).show();
         });
@@ -112,7 +152,51 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
         //----------------- Payment details -----------------
         Button datosPago = findViewById(R.id.MiViaje_VerDatosPagoBtn);
         datosPago.setOnClickListener( view -> {
-            Toast.makeText(this, "Se miran los datos de pago", Toast.LENGTH_SHORT).show();
+            // Get payment info from DB
+            mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("pasajeros").child(currentUserUid).child("cantidadReservas");
+            mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                                      @Override
+                                                      public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                                          if (!task.isSuccessful()) {
+                                                              Log.e("firebase", "Error getting data", task.getException());
+                                                          } else {
+                                                              int reservedSeats = Integer.parseInt(String.valueOf(task.getResult().getValue()));
+
+                                                              mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("valorViaje");
+                                                              mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                                                                                          @Override
+                                                                                                          public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                                                                                              if (!task.isSuccessful()) {
+                                                                                                                  Log.e("firebase", "Error getting data", task.getException());
+                                                                                                              }
+                                                                                                              else {
+                                                                                                                  int tripCost = Integer.parseInt(String.valueOf(task.getResult().getValue()));
+                                                                                                                  String value = String.valueOf(tripCost * reservedSeats);
+
+                                                                                                                  mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid).child("uidConductor");
+                                                                                                                  mDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                                                                                                                                              @Override
+                                                                                                                                                              public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                                                                                                                                                  if (!task.isSuccessful()) {
+                                                                                                                                                                      Log.e("firebase", "Error getting data", task.getException());
+                                                                                                                                                                  }
+                                                                                                                                                                  else {
+                                                                                                                                                                      String uidDriver = String.valueOf(task.getResult().getValue());
+                                                                                                                                                                      Intent pago = new Intent(view.getContext(), Activity_Pago.class);
+                                                                                                                                                                      pago.putExtra("costo", value);
+                                                                                                                                                                      pago.putExtra("llaveReserva", tripReservationUid);
+                                                                                                                                                                      pago.putExtra("conductor", uidDriver);
+                                                                                                                                                                      startActivity(pago);
+                                                                                                                                                                  }
+                                                                                                                                                              }
+                                                                                                                                                          });
+                                                                                                              }
+                                                                                                          }
+                                                                                                      });
+                                                          }
+                                                      }
+                                                  });
+
         });
     }
 

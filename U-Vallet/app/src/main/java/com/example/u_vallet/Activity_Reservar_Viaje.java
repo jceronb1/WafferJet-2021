@@ -172,14 +172,14 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
                 });
                 mRef2.child(mAuth.getUid()).child("viajeActivo").setValue("true");
                 mRef2.child(uidconductor).child("viajeActivo").setValue("true");
+                Intent intent = new Intent( getBaseContext(), Activity_Pago.class);
+                intent.putExtra("costo", valorTotal.getText().toString());
+                intent.putExtra("llaveReserva", IDViaje);
+                intent.putExtra("conductor", uidconductor);
+                startActivity(intent);
             } else {
-                Toast.makeText(getBaseContext(), "No fue posible reservas cupo(s)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "No fue posible reservar viaje, cupos disponibles menores a los cupos solicitados", Toast.LENGTH_SHORT).show();
             }
-            Intent intent = new Intent( getBaseContext(), Activity_Pago.class);
-            intent.putExtra("costo", valorTotal.getText().toString());
-            intent.putExtra("llaveReserva", IDViaje);
-            intent.putExtra("conductor", uidconductor);
-            startActivity(intent);
         }
 
 
