@@ -130,28 +130,21 @@ public class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMa
     private void getUserLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            Log.i("PER", "No hay permisos");
             return;
         }
         fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            updateOriginLocationFirebase(location);
-                        }
+                .addOnSuccessListener(this, location -> {
+                    // Got last known location. In some rare situations this can be null.
+                    if (location != null) {
+                        Log.i("Location", "Location is requested");
+                        updateOriginLocationFirebase(location);
                     }
                 });
     }
 
     private void updateOriginLocationFirebase(Location location) {
+        Log.i("location", location.toString());
         // Firebase reference
         mRef = mDatabase.getReference(PATH_ROUTES).child(routeUid).child("originLocation");
         // Create HashMap to store location
