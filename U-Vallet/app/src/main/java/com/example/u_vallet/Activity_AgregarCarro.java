@@ -121,7 +121,7 @@ public class Activity_AgregarCarro extends AppCompatActivity implements AdapterV
             capacidad = (EditText) findViewById(R.id.AgregarCarro_Capacidad);
 
             // Convert values in input
-            String placaCarro = placa.getText().toString();
+            String placaCarro = placa.getText().toString().toUpperCase();
             String capacidadCarro = capacidad.getText().toString();
 
             // Validate form
