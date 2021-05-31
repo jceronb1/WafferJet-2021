@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,8 +37,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
@@ -74,6 +78,8 @@ public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMap
     LatLng destinationLatLng;
     String originLocation;
     String destinationLocation;
+    private DatabaseReference myRef;
+    private FirebaseDatabase database;
 
     // Location
     private static final int REQUEST_LOCATION = 410;
@@ -85,7 +91,7 @@ public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMap
     public String durationB;
     public String durationC;
     private TextView viewDuration;
-
+    private  ArrayList<Carro> MisCarros = new ArrayList<Carro>();
 
 
     // Description of the method
@@ -94,7 +100,7 @@ public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__crear_viaje__maps);
         mAuth = FirebaseAuth.getInstance();
-
+        database = FirebaseDatabase.getInstance();
         viewDuration = (TextView)findViewById(R.id.viewDuration);
         polylines = new ArrayList<>();
         markerOrigin = null;
@@ -107,7 +113,7 @@ public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMap
         int destinationButtonID = searchViewDestination.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
         ImageView originCloseButton = (ImageView) searchViewOrigin.findViewById(originCloseButtonId);
         ImageView destinationCloseButton = (ImageView) searchViewDestination.findViewById(destinationButtonID);
-
+        getCarrosFromDB();
         originCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,6 +245,8 @@ public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMap
 
         });
 
+
+
         mapFragment.getMapAsync(this);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -266,7 +274,14 @@ public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMap
                     intent.putExtra("Route", key);
                     intent.putExtra("direccionO", searchViewOrigin.getQuery().toString());
                     intent.putExtra("direccionD", searchViewDestination.getQuery().toString());
-                    startActivity(intent);
+                    if(MisCarros.size()>0){
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(getBaseContext(), "Debe agregar un carro para crear un viaje", Toast.LENGTH_SHORT).show();
+                        Intent intent3 = new Intent(v.getContext(), Activity_MisCarros.class);
+                        startActivity(intent3);
+                    }
+
                 }else{
                     Toast.makeText(getBaseContext(), "Debe seleccionar una dirección de origen y una dirección de destino para poder avanzar.", Toast.LENGTH_SHORT).show();
                 }
@@ -284,6 +299,34 @@ public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMap
         //--------  Get last known location from the user  --------------   TODO : Get current location, not the last known
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+    }
+    public void getCarrosFromDB() {
+        MisCarros.clear();
+        myRef = database.getReference("cars/"+mAuth.getCurrentUser().getUid()+"/");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    String marca = singleSnapshot.child("marca").getValue(String.class);
+                    Integer capacidad = singleSnapshot.child("capacidad").getValue(Integer.class);
+                    String modelo = singleSnapshot.child("modelo").getValue(String.class);
+                    String placa = singleSnapshot.child("placa").getValue(String.class);
+                    Carro carro = new Carro();
+                    carro.setMarcaCarro(marca);
+                    carro.setCapacidad(capacidad);
+                    carro.setModelo(modelo);
+                    carro.setPlaca(placa);
+
+                    MisCarros.add(carro);
+                    //testData.add(carro);
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("LOADUSER", "Error en la consulta", databaseError.toException());
+            }
+        });
     }
 
     // Description of the method

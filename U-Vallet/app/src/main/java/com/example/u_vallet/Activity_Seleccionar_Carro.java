@@ -50,17 +50,11 @@ public class Activity_Seleccionar_Carro extends AppCompatActivity {
 
         getCarrosFromDB();
         // Create the custom adapter for the trips
-        if(MisCarros.size()>= 1)
-        {
+
             CarrosCustomAdapter carrosAdapter = new CarrosCustomAdapter();
             // Create and bind list view with TripsCustomAdapter
             ListView carrosListView = (ListView) findViewById(R.id.Cars_ListView);
             carrosListView.setAdapter(carrosAdapter);
-        }else{
-            Toast.makeText(Activity_Seleccionar_Carro.this, "Primero debe agregar un carro para poder crear un viaje", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, Activity_MisCarros.class);
-            startActivity(intent);
-        }
 
     }
     //funciones para listview------------------------------------
