@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
@@ -32,7 +33,7 @@ public class Activity_Seleccionar_Carro extends AppCompatActivity {
 
     DatabaseReference mRef;
 
-    private ArrayList<Carro> MisCarros;
+    private ArrayList<Carro> MisCarros = new ArrayList<>();
     private DatabaseReference myRef;
     private FirebaseDatabase database;
     private FirebaseAuth mAuth;
@@ -41,6 +42,9 @@ public class Activity_Seleccionar_Carro extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        database = FirebaseDatabase.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity__seleccionar__carro);
         key = getIntent().getExtras().getString("Route");
 
