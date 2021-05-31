@@ -158,22 +158,20 @@ public class Activity_Reservar_Viaje extends AppCompatActivity {
                         for (DataSnapshot snap : snapshot.getChildren()) {
                             String correo = snap.child("username").getValue(String.class);
                             if (correo.equals(correoUserAutenticado)) {
-                                //mRef.child("nombreConductor").setValue(snap.child("name").getValue(String.class));
                                 mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("nombre").setValue(snap.child("name").getValue(String.class));
                                 mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("cantidadReservas").setValue(reservas);
                                 mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("latitude").setValue(lati);
                                 mRef.child(IDViaje).child("pasajeros").child(mAuth.getUid()).child("longitude").setValue(longi);
-                                mRef2.child(mAuth.getUid()).child("viajeActivo").setValue("true");
-                                mRef2.child(uidconductor).child("viajeActivo").setValue("true");
                             }
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
+                mRef2.child(mAuth.getUid()).child("viajeActivo").setValue("true");
+                mRef2.child(uidconductor).child("viajeActivo").setValue("true");
             } else {
                 Toast.makeText(getBaseContext(), "No fue posible reservas cupo(s)", Toast.LENGTH_SHORT).show();
             }

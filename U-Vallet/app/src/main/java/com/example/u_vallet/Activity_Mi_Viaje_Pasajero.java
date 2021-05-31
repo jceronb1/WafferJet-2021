@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.auth.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +40,7 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
     private TextView horaPartida;
     // Firebase
     private FirebaseAuth userAuth;
+    private String currentUserUid;
     private String currentUserId;
     private DatabaseReference mDatabase;
     // Intent
@@ -52,9 +55,11 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
         setContentView(R.layout.activity__mi__viaje__pasajero);
 
         //----------------- Intent -----------------
-        tripReservationUid = "-Mb-xsX7tvsQ8AiR6K2c";// getIntent().getStringExtra("llaveReserva");
+        tripReservationUid = "-Mb-xsX7tvsQ8AiR6K2c"; // getIntent().getStringExtra("llaveReserva");
 
         //----------------- Firebase -----------------
+        userAuth = FirebaseAuth.getInstance();
+        currentUserUid = userAuth.getUid();
         mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid);
 
         //----------------- Form fields -----------------
@@ -91,9 +96,23 @@ public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
 
         //----------------- Button -----------------
         Button ExplorarViaje = findViewById(R.id.buttonMiViajeMV4);
-        ExplorarViaje.setOnClickListener(v -> {
-            Intent intentCrearViaje = new Intent(v.getContext(), Activity_ExplorarViajes.class);
-            startActivity(intentCrearViaje);
+        ExplorarViaje.setOnClickListener(v -> startActivity(new Intent(v.getContext(), Activity_ExplorarViajes.class)));
+
+        //----------------- Cancel trip -----------------
+        Button cancelarViaje = findViewById(R.id.botonCancelarViaje);
+        cancelarViaje.setOnClickListener( view -> {
+            // If user press this button, the reserved seats, shuld be returned to
+            // the original trip in the DB.
+            mDatabase = FirebaseDatabase.getInstance().getReference("users").child(currentUserUid).child("viajeActivo");
+            mDatabase.setValue("false");
+
+            Toast.makeText(this, "Se ha cancelado el viaje con éxito", Toast.LENGTH_SHORT).show();
+        });
+
+        //----------------- Payment details -----------------
+        Button datosPago = findViewById(R.id.MiViaje_VerDatosPagoBtn);
+        datosPago.setOnClickListener( view -> {
+            Toast.makeText(this, "Se miran los datos de pago", Toast.LENGTH_SHORT).show();
         });
     }
 
