@@ -1,11 +1,10 @@
 package com.example.u_vallet;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,11 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +31,15 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
     //----------------------------------------------
     //----------------  Attributes  ----------------
     //----------------------------------------------
-    private ArrayList<Viaje> ActiveTrips;
+    private ArrayList<Viaje> ActiveTrips = new ArrayList<>();
+    private ArrayList<String> idRutas = new ArrayList<>();
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mDataBase;
+    private DatabaseReference mRef;
+    private DatabaseReference mRef2;
+    public static final String PathRoute = "routes/";
+    private String correoUserAutenticado;
+
 
     //----------------------------------------------
     //-----------------  On Create  ----------------
@@ -37,49 +49,121 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explorar_viajes);
 
-        // Get all active trips from DB
-        ActiveTrips = getActiveTripsFromDB();
+        mAuth = FirebaseAuth.getInstance();
+        mDataBase = FirebaseDatabase.getInstance();
 
-        // Create the custom adapter for the trips
-        TripsCustomAdapter tripsAdapter = new TripsCustomAdapter();
-        // Create and bind list view with TripsCustomAdapter
-        ListView tripsListView = (ListView) findViewById(R.id.Trips_ListView);
-        tripsListView.setAdapter(tripsAdapter);
+        // Get all active trips from DB
+        getRoutesFromDB();
+
+
 
         Button botonMiViaje = (Button) findViewById(R.id.buttonCrearViajeMC3);
 
         botonMiViaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero.class);
-                startActivity(intentMiViaje);
+                correoUserAutenticado = mAuth.getCurrentUser().getEmail();
+                mRef2 = FirebaseDatabase.getInstance().getReference("users/");
+                mRef2.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot snap :snapshot.getChildren() ){
+                            String correo = snap.child("username").getValue(String.class);
+                            if(correo.equals(correoUserAutenticado)){
+                                try {
+                                    String viajeactivo = snap.child("viajeActivo").getValue(String.class);
+                                    if(viajeactivo.equals("true")){
+                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero.class);
+                                        startActivity(intentMiViaje);
+                                    }else{
+                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero_Alterantivo.class);
+                                        startActivity(intentMiViaje);
+                                    }
+                                }catch (Exception e){
+                                    Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero_Alterantivo.class);
+                                    startActivity(intentMiViaje);
+                                }
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
             }
         });
+
 
     }
 
     //----------------------------------------------
     //--------- Methods that involves DB -----------
     //----------------------------------------------
-    private ArrayList<Viaje> getActiveTripsFromDB() {
-        ArrayList<Viaje> testData = new ArrayList<Viaje>();
-        testData.add(new Viaje("Juan Diego",
-                123,
-                "Origen X",
-                "Destino Y",
-                new Carro("Gabriel Gomez","Mazda","JNL 373","CX5",5,123)));
-        testData.add(new Viaje("Campos Neira",
-                456,
-                "Origen X",
-                "Destino Y",
-                new Carro("Joaquin Perez","Renault","HLK 819","Koleos",5,456)));
-        testData.add(new Viaje("Campos Neira",
-                456,
-                "Origen X",
-                "Destino Y",
-                new Carro("Pablo Manrique","Chevrolet","FVL 652","TrailBlazer",7,789)));
-        return testData;
+
+    private void getRoutesFromDB(){
+        mRef = mDataBase.getReference(PathRoute);
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int size = ActiveTrips.size();
+                for(DataSnapshot singlesnapshot : snapshot.getChildren() ){
+                    Viaje viaje = new Viaje();
+                    String status =  singlesnapshot.child("status").getValue(String.class);
+                    String uidConductor =  singlesnapshot.child("uidConductor").getValue(String.class);
+
+
+                    String key = singlesnapshot.child("key").getValue(String.class);;
+                    if(status.equals("active") && !uidConductor.equals(mAuth.getUid()) && !idRutas.contains(key)){
+
+                        String origen = singlesnapshot.child("originDirection").getValue(String.class);
+                        String nombreConductor = singlesnapshot.child("nombreConductor").getValue(String.class);
+                        String destino = singlesnapshot.child("destinationDirection").getValue(String.class);
+                        String marca = singlesnapshot.child("carro").child("marca").getValue(String.class);
+                        String placa = singlesnapshot.child("carro").child("placa").getValue(String.class);
+                        Integer valorCupo = singlesnapshot.child("valorViaje").getValue(Integer.class);
+                        Integer capacidad = singlesnapshot.child("cuposDisponibles").getValue(Integer.class);
+                        String puntoEncuentro = singlesnapshot.child("puntoEncuentro").getValue(String.class);
+                        String hora = singlesnapshot.child("horaViaje").getValue(String.class);
+                        if(capacidad > 0) {
+                            viaje.setIdConductor(uidConductor);
+                            viaje.setIdViaje(key);
+                            viaje.setNombreDelConductor(nombreConductor);
+                            viaje.setOrigen(origen);
+                            viaje.setDestino(destino);
+                            viaje.setMarca(marca);
+                            viaje.setPlaca(placa);
+                            viaje.setValorCupo(valorCupo);
+                            viaje.setCapacidad(capacidad);
+                            viaje.setPuntoEncuentro(puntoEncuentro);
+                            viaje.setHora(hora);
+                            ActiveTrips.add(viaje);
+                            idRutas.add(key);
+                        }
+                    }
+                }
+
+                if(size != ActiveTrips.size()){
+                    // Create the custom adapter for the trips
+                    TripsCustomAdapter tripsAdapter = new TripsCustomAdapter();
+                    // Create and bind list view with TripsCustomAdapter
+                    ListView tripsListView = (ListView) findViewById(R.id.Trips_ListView);
+                    tripsListView.setAdapter(tripsAdapter);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
+
+
 
     //----------------------------------------------
     //------------ Methods for the menu ------------
@@ -137,12 +221,20 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             TextView destinyDirection = (TextView) convertView.findViewById(R.id.Destiny_Direction);
             TextView carBrand = (TextView) convertView.findViewById(R.id.Car_Brand);
             TextView carPlate = (TextView) convertView.findViewById(R.id.Car_Plate);
+            TextView cuposDisponibles = (TextView)   convertView.findViewById(R.id.cupos);
+            TextView valorCupo = (TextView)   convertView.findViewById(R.id.valorCupo);
+            TextView puntoEncuentro = (TextView)   convertView.findViewById(R.id.puntEncuentro);
+            TextView hora = (TextView)   convertView.findViewById(R.id.hora);
             // Set information to the view
             driverName.setText(ActiveTrips.get(position).NombreDelConductor);
             originDirection.setText(ActiveTrips.get(position).origen);
             destinyDirection.setText(ActiveTrips.get(position).destino);
-            carBrand.setText(ActiveTrips.get(position).carroQueRealizaElViaje.marcaCarro);
-            carPlate.setText(ActiveTrips.get(position).carroQueRealizaElViaje.placa);
+            carBrand.setText(ActiveTrips.get(position).marca);
+            carPlate.setText(ActiveTrips.get(position).placa);
+            cuposDisponibles.setText(String.valueOf(ActiveTrips.get(position).capacidad));
+            valorCupo.setText(String.valueOf(ActiveTrips.get(position).valorCupo));
+            puntoEncuentro.setText(ActiveTrips.get(position).puntoEncuentro);
+            hora.setText(ActiveTrips.get(position).hora);
 
             // Set event listeners to the buttons
             Button seeRoute = (Button) convertView.findViewById(R.id.Button_See_Route);
@@ -150,17 +242,60 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             seeRoute.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("Route   ", v.getContext().toString());
-                    Uri gmmIntentUri = Uri.parse("http://maps.google.com/maps?saddr=4.688549,-74.050789&daddr=4.6259875,-74.0631727");
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
+                    Intent mapIntent = new Intent(getBaseContext(), Activity_Pasajero_RutaViaje_Maps.class);
+                    mapIntent.putExtra("PasajeroKey", ActiveTrips.get(position).getIdViaje());
                     startActivity(mapIntent);
                 }
             });
             reserveTrip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("Reserve ", v.getContext().toString());
+                    correoUserAutenticado = mAuth.getCurrentUser().getEmail();
+                    mRef2 = FirebaseDatabase.getInstance().getReference("users/");
+                    mRef2.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot snap :snapshot.getChildren() ){
+                                String correo = snap.child("username").getValue(String.class);
+                                if(correo.equals(correoUserAutenticado)){
+                                    try {
+                                        String viajeactivo = snap.child("viajeActivo").getValue(String.class);
+                                        if(viajeactivo.equals("true")){
+                                            Toast.makeText(getBaseContext(), "usted ya tiene un viaje reservado", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);
+                                            intent.putExtra("direccion", "");
+                                            intent.putExtra("Lat", "");
+                                            intent.putExtra("Lng", "");
+                                            intent.putExtra("reserva","");
+                                            intent.putExtra("precio",valorCupo.getText().toString());
+                                            intent.putExtra("idviaje", ActiveTrips.get(position).getIdViaje());
+                                            intent.putExtra("cuposDisponibles",cuposDisponibles.getText().toString());
+                                            intent.putExtra("uidconductor",ActiveTrips.get(position).getIdConductor());
+                                            startActivity(intent);
+                                        }
+                                    }catch (Exception e){
+                                        Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);
+                                        intent.putExtra("direccion", "");
+                                        intent.putExtra("Lat", "");
+                                        intent.putExtra("Lng", "");
+                                        intent.putExtra("reserva","");
+                                        intent.putExtra("precio",valorCupo.getText().toString());
+                                        intent.putExtra("idviaje", ActiveTrips.get(position).getIdViaje());
+                                        intent.putExtra("cuposDisponibles",cuposDisponibles.getText().toString());
+                                        intent.putExtra("uidconductor",ActiveTrips.get(position).getIdConductor());
+                                        startActivity(intent);
+                                    }
+
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             });
 

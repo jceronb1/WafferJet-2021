@@ -2,6 +2,9 @@ package com.example.u_vallet;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @IgnoreExtraProperties
 public class Carro {
     //----------------------------------------------
@@ -24,5 +27,71 @@ public class Carro {
         this.idConductor = idConductor;
         this.modelo = modelo;
         this.capacidad = capacidad;
+    }
+
+    public Carro(String marcaCarro, String placa, String modelo, int capacidad) {
+        this.marcaCarro = marcaCarro;
+        this.placa = placa;
+        this.modelo = modelo;
+        this.capacidad = capacidad;
+    }
+
+    public Carro() {
+    }
+
+    public String getNombreConductor() {
+        return nombreConductor;
+    }
+
+    public void setNombreConductor(String nombreConductor) {
+        this.nombreConductor = nombreConductor;
+    }
+
+    public String getMarcaCarro() {
+        return marcaCarro;
+    }
+
+    public void setMarcaCarro(String marcaCarro) {
+        this.marcaCarro = marcaCarro;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public int getCapacidad() {
+        return capacidad;
+    }
+
+    public void setCapacidad(int capacidad) {
+        this.capacidad = capacidad;
+    }
+
+    public int getIdConductor() {
+        return idConductor;
+    }
+
+    public void setIdConductor(int idConductor) {
+        this.idConductor = idConductor;
+    }
+    public Map<String, Object> toMap(){
+        HashMap<String, Object> carro = new HashMap<>();
+        carro.put("marca", marcaCarro);
+        carro.put("placa", placa);
+        carro.put("modelo", modelo);
+        carro.put("capacidad", capacidad);
+        return carro;
     }
 }

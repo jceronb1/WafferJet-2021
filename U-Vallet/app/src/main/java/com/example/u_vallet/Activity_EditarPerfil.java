@@ -79,7 +79,8 @@ public class Activity_EditarPerfil extends AppCompatActivity {
     private StorageReference mStorageRef;
     private FirebaseUser currentUser;
     public static final String PATH_USERS = "users/";
-
+    private boolean contra = false;
+    String res = "";
     private EditText mNombreUsuario;
     private EditText mNombreCompleto;
     private EditText mContraseñaAntigua;
@@ -315,6 +316,7 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                     String email = usuario.getUsername();
                     String nombreC = usuario.getName();
                     String contraseñaA = usuario.getContraseña();
+                    res = contraseñaA;
                     Date fecha = usuario.getFechaNacimiento();
                     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                     String sFecha = null;
@@ -335,7 +337,7 @@ public class Activity_EditarPerfil extends AppCompatActivity {
                         Log.d("UID_EP", key);
                         mNombreUsuario.setHint(email);
                         mNombreCompleto.setText(nombreC);
-                        mContraseñaAntigua.setText(contraseñaA);
+
                         mFechaNacimiento.setText(sFecha);
                         mTelefono.setText(telefono);
                         mDireccion.setText(direccion);
@@ -400,6 +402,12 @@ public class Activity_EditarPerfil extends AppCompatActivity {
             valid = false;
         }else{
             mContraseñaAntigua.setError(null);
+        }
+        if(res.equals(contraseña)){
+            Toast.makeText(getBaseContext(), "La contraseña antigua coincide", Toast.LENGTH_SHORT).show();
+        }else{
+            valid = false;
+            Toast.makeText(getBaseContext(), "la contraseña antigua debe coincidir con la que esta en base de datos", Toast.LENGTH_SHORT).show();
         }
         /*if(TextUtils.isEmpty(confirmarContraseña)){
             mConfirmPassword.setError("Required");

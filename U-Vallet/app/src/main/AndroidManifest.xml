@@ -8,10 +8,10 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- Location -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Location -->
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- To access REST api -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -24,7 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
-
+        <activity android:name=".Activity_Pago"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -38,46 +38,54 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".Activity_ReservarViaje_Maps"
+            android:label="@string/title_activity__reservar_viaje__maps" />
+        <activity android:name=".Activity_Finalizar_Viaje" />
+        <activity
+            android:name=".Activity_Pasajero_RutaViaje_Maps"
+            android:label="@string/title_activity__pasajaero__ruta_viaje__maps" />
+        <activity android:name=".Activity_Reservar_Viaje" />
+        <activity
+            android:name=".Activity_ViajeEnCurso_Maps"
+            android:label="@string/title_activity__viaje_en_curso__maps" />
+        <activity
+            android:name=".Activity_RutaViaje_Maps"
+            android:label="@string/title_activity__ruta_viaje__maps" />
+        <activity
             android:name=".Activity_CrearViaje_Maps"
             android:label="@string/title_activity__crear_viaje__maps" />
-
-        <activity android:name=".Activity_AgregarCarro"
-            android:label="Agregar Carro"/>
-
-        <activity android:name=".Activity_CrearViaje"
-            android:label="Crear Viaje"/>
-
-        <activity android:name=".Activity_EditarCarro"/>
-
-        <activity android:name=".Activity_EditarPerfil"
-            android:label="Editar perfil"/>
-
+        <activity
+            android:name=".Activity_AgregarCarro"
+            android:label="Agregar Carro" />
+        <activity
+            android:name=".Activity_CrearViaje"
+            android:label="Crear Viaje" />
+        <activity android:name=".Activity_EditarCarro" />
+        <activity
+            android:name=".Activity_EditarPerfil"
+            android:label="Editar perfil" />
         <activity android:name=".Activity_ExplorarViaje" />
-
-        <activity android:name=".Activity_ExplorarViajes"
-            android:label="Explorar viajes"/>
-
+        <activity
+            android:name=".Activity_ExplorarViajes"
+            android:label="Explorar viajes" />
         <activity android:name=".Activity_Mi_Viaje_Condcutor_Alternativo" />
-
         <activity android:name=".Activity_Mi_Viaje_Conductor" />
-
-        <activity android:name=".Activity_Mi_Viaje_Pasajero"
+        <activity
+            android:name=".Activity_Mi_Viaje_Pasajero"
             android:label="Mi viaje" />
-
         <activity android:name=".Activity_Mi_Viaje_Pasajero_Alterantivo" />
-
-        <activity android:name=".Activity_MisCarros"
-            android:label="U-Vallet - Mis carros"/>
-
-        <activity android:name=".Activity_Registrarse"
-            android:label="Registrarse"/>
-
-        <activity android:name=".Activity_Roles"
-            android:label="Roles"/>
-
-        <activity android:name=".Activity_Seleccionar_Carro"
-            android:label="U-Vallet - Seleccionar vehiculo"/>
-
+        <activity
+            android:name=".Activity_MisCarros"
+            android:label="U-Vallet - Mis carros" />
+        <activity
+            android:name=".Activity_Registrarse"
+            android:label="Registrarse" />
+        <activity
+            android:name=".Activity_Roles"
+            android:label="Roles" />
+        <activity
+            android:name=".Activity_Seleccionar_Carro"
+            android:label="U-Vallet - Seleccionar vehiculo" />
         <activity android:name=".Activity_Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

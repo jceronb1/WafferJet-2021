@@ -1,30 +1,25 @@
 package com.example.u_vallet;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.RelativeLayout;
+import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -41,6 +36,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
@@ -51,12 +52,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapReadyCallback {
+public class Activity_CrearViaje_Maps extends AppCompatActivity implements OnMapReadyCallback {
+
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
@@ -66,6 +69,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     private LatLng mDestination;
     private Polyline mPolyline;
     ArrayList<LatLng> mMarkerPoints;
+    List<LatLng> routeSelected;
     private Marker markerOrigin;
     private Marker markerDestination;
     ArrayList<Polyline> polylines;
@@ -74,6 +78,8 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     LatLng destinationLatLng;
     String originLocation;
     String destinationLocation;
+    private DatabaseReference myRef;
+    private FirebaseDatabase database;
 
     // Location
     private static final int REQUEST_LOCATION = 410;
@@ -81,6 +87,11 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     String[] location_permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
     private double userLastKnownLocationLat;
     private double userLastKnownLocationLong;
+    public String durationA;
+    public String durationB;
+    public String durationC;
+    private TextView viewDuration;
+    private  ArrayList<Carro> MisCarros = new ArrayList<Carro>();
 
 
     // Description of the method
@@ -88,6 +99,9 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__crear_viaje__maps);
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        viewDuration = (TextView)findViewById(R.id.viewDuration);
         polylines = new ArrayList<>();
         markerOrigin = null;
         markerDestination = null;
@@ -99,11 +113,10 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         int destinationButtonID = searchViewDestination.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
         ImageView originCloseButton = (ImageView) searchViewOrigin.findViewById(originCloseButtonId);
         ImageView destinationCloseButton = (ImageView) searchViewDestination.findViewById(destinationButtonID);
-
+        getCarrosFromDB();
         originCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("pruEBA", "ENTRAMOS");
                 searchViewOrigin.setQuery("", false);
                 if (markerOrigin != null) {
                     mMarkerPoints.remove(markerOrigin.getPosition());
@@ -232,16 +245,46 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
         });
 
+
+
         mapFragment.getMapAsync(this);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), Activity_Seleccionar_Carro.class);
-                //intent.putExtra("Origen", searchViewOrigin.getQuery());
-                //intent.putExtra("Destino", searchViewDestination.getQuery());
-                Intent intent2 = new Intent(v.getContext(), Activity_ExplorarViajes.class);
-                startActivity(intent);
+                if(mMarkerPoints.size() == 2) {
+                    for (int i = 0; i < polylines.size(); i++) {
+                        if (polylines.get(i).getColor() == -10052106) {
+                            routeSelected = polylines.get(i).getPoints();
+                        }
+                    }
+                    Ruta ruta = new Ruta();
+                    ruta.setRoute(routeSelected);
+                    ruta.setOriginLocation(mOrigin);
+                    ruta.setDestinationLocation(mDestination);
+                    ruta.setUidConductor(mAuth.getUid());
+                    ruta.setStatus("onCreate");
+                    mDatabase = FirebaseDatabase.getInstance().getReference("routes");
+                    String key = mDatabase.push().getKey();
+                    ruta.setKey(key);
+                    mDatabase = FirebaseDatabase.getInstance().getReference("routes/" + key);
+                    mDatabase.setValue(ruta);
+                    Intent intent2 = new Intent(v.getContext(), Activity_ExplorarViajes.class);
+                    intent.putExtra("Route", key);
+                    intent.putExtra("direccionO", searchViewOrigin.getQuery().toString());
+                    intent.putExtra("direccionD", searchViewDestination.getQuery().toString());
+                    if(MisCarros.size()>0){
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(getBaseContext(), "Debe agregar un carro para crear un viaje", Toast.LENGTH_SHORT).show();
+                        Intent intent3 = new Intent(v.getContext(), Activity_MisCarros.class);
+                        startActivity(intent3);
+                    }
+
+                }else{
+                    Toast.makeText(getBaseContext(), "Debe seleccionar una dirección de origen y una dirección de destino para poder avanzar.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -256,6 +299,34 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
         //--------  Get last known location from the user  --------------   TODO : Get current location, not the last known
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+    }
+    public void getCarrosFromDB() {
+        MisCarros.clear();
+        myRef = database.getReference("cars/"+mAuth.getCurrentUser().getUid()+"/");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    String marca = singleSnapshot.child("marca").getValue(String.class);
+                    Integer capacidad = singleSnapshot.child("capacidad").getValue(Integer.class);
+                    String modelo = singleSnapshot.child("modelo").getValue(String.class);
+                    String placa = singleSnapshot.child("placa").getValue(String.class);
+                    Carro carro = new Carro();
+                    carro.setMarcaCarro(marca);
+                    carro.setCapacidad(capacidad);
+                    carro.setModelo(modelo);
+                    carro.setPlaca(placa);
+
+                    MisCarros.add(carro);
+                    //testData.add(carro);
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("LOADUSER", "Error en la consulta", databaseError.toException());
+            }
+        });
     }
 
     // Description of the method
@@ -292,7 +363,6 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
                         LatLng mapaInicial = new LatLng(userLastKnownLocationLat, userLastKnownLocationLong);
                         mMarkerPoints.add(mapaInicial);
-                        Log.d("DEBCREARV_123", String.valueOf(mMarkerPoints.size()));
                         MarkerOptions options = new MarkerOptions();
                         options.position(mapaInicial);
                         options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -417,6 +487,18 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 Log.e("Polyline color", String.valueOf(polyline.getColor()));
                 Log.e("Polyline colors", String.valueOf(R.color.grey));
 
+
+                if(polyline.getTag().equals("lineA")){
+                    //Toast.makeText(getBaseContext(), "durationA", Toast.LENGTH_SHORT).show();
+                    viewDuration.setText("Tiempo: "+durationA);
+                }else if(polyline.getTag().equals("lineB")){
+                    //Toast.makeText(getBaseContext(), "durationB", Toast.LENGTH_SHORT).show();
+                    viewDuration.setText("Tiempo: "+durationB);
+                }else{
+                    //Toast.makeText(getBaseContext(), "durationC", Toast.LENGTH_SHORT).show();
+                    viewDuration.setText("Tiempo: "+durationC);
+                }
+
                 //polyline.getId();
                 Log.e("Polyline id", polyline.getId());
                 //ArrayList<Polyline> polylinesAux = new ArrayList<>();
@@ -500,7 +582,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
     }
 
     // Description of the method
-    private void drawRoute(){
+    private void drawRoute() {
 
         // Getting URL to the Google Directions API
         String url = getDirectionsUrl(mOrigin, mDestination);
@@ -509,6 +591,8 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
+
+
     }
 
     // Description of the Method
@@ -616,13 +700,27 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
             JSONObject jObject;
             List<List<List<HashMap<String, String>>>> routes = null;
+            List<String> durations = new ArrayList<>();
             List<List<HashMap<String, String>>> routesAux = null;
             try {
                 jObject = new JSONObject(jsonData[0]);
                 DirectionsJSONParser parser = new DirectionsJSONParser();
 
                 // Starts parsing data
-                routes = parser.parse(jObject);
+                routes = parser.parse(jObject).getRoutes1();
+                durations = parser.parse(jObject).getDurations();
+                int indice = 0;
+                for(String duration : durations){
+                    Log.i("Tiempo: ",duration);
+                    if(indice==0){
+                        durationA = duration;
+                    }else if(indice==1){
+                        durationB = duration;
+                    }else{
+                        durationC = duration;
+                    }
+                    indice++;
+                }
                 /*int tam = routes.size()-1;
                 routesAux = routes.get(tam);
                 routes.remove(tam);
@@ -671,7 +769,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                     List<List<HashMap<String, String>>> path1 = result.get(i);
 
                     HashMap<String, String>pathAux = (HashMap<String, String>) path1.get(0);
-                    Log.d("JSON AUX",String.valueOf(pathAux));
+                    Log.i("JSON AUX",String.valueOf(pathAux));
                     path1.remove(0);
                     duration = pathAux.get("dur");
 
@@ -687,7 +785,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         Log.d("pathsize", path.size() + "");
                         //Log.d("JSON B", point.get("dur"));
                         // Fetching all the points in i-th route
-
+                        String duracion = "duro";
                         for (int j = 0; j < path.size(); j++) {
                             lineOptions1 = new PolylineOptions();
                             HashMap<String, String> point = path.get(j);
@@ -705,14 +803,14 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
 
                             double lat = Double.parseDouble(point.get("lat"));
                             double lng = Double.parseDouble(point.get("lng"));
-                            /*String durationB = point.get("dur");
-                            Log.d("JSON DURATION", durationB);*/
+
                             LatLng position = new LatLng(lat, lng);
                             Log.d("latlng", position.toString());
                             points.add(position);
 
 
                         }
+                        Log.i("JSON DURATION", duracion);
                         //                lineOptions.addAll(points);
                         //                lineOptions.width(5);
                         //                lineOptions.color(Color.BLUE);
@@ -766,7 +864,6 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         line1.addAll(aline1);
                         line2.addAll(aline2);
                         line3.addAll(aline3);
-
                         Polyline lineA = mMap.addPolyline(line1);
                         Polyline lineB = mMap.addPolyline(line2);
                         Polyline lineC = mMap.addPolyline(line3);
@@ -776,7 +873,7 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                         lineB.setTag("lineB");
                         lineC.setClickable(true);
                         lineC.setTag("lineC");
-
+                        Log.d("Polyline", String.valueOf(lineA.getPoints()+ String.valueOf(lineA.getWidth())));
                         polylines.add(lineA);
                         polylines.add(lineB);
                         polylines.add(lineC);
@@ -962,6 +1059,10 @@ public class Activity_CrearViaje_Maps extends FragmentActivity implements OnMapR
                 lineA.setTag("lineA");
                 polylines.add(lineA);
             }
+
+            viewDuration.setText("Tiempo: "+durationA);
+
+
 
         }
 

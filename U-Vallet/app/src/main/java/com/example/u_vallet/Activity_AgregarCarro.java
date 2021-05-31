@@ -8,42 +8,93 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.gson.JsonParser;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Activity_AgregarCarro extends AppCompatActivity {
+public class Activity_AgregarCarro extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     //-----------------------------------------------
     //---------------  Attributes  ------------------
     //-----------------------------------------------
-    // Database
+    // Firebase
     private DatabaseReference firebaseDB;
+    private FirebaseAuth userAuth;
+    String currentUserId;
+    private FirebaseAuth mAuth;
+    private StorageReference mStorageRef;
+    private Uri imagenUri;
     // Permissions
     private static final int MEDIA_PERMISSION_CODE = 311;
     private static final int SELECT_IMAGE_CODE = 312;
+
     // Input fields
     EditText placa;
-    EditText marca;
-    EditText modelo;
     EditText capacidad;
+    String modeloCarro = null;
+    String marcaCarro = null;
     ImageView imagenCarro;
     boolean imagenSeleccionada = false;
+    boolean marcaSeleccionada = false;
+    boolean modeloSeleccionado = false;
+
+    // JSON api response
+    JSONObject JSONModelosCarros = null;
+    HashSet<String> marcasCarros = new HashSet<String>();
+    ArrayList<String> carBrands = new ArrayList<String>();
+    HashMap<String, ArrayList<String>> carModels = new HashMap<String, ArrayList<String>>();
 
     //-----------------------------------------------
     //---------------  On create  -------------------
@@ -53,10 +104,13 @@ public class Activity_AgregarCarro extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_carro);
 
-        // Create Firebase Data Base instance
-        firebaseDB = FirebaseDatabase.getInstance().getReference();
-
-        //
+        // Firebase configurations
+        firebaseDB = FirebaseDatabase.getInstance().getReference("cars");
+        userAuth = FirebaseAuth.getInstance();
+        currentUserId = userAuth.getUid();
+        mAuth = FirebaseAuth.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        // Car image
         imagenCarro = (ImageView) findViewById(R.id.AgregarCarro_ImagenCarro);
 
         // Logic to add a new car
@@ -64,14 +118,10 @@ public class Activity_AgregarCarro extends AppCompatActivity {
         agregarCarro.setOnClickListener( view -> {
             // Get input fields
             placa = (EditText) findViewById(R.id.AgregarCarro_Placa);
-            marca = (EditText) findViewById(R.id.AgregarCarro_Marca);
-            modelo = (EditText) findViewById(R.id.AgregarCarro_Modelo);
             capacidad = (EditText) findViewById(R.id.AgregarCarro_Capacidad);
 
             // Convert values in input
-            String marcaCarro = marca.getText().toString();
-            String placaCarro = placa.getText().toString();
-            String modeloCarro = modelo.getText().toString();
+            String placaCarro = placa.getText().toString().toUpperCase();
             String capacidadCarro = capacidad.getText().toString();
 
             // Validate form
@@ -80,12 +130,9 @@ public class Activity_AgregarCarro extends AppCompatActivity {
                 return;
             }
 
-            // Get user info
-            String nombreConductor = "Pedro Perez";
-            int idConductor = 123;
 
             // Write new car
-            // writeNewCar(nombreConductor, marcaCarro, placaCarro, modeloCarro, capacidadCarro, idConductor);
+            writeNewCar(marcaCarro, placaCarro, modeloCarro, Integer.parseInt(capacidadCarro));
             Log.i("Carro", "New car added");
 
             // Create dialog to inform the user that a new car was added
@@ -135,6 +182,9 @@ public class Activity_AgregarCarro extends AppCompatActivity {
             }
         });
 
+        //-----------  Volley REST service call  -------------
+        restServiceCarBrands();
+
     }
 
     //-----------------------------------------------
@@ -181,44 +231,56 @@ public class Activity_AgregarCarro extends AppCompatActivity {
         //
         if (resultCode == RESULT_OK &&  requestCode == SELECT_IMAGE_CODE) {
             Log.i("Called", "called");
-            imagenCarro.setImageURI(data.getData());
-            imagenSeleccionada = true;
-        }
-    }
+            try {
+                final Uri imageUri = data.getData();
+                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                imagenCarro.setImageBitmap(selectedImage);
+                //mImageView.setImageURI(imageUri);
+                imagenSeleccionada = true;
+                imagenUri = imageUri;
+            }catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
 
-    //-----------------------------------------------
-    //------------- Permissions methods -------------
-    //-----------------------------------------------
-    private void requestMediaPermission() {
+            //imagenCarro.setImageURI(data.getData());
+            //imagenSeleccionada = true;
+        }
     }
 
     //-----------------------------------------------
     //-------------  Methods for DB  ----------------
     //-----------------------------------------------
-    public void writeNewCar(String nombreConductor, String marcaCarro, String placa,String modelo,int capacidad ,int idConductor) {
+    public void writeNewCar(String marcaCarro, String placa, String modelo, int capacidad) {
         // Create instance of Car
-        Carro carro = new Carro(nombreConductor, marcaCarro, placa, modelo, capacidad, idConductor);
+        HashMap<String, Object> carro = new HashMap<String, Object>();
+        carro.put("marca", marcaCarro);
+        carro.put("placa", placa);
+        carro.put("modelo", modelo);
+        carro.put("capacidad", capacidad);
+
         // Save car in DB
-        firebaseDB.child("Carros").child(String.valueOf(idConductor)).setValue(carro);
+        uploadImageToFirebase(imagenUri);
+        firebaseDB.child(currentUserId).child(placa).setValue(carro);
     }
 
     //-----------------------------------------------
     //----------------  Methods  --------------------
     //-----------------------------------------------
     // Method to validate user input
-    private boolean validateForm(String marcaCarro, String placaCarro,String modeloCarro, String capacidadCarro ) {
-        // Check for empty fields
+    private boolean validateForm(String marcaCarro, String placaCarro, String modeloCarro, String capacidadCarro ) {
 
+        // Check for empty fields
         if (placaCarro.isEmpty()) {
             placa.setError("Vacío o inválido");
             return false;
         }
-        if (marcaCarro.isEmpty()) {
-            marca.setError("Vacío");
+        if (!marcaSeleccionada) {
+            Toast.makeText(Activity_AgregarCarro.this, "Marca inválida", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (modeloCarro.isEmpty()) {
-            modelo.setError("Vacío o inválido");
+        if (!modeloSeleccionado) {
+            Toast.makeText(Activity_AgregarCarro.this, "Modelo inválido", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (capacidadCarro.isEmpty()) {
@@ -234,7 +296,7 @@ public class Activity_AgregarCarro extends AppCompatActivity {
         Pattern pattern = Pattern.compile("[a-zA-Z]{3} ?- ?[0-9]{3}");
         Matcher matcher = pattern.matcher(placaCarro);
         if (!matcher.find()) {
-            placa.setError("Placa inválida, abc - 123");
+            placa.setError("Placa inválida, formato requerido: abc - 123");
             return false;
         }
 
@@ -246,6 +308,235 @@ public class Activity_AgregarCarro extends AppCompatActivity {
         Intent selectImageIntent = new Intent(Intent.ACTION_PICK);
         selectImageIntent.setType("image/*");
         startActivityForResult(selectImageIntent, SELECT_IMAGE_CODE);
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+    private void uploadImageToFirebase(Uri imagenUri){
+        StorageReference fileRef = mStorageRef.child("cars/"+mAuth.getCurrentUser().getUid()+"/"+placa.getText().toString()+"/car.jpg");
+        fileRef.putFile(imagenUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(imagenCarro);
+                        Toast.makeText(Activity_AgregarCarro.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Activity_AgregarCarro.this, "Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void restServiceCarBrands() {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+        // Request URL
+        String url ="https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getMakes&year=2015&sold_in_us=1";
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Log.i("RESP", String.valueOf(response.length()));
+                        Log.i("RESP", response);
+
+                        // Convert String to JSONObject
+                        response = response.substring(2, response.length() - 2);
+                        try {
+                            JSONModelosCarros = new JSONObject(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        // Inflate car brands spinner
+                        inflateBrandsSpinner();
+
+                        // Make request to get the models from all cars
+                        restServiceCarModels();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(Activity_AgregarCarro.this, "Fallo al consumir los servicios REST", Toast.LENGTH_SHORT).show();
+                Log.i("VOLLEY", error.toString());
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    private void restServiceCarModels() {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        // Travers cars brands and make request to get the car models
+        for (String brand : carBrands) {
+            // Request URL
+            String url ="https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getModels&make=" + brand.toLowerCase() + "&year=2015&sold_in_us=1";
+            // Request a string response from the provided URL.
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // Display the first 500 characters of the response string.
+                            Log.i("RESP", String.valueOf(response.length()));
+                            Log.i("RESP", response);
+
+                            // Convert String to JSONObject
+                            response = response.substring(2, response.length() - 2);
+                            JSONObject JSONCarModels = null;
+                            try {
+                                JSONCarModels = new JSONObject(response);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            // Store information about car models in hashmap
+                            ArrayList<String> models = new ArrayList<String>();
+                            // Parse JSON data from API response
+                            try {
+                                JSONArray carModelsArray = JSONCarModels.getJSONArray("Models");
+                                for (int i = 0; i < carModelsArray.length(); i++) {
+                                    // Traverse JSON object by keys
+                                    JSONObject car = carModelsArray.getJSONObject(i);
+                                    Iterator key = car.keys();
+                                    while (key.hasNext()) {
+                                        String k = key.next().toString();
+                                        String val = car.getString(k);
+                                        if (k.equals("model_name")) {
+                                            models.add(val);
+                                        }
+                                    }
+                                }
+                            } catch ( Exception e ) {
+                                Log.i("ERROR", "Getting car models : " + e.toString());
+                            }
+
+                            // Store information in hashmap
+                            carModels.put(brand, models);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(Activity_AgregarCarro.this, "Fallo al consumir los servicios REST", Toast.LENGTH_SHORT).show();
+                    Log.i("VOLLEY", error.toString());
+                }
+            });
+            // Add the request to the RequestQueue.
+            queue.add(stringRequest);
+
+        }
+
+    }
+
+    private void inflateBrandsSpinner() {
+
+        Log.i("SPINNER", "SPINNER CALLED");
+
+        // Parse JSON data from API response
+        try {
+            JSONArray carModelsArray = JSONModelosCarros.getJSONArray("Makes");
+            for (int i = 0; i < carModelsArray.length(); i++) {
+                // Traverse JSON object by keys
+                JSONObject car = carModelsArray.getJSONObject(i);
+                Iterator key = car.keys();
+                while (key.hasNext()) {
+                    String k = key.next().toString();
+                    String val = car.getString(k);
+                    if (k.equals("make_display")) {
+                        marcasCarros.add(val);
+                    }
+                }
+            }
+        } catch ( Exception e ) {
+            Log.i("ERROR", "INFLATING SPINNER ... " + e.toString());
+        }
+
+        // Debug
+        Log.d("VALUE", marcasCarros.toString());
+
+        // Convert HashSet into an array of Strings
+        carBrands = new ArrayList<String>();
+        carBrands.add("Seleccione una marca");
+        for (String marca : marcasCarros) {
+            carBrands.add(marca);
+        }
+
+        // Inflate Spinner
+        Spinner carsSpinner = (Spinner) findViewById(R.id.AgregarCarro_Marcas);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, carBrands);
+        // Specify the layout to use when the list of choices appears
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        carsSpinner.setAdapter(arrayAdapter);
+        //
+        carsSpinner.setOnItemSelectedListener(this);
+
+        Log.i("Spinner", "Finished inflating spinner");
+    }
+
+    private void inflateModelsSpinner(String carBrand) {
+        ArrayList<String> models;
+        // If is the default value
+        if (carBrand.equals("Seleccione una marca")) {
+            models = new ArrayList<String>();
+            models.add("Seleccione primero una marca");
+        }
+        // Otherwise, get models from hashmap
+        else {
+            models = carModels.get(carBrand);
+            models.add(0, "Seleccione un modelo");
+        }
+        // Inflate Spinner
+        Spinner modelsSpinner = (Spinner) findViewById(R.id.AgregarCarro_Modelo);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, models);
+        // Specify the layout to use when the list of choices appears
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        modelsSpinner.setAdapter(arrayAdapter);
+        //
+        modelsSpinner.setOnItemSelectedListener(this);
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        // parent.getItemAtPosition(pos)
+        Log.i("ITEM", String.valueOf(parent.getItemAtPosition(pos)));
+        // Check which spinner was activated
+        switch (parent.getId()) {
+            // Car brand
+            case R.id.AgregarCarro_Marcas:
+                marcaCarro = String.valueOf(parent.getItemAtPosition(pos));
+                marcaSeleccionada = (marcaCarro.equals("Seleccione una marca")) ? false : true;
+                // Inflate car models spinner based on item selected
+                inflateModelsSpinner(marcaCarro);
+                return;
+
+            // Car model
+            case R.id.AgregarCarro_Modelo:
+                modeloCarro = String.valueOf(parent.getItemAtPosition(pos));
+                modeloSeleccionado = (modeloCarro.equals("Seleccione primero una marca") || modeloCarro.equals("Seleccione un modelo")) ? false : true;
+                return;
+        }
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        marcaSeleccionada = false;
+        marcaCarro = null;
     }
 
 }

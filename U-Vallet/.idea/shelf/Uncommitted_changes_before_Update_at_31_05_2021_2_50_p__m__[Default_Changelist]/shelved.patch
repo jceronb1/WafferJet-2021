@@ -1,0 +1,570 @@
+Index: app/src/main/java/com/example/u_vallet/Activity_Reservar_Viaje.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.u_vallet;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.text.TextUtils;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class Activity_Reservar_Viaje extends AppCompatActivity {\r\n\r\n    private ArrayList<Viaje> viajes = new ArrayList<>();\r\n    private FirebaseAuth mAuth;\r\n    private FirebaseDatabase mDataBase;\r\n    private DatabaseReference mRef;\r\n    private DatabaseReference mRef2;\r\n    public static final String PathRoute = \"routes/\";\r\n\r\n    String IDViaje;\r\n    private String correoUserAutenticado;\r\n    private int disponibles;\r\n    private String uidconductor;\r\n    EditText reservas;\r\n    TextView ubicacionPasajero;\r\n    EditText valorTotal;\r\n    String lat;\r\n    String lng;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity__reservar__viaje);\r\n\r\n        mAuth = FirebaseAuth.getInstance();\r\n        mDataBase = FirebaseDatabase.getInstance();\r\n        String direccion = getIntent().getExtras().getString(\"direccion\");\r\n        lat = getIntent().getExtras().getString(\"Lat\");\r\n        lng = getIntent().getExtras().getString(\"Lng\");\r\n        Log.d(\"USPRUEBAF\", String.valueOf(lat) + \"/\"+String.valueOf(lng));\r\n        String valor = getIntent().getExtras().getString(\"precio\");\r\n        String res = getIntent().getExtras().getString(\"reserva\");\r\n        IDViaje = getIntent().getExtras().getString(\"idviaje\");\r\n        disponibles = Integer.parseInt(getIntent().getExtras().getString(\"cuposDisponibles\"));\r\n        Log.d(\"USPUEBA\", \"Disponibles:\" + String.valueOf(disponibles));\r\n        uidconductor = getIntent().getExtras().getString(\"uidconductor\");\r\n        Log.i(\"IDCONDUCTOR:\",uidconductor);\r\n        reservas = (EditText)findViewById(R.id.campoReservas);\r\n        reservas.setText(res);\r\n        valorTotal = (EditText)findViewById(R.id.campoValorTotal);\r\n        ubicacionPasajero = (TextView)findViewById(R.id.tvUbicacionPasajero);\r\n        ubicacionPasajero.setText(direccion);\r\n        valorTotal.setEnabled(false);\r\n\r\n\r\n        Button botonCalcularViaje = (Button) findViewById(R.id.botonCalcularTotal);\r\n        botonCalcularViaje.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                int total = Integer.parseInt(reservas.getText().toString()) * Integer.parseInt(valor);\r\n                valorTotal.setText(String.valueOf(total));\r\n            }\r\n        });\r\n\r\n        Button buttonUbicacion = (Button)findViewById(R.id.buttonSeleccionarUbicacion);\r\n        buttonUbicacion.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent(v.getContext(), Activity_ReservarViaje_Maps.class);\r\n                Log.d(\"USPUEBA\", String.valueOf(disponibles));\r\n                String res = reservas.getText().toString();\r\n                intent.putExtra(\"reserva\", res);\r\n                intent.putExtra(\"uidconductor\", uidconductor);\r\n                intent.putExtra(\"precio\", valor);\r\n                intent.putExtra(\"Viaje\", IDViaje);\r\n                String dispo = String.valueOf(disponibles);\r\n                Log.d(\"USPUEBA\", dispo);\r\n                intent.putExtra(\"cuposDisponibles\", dispo);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n\r\n        Button botonReservar = (Button) findViewById(R.id.botonReservar);\r\n        botonReservar.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                agregarReservas();\r\n            }\r\n        });\r\n\r\n        Button botonCancelar = (Button) findViewById(R.id.cancelarReserva);\r\n        botonCancelar.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent( getBaseContext(), Activity_ExplorarViajes.class);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n    }\r\n\r\n    private boolean validateForm(){\r\n        boolean valid = true;\r\n        String disponible = reservas.getText().toString();\r\n        String valor = valorTotal.getText().toString();\r\n        String direccion = ubicacionPasajero.getText().toString();\r\n\r\n        if(TextUtils.isEmpty(disponible)){\r\n            reservas.setError(\"Requerido\");\r\n            valid = false;\r\n        }else{\r\n            reservas.setError(null);\r\n        }\r\n        if(TextUtils.isEmpty(valor)){\r\n            valorTotal.setError(\"Requerido\");\r\n            valid = false;\r\n        }else{\r\n            valorTotal.setError(null);\r\n        }\r\n        if(TextUtils.isEmpty(direccion)){\r\n            ubicacionPasajero.setError(\"Requerido\");\r\n            valid = false;\r\n        }else{\r\n            ubicacionPasajero.setError(null);\r\n        }\r\n        return valid;\r\n    }\r\n\r\n    private void agregarReservas(){\r\n        if(validateForm()) {\r\n            mRef = mDataBase.getReference(PathRoute);\r\n            double lati = Double.parseDouble(lat);\r\n            double longi = Double.parseDouble(lng);\r\n            correoUserAutenticado = mAuth.getCurrentUser().getEmail();\r\n            EditText res = (EditText) findViewById(R.id.campoReservas);\r\n            int reservas = Integer.parseInt(res.getText().toString());\r\n            if (disponibles != 0 && disponibles >= reservas) {\r\n                disponibles = disponibles - reservas;\r\n                mRef.child(IDViaje).child(\"cuposDisponibles\").setValue(disponibles);\r\n\r\n                mRef2 = FirebaseDatabase.getInstance().getReference(\"users/\");\r\n                mRef2.addValueEventListener(new ValueEventListener() {\r\n                    @Override\r\n                    public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                        for (DataSnapshot snap : snapshot.getChildren()) {\r\n                            String correo = snap.child(\"username\").getValue(String.class);\r\n                            if (correo.equals(correoUserAutenticado)) {\r\n                                //mRef.child(\"nombreConductor\").setValue(snap.child(\"name\").getValue(String.class));\r\n                                mRef.child(IDViaje).child(\"pasajeros\").child(mAuth.getUid()).child(\"nombre\").setValue(snap.child(\"name\").getValue(String.class));\r\n                                mRef.child(IDViaje).child(\"pasajeros\").child(mAuth.getUid()).child(\"cantidadReservas\").setValue(reservas);\r\n                                mRef.child(IDViaje).child(\"pasajeros\").child(mAuth.getUid()).child(\"latitude\").setValue(lati);\r\n                                mRef.child(IDViaje).child(\"pasajeros\").child(mAuth.getUid()).child(\"longitude\").setValue(longi);\r\n                                mRef2.child(mAuth.getUid()).child(\"viajeActivo\").setValue(\"true\");\r\n                                mRef2.child(uidconductor).child(\"viajeActivo\").setValue(\"true\");\r\n                            }\r\n                        }\r\n                    }\r\n\r\n                    @Override\r\n                    public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                    }\r\n                });\r\n            } else {\r\n                Toast.makeText(getBaseContext(), \"No fue posible reservas cupo(s)\", Toast.LENGTH_SHORT).show();\r\n            }\r\n            Intent intent = new Intent( getBaseContext(), Activity_Pago.class);\r\n            intent.putExtra(\"costo\", valorTotal.getText().toString());\r\n            intent.putExtra(\"llaveReserva\", IDViaje);\r\n            intent.putExtra(\"conductor\", uidconductor);\r\n            startActivity(intent);\r\n        }\r\n\r\n\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/u_vallet/Activity_Reservar_Viaje.java	(revision a473b62bd3b0d278c985d3808369061d849e5893)
++++ app/src/main/java/com/example/u_vallet/Activity_Reservar_Viaje.java	(date 1622488672752)
+@@ -2,8 +2,15 @@
+ 
+ import androidx.annotation.NonNull;
+ import androidx.appcompat.app.AppCompatActivity;
++import androidx.core.app.NotificationCompat;
++import androidx.core.app.NotificationManagerCompat;
+ 
++import android.app.NotificationChannel;
++import android.app.NotificationManager;
++import android.app.PendingIntent;
+ import android.content.Intent;
++import android.graphics.Color;
++import android.os.Build;
+ import android.os.Bundle;
+ import android.text.TextUtils;
+ import android.util.Log;
+@@ -30,6 +37,7 @@
+     private DatabaseReference mRef;
+     private DatabaseReference mRef2;
+     public static final String PathRoute = "routes/";
++    private static final String NOTIFICATION_CHANNEL = "NOTIFICATION";
+ 
+     String IDViaje;
+     private String correoUserAutenticado;
+@@ -98,6 +106,10 @@
+         botonReservar.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
++
++
++                createNotification();
++                createNotificationChannel();
+                 agregarReservas();
+             }
+         });
+@@ -111,6 +123,37 @@
+             }
+         });
+     }
++    private void createNotification(){
++        Intent reservaPasajero = new Intent(this, Activity_Mi_Viaje_Pasajero.class);
++        reservaPasajero.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
++        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, reservaPasajero, 0);
++        String notificationMessage = " Reservo el viaje exitosamente";
++        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);
++        notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
++        notificationBuilder.setContentTitle("NOTIFICACION DE PASAJERO");
++        notificationBuilder.setColor(Color.BLUE);
++        notificationBuilder.setContentText(notificationMessage);
++        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
++        notificationBuilder.setContentIntent(pendingIntent);
++        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
++        notificationManager.notify(0,notificationBuilder.build());
++    }
++    private void createNotificationChannel() {
++        // Create the NotificationChannel, but only on API 26+ because
++        // the NotificationChannel class is new and not in the support library
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
++            CharSequence name = "NOTIFICATION";
++            String description = "NOTIFICATION";
++            int importance = NotificationManager.IMPORTANCE_DEFAULT;
++            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, name, importance);
++            channel.setDescription(description);
++            // Register the channel with the system; you can't change the importance
++            // or other notification behaviors after this
++            NotificationManager notificationManager = (NotificationManager)getSystemService(NotificationManager.class);
++
++            notificationManager.createNotificationChannel(channel);
++        }
++    }
+ 
+     private boolean validateForm(){
+         boolean valid = true;
+@@ -182,6 +225,8 @@
+             intent.putExtra("llaveReserva", IDViaje);
+             intent.putExtra("conductor", uidconductor);
+             startActivity(intent);
++
++
+         }
+ 
+ 
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_8\" default=\"true\" project-jdk-name=\"1.8\" project-jdk-type=\"JavaSDK\" />\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision a473b62bd3b0d278c985d3808369061d849e5893)
++++ .idea/misc.xml	(date 1622482835641)
+@@ -1,4 +1,4 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
+ </project>
+\ No newline at end of file
+Index: .project
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .project	(date 1622490462518)
++++ .project	(date 1622490462518)
+@@ -0,0 +1,28 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<projectDescription>
++	<name>U-Vallet</name>
++	<comment>Project U-Vallet created by Buildship.</comment>
++	<projects>
++	</projects>
++	<buildSpec>
++		<buildCommand>
++			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++	</buildSpec>
++	<natures>
++		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
++	</natures>
++	<filteredResources>
++		<filter>
++			<id>1622490462490</id>
++			<name></name>
++			<type>30</type>
++			<matcher>
++				<id>org.eclipse.core.resources.regexFilterMatcher</id>
++				<arguments>node_modules|.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
++			</matcher>
++		</filter>
++	</filteredResources>
++</projectDescription>
+Index: .settings/org.eclipse.buildship.core.prefs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .settings/org.eclipse.buildship.core.prefs	(date 1622490408241)
++++ .settings/org.eclipse.buildship.core.prefs	(date 1622490408241)
+@@ -0,0 +1,13 @@
++arguments=
++auto.sync=false
++build.scans.enabled=false
++connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
++connection.project.dir=
++eclipse.preferences.version=1
++gradle.user.home=
++java.home=C\:/Program Files/Java/jdk-13
++jvm.arguments=
++offline.mode=false
++override.workspace.settings=true
++show.console.view=true
++show.executions.view=true
+Index: .idea/shelf/Uncommitted_changes_before_Update_at_31_05_2021_12_39_p__m__[Default_Changelist]/shelved.patch
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/shelf/Uncommitted_changes_before_Update_at_31_05_2021_12_39_p__m__[Default_Changelist]/shelved.patch	(date 1622482778295)
++++ .idea/shelf/Uncommitted_changes_before_Update_at_31_05_2021_12_39_p__m__[Default_Changelist]/shelved.patch	(date 1622482778295)
+@@ -0,0 +1,212 @@
++Index: app/src/main/java/com/example/u_vallet/Activity_ExplorarViajes.java
++IDEA additional info:
++Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
++<+>package com.example.u_vallet;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.BaseAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.ListView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class Activity_ExplorarViajes extends AppCompatActivity {\r\n    //----------------------------------------------\r\n    //----------------  Attributes  ----------------\r\n    //----------------------------------------------\r\n    private ArrayList<Viaje> ActiveTrips = new ArrayList<>();\r\n    private ArrayList<String> idRutas = new ArrayList<>();\r\n    private FirebaseAuth mAuth;\r\n    private FirebaseDatabase mDataBase;\r\n    private DatabaseReference mRef;\r\n    private DatabaseReference mRef2;\r\n    public static final String PathRoute = \"routes/\";\r\n    private String correoUserAutenticado;\r\n\r\n    //----------------------------------------------\r\n    //-----------------  On Create  ----------------\r\n    //----------------------------------------------\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_explorar_viajes);\r\n\r\n        mAuth = FirebaseAuth.getInstance();\r\n        mDataBase = FirebaseDatabase.getInstance();\r\n\r\n        // Get all active trips from DB\r\n        getRoutesFromDB();\r\n\r\n\r\n\r\n        Button botonMiViaje = (Button) findViewById(R.id.buttonCrearViajeMC3);\r\n\r\n        botonMiViaje.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                correoUserAutenticado = mAuth.getCurrentUser().getEmail();\r\n                mRef2 = FirebaseDatabase.getInstance().getReference(\"users/\");\r\n                mRef2.addValueEventListener(new ValueEventListener() {\r\n                    @Override\r\n                    public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                        for(DataSnapshot snap :snapshot.getChildren() ){\r\n                            String correo = snap.child(\"username\").getValue(String.class);\r\n                            if(correo.equals(correoUserAutenticado)){\r\n                                try {\r\n                                    String viajeactivo = snap.child(\"viajeActivo\").getValue(String.class);\r\n                                    if(viajeactivo.equals(\"true\")){\r\n                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero.class);\r\n                                        startActivity(intentMiViaje);\r\n                                    }else{\r\n                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero_Alterantivo.class);\r\n                                        startActivity(intentMiViaje);\r\n                                    }\r\n                                }catch (Exception e){\r\n                                    Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero_Alterantivo.class);\r\n                                    startActivity(intentMiViaje);\r\n                                }\r\n\r\n                            }\r\n                        }\r\n                    }\r\n\r\n                    @Override\r\n                    public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                    }\r\n                });\r\n\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    //----------------------------------------------\r\n    //--------- Methods that involves DB -----------\r\n    //----------------------------------------------\r\n\r\n    private void getRoutesFromDB(){\r\n        mRef = mDataBase.getReference(PathRoute);\r\n        mRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                int size = ActiveTrips.size();\r\n                for(DataSnapshot singlesnapshot : snapshot.getChildren() ){\r\n                    Viaje viaje = new Viaje();\r\n                    String status =  singlesnapshot.child(\"status\").getValue(String.class);\r\n                    String uidConductor =  singlesnapshot.child(\"uidConductor\").getValue(String.class);\r\n\r\n\r\n                    String key = singlesnapshot.child(\"key\").getValue(String.class);;\r\n                    if(status.equals(\"active\") && !uidConductor.equals(mAuth.getUid()) && !idRutas.contains(key)){\r\n\r\n                        String origen = singlesnapshot.child(\"originDirection\").getValue(String.class);\r\n                        String nombreConductor = singlesnapshot.child(\"nombreConductor\").getValue(String.class);\r\n                        String destino = singlesnapshot.child(\"destinationDirection\").getValue(String.class);\r\n                        String marca = singlesnapshot.child(\"carro\").child(\"marca\").getValue(String.class);\r\n                        String placa = singlesnapshot.child(\"carro\").child(\"placa\").getValue(String.class);\r\n                        Integer valorCupo = singlesnapshot.child(\"valorViaje\").getValue(Integer.class);\r\n                        Integer capacidad = singlesnapshot.child(\"cuposDisponibles\").getValue(Integer.class);\r\n                        String puntoEncuentro = singlesnapshot.child(\"puntoEncuentro\").getValue(String.class);\r\n                        String hora = singlesnapshot.child(\"horaViaje\").getValue(String.class);\r\n                        if(capacidad > 0) {\r\n                            viaje.setIdConductor(uidConductor);\r\n                            viaje.setIdViaje(key);\r\n                            viaje.setNombreDelConductor(nombreConductor);\r\n                            viaje.setOrigen(origen);\r\n                            viaje.setDestino(destino);\r\n                            viaje.setMarca(marca);\r\n                            viaje.setPlaca(placa);\r\n                            viaje.setValorCupo(valorCupo);\r\n                            viaje.setCapacidad(capacidad);\r\n                            viaje.setPuntoEncuentro(puntoEncuentro);\r\n                            viaje.setHora(hora);\r\n                            ActiveTrips.add(viaje);\r\n                            idRutas.add(key);\r\n                        }\r\n                    }\r\n                }\r\n\r\n                if(size != ActiveTrips.size()){\r\n                    // Create the custom adapter for the trips\r\n                    TripsCustomAdapter tripsAdapter = new TripsCustomAdapter();\r\n                    // Create and bind list view with TripsCustomAdapter\r\n                    ListView tripsListView = (ListView) findViewById(R.id.Trips_ListView);\r\n                    tripsListView.setAdapter(tripsAdapter);\r\n                }\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    //----------------------------------------------\r\n    //------------ Methods for the menu ------------\r\n    //----------------------------------------------\r\n    @Override\r\n    public boolean onCreateOptionsMenu(Menu menu){\r\n        getMenuInflater().inflate(R.menu.activity__navegation, menu);\r\n        return true;\r\n    }\r\n    @Override\r\n    public boolean onOptionsItemSelected(MenuItem item){\r\n        int itemClicked = item.getItemId();\r\n        if(itemClicked == R.id.menuCambiarRol){\r\n            Intent intent = new Intent(this, Activity_Roles.class);\r\n            startActivity(intent);\r\n        }else if (itemClicked == R.id.menuEditarPerfil){\r\n            Intent intent = new Intent( this, Activity_EditarPerfil.class);\r\n            startActivity(intent);\r\n        }else if(itemClicked == R.id.menuLogOut){\r\n            FirebaseAuth.getInstance().signOut();\r\n            Intent intent = new Intent( this, Activity_Login.class);\r\n            startActivity(intent);\r\n        }\r\n        return super.onOptionsItemSelected(item);\r\n    }\r\n\r\n\r\n    //----------------------------------------------\r\n    //--------   Custom adapter for trips  ---------\r\n    //----------------------------------------------\r\n    class TripsCustomAdapter extends BaseAdapter {\r\n\r\n        @Override\r\n        public int getCount() {\r\n            return ActiveTrips.size();\r\n        }\r\n\r\n        @Override\r\n        public Object getItem(int position) {\r\n            return ActiveTrips.get(position);\r\n        }\r\n\r\n        @Override\r\n        public long getItemId(int position) {\r\n            return 0;\r\n        }\r\n\r\n        @Override\r\n        public View getView(int position, View convertView, ViewGroup parent) {\r\n            //\r\n            convertView = getLayoutInflater().inflate(R.layout.listview_viaje, null);\r\n            // Get information fields of the view\r\n            TextView driverName = (TextView) convertView.findViewById(R.id.Driver_Name);\r\n            TextView originDirection = (TextView) convertView.findViewById(R.id.Origin_Direction);\r\n            TextView destinyDirection = (TextView) convertView.findViewById(R.id.Destiny_Direction);\r\n            TextView carBrand = (TextView) convertView.findViewById(R.id.Car_Brand);\r\n            TextView carPlate = (TextView) convertView.findViewById(R.id.Car_Plate);\r\n            TextView cuposDisponibles = (TextView)   convertView.findViewById(R.id.cupos);\r\n            TextView valorCupo = (TextView)   convertView.findViewById(R.id.valorCupo);\r\n            TextView puntoEncuentro = (TextView)   convertView.findViewById(R.id.puntEncuentro);\r\n            TextView hora = (TextView)   convertView.findViewById(R.id.hora);\r\n            // Set information to the view\r\n            driverName.setText(ActiveTrips.get(position).NombreDelConductor);\r\n            originDirection.setText(ActiveTrips.get(position).origen);\r\n            destinyDirection.setText(ActiveTrips.get(position).destino);\r\n            carBrand.setText(ActiveTrips.get(position).marca);\r\n            carPlate.setText(ActiveTrips.get(position).placa);\r\n            cuposDisponibles.setText(String.valueOf(ActiveTrips.get(position).capacidad));\r\n            valorCupo.setText(String.valueOf(ActiveTrips.get(position).valorCupo));\r\n            puntoEncuentro.setText(ActiveTrips.get(position).puntoEncuentro);\r\n            hora.setText(ActiveTrips.get(position).hora);\r\n\r\n            // Set event listeners to the buttons\r\n            Button seeRoute = (Button) convertView.findViewById(R.id.Button_See_Route);\r\n            Button reserveTrip = (Button) convertView.findViewById(R.id.Button_Reserve_Trip);\r\n            seeRoute.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View v) {\r\n                    Intent mapIntent = new Intent(getBaseContext(), Activity_Pasajero_RutaViaje_Maps.class);\r\n                    mapIntent.putExtra(\"PasajeroKey\", ActiveTrips.get(position).getIdViaje());\r\n                    startActivity(mapIntent);\r\n                }\r\n            });\r\n            reserveTrip.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View v) {\r\n                    correoUserAutenticado = mAuth.getCurrentUser().getEmail();\r\n                    mRef2 = FirebaseDatabase.getInstance().getReference(\"users/\");\r\n                    mRef2.addValueEventListener(new ValueEventListener() {\r\n                        @Override\r\n                        public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                            for(DataSnapshot snap :snapshot.getChildren() ){\r\n                                String correo = snap.child(\"username\").getValue(String.class);\r\n                                if(correo.equals(correoUserAutenticado)){\r\n                                    try {\r\n                                        String viajeactivo = snap.child(\"viajeActivo\").getValue(String.class);\r\n                                        if(viajeactivo.equals(\"true\")){\r\n                                            Toast.makeText(getBaseContext(), \"usted ya tiene un viaje reservado\", Toast.LENGTH_SHORT).show();\r\n                                        }else{\r\n                                            Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);\r\n                                            intent.putExtra(\"direccion\", \"\");\r\n                                            intent.putExtra(\"Lat\", \"\");\r\n                                            intent.putExtra(\"Lng\", \"\");\r\n                                            intent.putExtra(\"reserva\",\"\");\r\n                                            intent.putExtra(\"precio\",valorCupo.getText().toString());\r\n                                            intent.putExtra(\"idviaje\", ActiveTrips.get(position).getIdViaje());\r\n                                            intent.putExtra(\"cuposDisponibles\",cuposDisponibles.getText().toString());\r\n                                            intent.putExtra(\"uidconductor\",ActiveTrips.get(position).getIdConductor());\r\n                                            startActivity(intent);\r\n                                        }\r\n                                    }catch (Exception e){\r\n                                        Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);\r\n                                        intent.putExtra(\"direccion\", \"\");\r\n                                        intent.putExtra(\"Lat\", \"\");\r\n                                        intent.putExtra(\"Lng\", \"\");\r\n                                        intent.putExtra(\"reserva\",\"\");\r\n                                        intent.putExtra(\"precio\",valorCupo.getText().toString());\r\n                                        intent.putExtra(\"idviaje\", ActiveTrips.get(position).getIdViaje());\r\n                                        intent.putExtra(\"cuposDisponibles\",cuposDisponibles.getText().toString());\r\n                                        intent.putExtra(\"uidconductor\",ActiveTrips.get(position).getIdConductor());\r\n                                        startActivity(intent);\r\n                                    }\r\n\r\n                                }\r\n                            }\r\n                        }\r\n\r\n                        @Override\r\n                        public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                        }\r\n                    });\r\n                }\r\n            });\r\n\r\n            // Return view\r\n            return convertView;\r\n        }\r\n    }\r\n\r\n}
++Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
++<+>UTF-8
++===================================================================
++--- app/src/main/java/com/example/u_vallet/Activity_ExplorarViajes.java	(revision 1f4a2dee42c4bbe4e95e994030f39de9be7e47d5)
+++++ app/src/main/java/com/example/u_vallet/Activity_ExplorarViajes.java	(date 1622478954245)
++@@ -23,6 +23,8 @@
++ import com.google.firebase.database.FirebaseDatabase;
++ import com.google.firebase.database.ValueEventListener;
++ 
+++import org.jetbrains.annotations.NotNull;
+++
++ import java.util.ArrayList;
++ 
++ public class Activity_ExplorarViajes extends AppCompatActivity {
++@@ -38,6 +40,7 @@
++     public static final String PathRoute = "routes/";
++     private String correoUserAutenticado;
++ 
+++
++     //----------------------------------------------
++     //-----------------  On Create  ----------------
++     //----------------------------------------------
++@@ -94,6 +97,7 @@
++             }
++         });
++ 
+++
++     }
++ 
++     //----------------------------------------------
++@@ -159,6 +163,8 @@
++         });
++     }
++ 
+++
+++
++     //----------------------------------------------
++     //------------ Methods for the menu ------------
++     //----------------------------------------------
++Index: app/src/main/java/com/example/u_vallet/Activity_Mi_Viaje_Pasajero.java
++IDEA additional info:
++Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
++<+>package com.example.u_vallet;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.TextView;\r\n\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {\r\n    //------------------------------------------------\r\n    //                  Attributes\r\n    //------------------------------------------------\r\n    // Form fields\r\n    private TextView idViaje;\r\n    private TextView origen;\r\n    private TextView destino;\r\n    private TextView puntoPartida;\r\n    private TextView horaPartida;\r\n    // Firebase\r\n    private FirebaseAuth userAuth;\r\n    private String currentUserId;\r\n    private DatabaseReference mDatabase;\r\n    // Intent\r\n    String tripReservationUid;\r\n\r\n    //------------------------------------------------\r\n    //                  On Create\r\n    //------------------------------------------------\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity__mi__viaje__pasajero);\r\n\r\n        //----------------- Intent -----------------\r\n        tripReservationUid = \"-Mb-xsX7tvsQ8AiR6K2c\";// getIntent().getStringExtra(\"llaveReserva\");\r\n\r\n        //----------------- Firebase -----------------\r\n        mDatabase = FirebaseDatabase.getInstance().getReference(\"routes\").child(tripReservationUid);\r\n\r\n        //----------------- Form fields -----------------\r\n        idViaje = findViewById(R.id.miViajeIDText);\r\n        origen = findViewById(R.id.viajeOrigenText);\r\n        destino = findViewById(R.id.miViajeDestinoText);\r\n        puntoPartida = findViewById(R.id.editPuntoPartida);\r\n        horaPartida = findViewById(R.id.editHoraPartida);\r\n\r\n        //----------------- Fill form fields -----------------\r\n        ValueEventListener routeListener = new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(DataSnapshot dataSnapshot) {\r\n                // Get Reservation details\r\n                String _origen = dataSnapshot.child(\"originDirection\").getValue( String.class );\r\n                String _destino = dataSnapshot.child(\"destinationDirection\").getValue( String.class );\r\n                String _puntoPartida = dataSnapshot.child(\"puntoEncuentro\").getValue( String.class );\r\n                String _horaPartida = dataSnapshot.child(\"horaViaje\").getValue( String.class );\r\n                // Set values to form fields\r\n                idViaje.setText( tripReservationUid );\r\n                origen.setText( _origen );\r\n                destino.setText( _destino );\r\n                puntoPartida.setText( _puntoPartida );\r\n                horaPartida.setText( _horaPartida );\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(DatabaseError databaseError) {\r\n                // Getting Post failed, log a message\r\n                Log.i(\"loadPost:onCancelled\", databaseError.toException().toString());\r\n            }\r\n        };\r\n        mDatabase.addValueEventListener(routeListener);\r\n\r\n        //----------------- Button -----------------\r\n        Button ExplorarViaje = findViewById(R.id.buttonMiViajeMV4);\r\n        ExplorarViaje.setOnClickListener(v -> {\r\n            Intent intentCrearViaje = new Intent(v.getContext(), Activity_ExplorarViajes.class);\r\n            startActivity(intentCrearViaje);\r\n        });\r\n    }\r\n\r\n    //------------------------------------------------\r\n    //                  Menu\r\n    //------------------------------------------------\r\n    @Override\r\n    public boolean onCreateOptionsMenu(Menu menu){\r\n        getMenuInflater().inflate(R.menu.activity__navegation, menu);\r\n        return true;\r\n    }\r\n\r\n    @Override\r\n    public boolean onOptionsItemSelected(MenuItem item){\r\n        int itemClicked = item.getItemId();\r\n        if(itemClicked == R.id.menuCambiarRol){\r\n            Intent intent = new Intent(this, Activity_Roles.class);\r\n            startActivity(intent);\r\n        }else if (itemClicked == R.id.menuEditarPerfil){\r\n            Intent intent = new Intent( this, Activity_EditarPerfil.class);\r\n            startActivity(intent);\r\n        }\r\n        return super.onOptionsItemSelected(item);\r\n    }\r\n\r\n}
++Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
++<+>UTF-8
++===================================================================
++--- app/src/main/java/com/example/u_vallet/Activity_Mi_Viaje_Pasajero.java	(revision 1f4a2dee42c4bbe4e95e994030f39de9be7e47d5)
+++++ app/src/main/java/com/example/u_vallet/Activity_Mi_Viaje_Pasajero.java	(date 1622482429746)
++@@ -2,8 +2,15 @@
++ 
++ import androidx.annotation.NonNull;
++ import androidx.appcompat.app.AppCompatActivity;
+++import androidx.core.app.NotificationCompat;
+++import androidx.core.app.NotificationManagerCompat;
++ 
+++import android.app.NotificationChannel;
+++import android.app.NotificationManager;
+++import android.app.PendingIntent;
++ import android.content.Intent;
+++import android.graphics.Color;
+++import android.os.Build;
++ import android.os.Bundle;
++ import android.util.Log;
++ import android.view.Menu;
++@@ -21,6 +28,7 @@
++ import com.google.firebase.database.FirebaseDatabase;
++ import com.google.firebase.database.ValueEventListener;
++ 
+++import org.jetbrains.annotations.NotNull;
++ import org.json.JSONException;
++ import org.json.JSONObject;
++ 
++@@ -40,9 +48,14 @@
++     private FirebaseAuth userAuth;
++     private String currentUserId;
++     private DatabaseReference mDatabase;
+++    private Ruta ruta;
+++    private String newStatus ;
+++    private DatabaseReference mRef3;
++     // Intent
++     String tripReservationUid;
++ 
+++    private static final String NOTIFICATION_CHANNEL = "NOTIFICATION";
+++
++     //------------------------------------------------
++     //                  On Create
++     //------------------------------------------------
++@@ -52,7 +65,8 @@
++         setContentView(R.layout.activity__mi__viaje__pasajero);
++ 
++         //----------------- Intent -----------------
++-        tripReservationUid = "-Mb-xsX7tvsQ8AiR6K2c";// getIntent().getStringExtra("llaveReserva");
+++        tripReservationUid = getIntent().getStringExtra("llaveReserva");
+++        System.out.println("LA LLAVE ES:" + tripReservationUid);
++ 
++         //----------------- Firebase -----------------
++         mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid);
++@@ -95,7 +109,86 @@
++             Intent intentCrearViaje = new Intent(v.getContext(), Activity_ExplorarViajes.class);
++             startActivity(intentCrearViaje);
++         });
+++        createNotificationChannel();
+++        mRef3 = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid);
+++        ValueEventListener pasajeroInicioViajeListener = new ValueEventListener() {
+++            @Override
+++            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+++
+++
+++                Boolean shouldStartLocationActivity = shouldCreateNotification(snapshot);
+++                Log.i("STATE:", "INDEX ... " + String.valueOf(shouldStartLocationActivity));
+++                Log.i("ENTRO2", "ENTRO DESPUES");
+++                if (shouldStartLocationActivity == true) {
+++                    Log.i("ENTRO3", "ENTRE AL PRIMER IF");
+++                    Log.i("STATE", "USER CHANGED ITS STATUS");
+++                    createNotificaion();
+++                }
+++            }
+++
+++            @Override
+++            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+++
+++            }
+++        };
+++        mRef3.addValueEventListener(pasajeroInicioViajeListener);
+++
++     }
+++    //------------------------------------------------
+++    //                  BD
+++    //------------------------------------------------
+++    private Boolean shouldCreateNotification(DataSnapshot snapshot) {
+++
+++        newStatus = snapshot.child("status").getValue(String.class);
+++
+++        if (newStatus.equals("on course")){
+++            System.out.println("ENTRO A SHOULD Y EN TRUE");
+++            return true;
+++        }
+++        System.out.println("ENTRO A SHOULD Y EN FALSO");
+++        return false;
+++    }
+++    private void createNotificaion() {
+++
+++        // Create an explicit intent for an Activity in your app
+++        Intent showUserLocation = new Intent(this, Activity_ViajeEnCurso_Maps.class);
+++
+++
+++        showUserLocation.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+++        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, showUserLocation, 0);
+++
+++        String notificationMessage = "Su viaje ha iniciado";
+++        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);
+++        notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
+++        notificationBuilder.setContentTitle("NOTIFICACION DE USUARIO");
+++        notificationBuilder.setColor(Color.BLUE);
+++        notificationBuilder.setContentText(notificationMessage);
+++        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+++        // Set the intent that will fire when the user taps the notification
+++        notificationBuilder.setContentIntent(pendingIntent);
+++        notificationBuilder.setAutoCancel(true);
+++        System.out.println("CREO LA NOTIFICACIÓN");
+++        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+++        notificationManager.notify(0,notificationBuilder.build());
+++
+++    }
+++
+++    private void createNotificationChannel() {
+++        // Create the NotificationChannel, but only on API 26+ because
+++        // the NotificationChannel class is new and not in the support library
+++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+++            CharSequence name = "NOTIFICATION";
+++            String description = "NOTIFICATION";
+++            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+++            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, name, importance);
+++            channel.setDescription(description);
+++            // Register the channel with the system; you can't change the importance
+++            // or other notification behaviors after this
+++            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+++            notificationManager.createNotificationChannel(channel);
+++        }
+++    }
+++
++ 
++     //------------------------------------------------
++     //                  Menu
++Index: app/src/main/java/com/example/u_vallet/Activity_Reservar_Viaje.java
++IDEA additional info:
++Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
++<+>package com.example.u_vallet;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.text.TextUtils;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class Activity_Reservar_Viaje extends AppCompatActivity {\r\n\r\n    private ArrayList<Viaje> viajes = new ArrayList<>();\r\n    private FirebaseAuth mAuth;\r\n    private FirebaseDatabase mDataBase;\r\n    private DatabaseReference mRef;\r\n    private DatabaseReference mRef2;\r\n    public static final String PathRoute = \"routes/\";\r\n\r\n    String IDViaje;\r\n    private String correoUserAutenticado;\r\n    private int disponibles;\r\n    private String uidconductor;\r\n    EditText reservas;\r\n    TextView ubicacionPasajero;\r\n    EditText valorTotal;\r\n    String lat;\r\n    String lng;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity__reservar__viaje);\r\n\r\n        mAuth = FirebaseAuth.getInstance();\r\n        mDataBase = FirebaseDatabase.getInstance();\r\n        String direccion = getIntent().getExtras().getString(\"direccion\");\r\n        lat = getIntent().getExtras().getString(\"Lat\");\r\n        lng = getIntent().getExtras().getString(\"Lng\");\r\n        Log.d(\"USPRUEBAF\", String.valueOf(lat) + \"/\"+String.valueOf(lng));\r\n        String valor = getIntent().getExtras().getString(\"precio\");\r\n        String res = getIntent().getExtras().getString(\"reserva\");\r\n        IDViaje = getIntent().getExtras().getString(\"idviaje\");\r\n        disponibles = Integer.parseInt(getIntent().getExtras().getString(\"cuposDisponibles\"));\r\n        Log.d(\"USPUEBA\", \"Disponibles:\" + String.valueOf(disponibles));\r\n        uidconductor = getIntent().getExtras().getString(\"uidconductor\");\r\n        Log.i(\"IDCONDUCTOR:\",uidconductor);\r\n        reservas = (EditText)findViewById(R.id.campoReservas);\r\n        reservas.setText(res);\r\n        valorTotal = (EditText)findViewById(R.id.campoValorTotal);\r\n        ubicacionPasajero = (TextView)findViewById(R.id.tvUbicacionPasajero);\r\n        ubicacionPasajero.setText(direccion);\r\n        valorTotal.setEnabled(false);\r\n\r\n\r\n        Button botonCalcularViaje = (Button) findViewById(R.id.botonCalcularTotal);\r\n        botonCalcularViaje.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                int total = Integer.parseInt(reservas.getText().toString()) * Integer.parseInt(valor);\r\n                valorTotal.setText(String.valueOf(total));\r\n            }\r\n        });\r\n\r\n        Button buttonUbicacion = (Button)findViewById(R.id.buttonSeleccionarUbicacion);\r\n        buttonUbicacion.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent(v.getContext(), Activity_ReservarViaje_Maps.class);\r\n                Log.d(\"USPUEBA\", String.valueOf(disponibles));\r\n                String res = reservas.getText().toString();\r\n                intent.putExtra(\"reserva\", res);\r\n                intent.putExtra(\"uidconductor\", uidconductor);\r\n                intent.putExtra(\"precio\", valor);\r\n                intent.putExtra(\"Viaje\", IDViaje);\r\n                String dispo = String.valueOf(disponibles);\r\n                Log.d(\"USPUEBA\", dispo);\r\n                intent.putExtra(\"cuposDisponibles\", dispo);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n\r\n        Button botonReservar = (Button) findViewById(R.id.botonReservar);\r\n        botonReservar.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                agregarReservas();\r\n            }\r\n        });\r\n\r\n        Button botonCancelar = (Button) findViewById(R.id.cancelarReserva);\r\n        botonCancelar.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent( getBaseContext(), Activity_ExplorarViajes.class);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n    }\r\n\r\n    private boolean validateForm(){\r\n        boolean valid = true;\r\n        String disponible = reservas.getText().toString();\r\n        String valor = valorTotal.getText().toString();\r\n        String direccion = ubicacionPasajero.getText().toString();\r\n\r\n        if(TextUtils.isEmpty(disponible)){\r\n            reservas.setError(\"Requerido\");\r\n            valid = false;\r\n        }else{\r\n            reservas.setError(null);\r\n        }\r\n        if(TextUtils.isEmpty(valor)){\r\n            valorTotal.setError(\"Requerido\");\r\n            valid = false;\r\n        }else{\r\n            valorTotal.setError(null);\r\n        }\r\n        if(TextUtils.isEmpty(direccion)){\r\n            ubicacionPasajero.setError(\"Requerido\");\r\n            valid = false;\r\n        }else{\r\n            ubicacionPasajero.setError(null);\r\n        }\r\n        return valid;\r\n    }\r\n\r\n    private void agregarReservas(){\r\n        if(validateForm()) {\r\n            mRef = mDataBase.getReference(PathRoute);\r\n            double lati = Double.parseDouble(lat);\r\n            double longi = Double.parseDouble(lng);\r\n            correoUserAutenticado = mAuth.getCurrentUser().getEmail();\r\n            EditText res = (EditText) findViewById(R.id.campoReservas);\r\n            int reservas = Integer.parseInt(res.getText().toString());\r\n            if (disponibles != 0 && disponibles >= reservas) {\r\n                disponibles = disponibles - reservas;\r\n                mRef.child(IDViaje).child(\"cuposDisponibles\").setValue(disponibles);\r\n\r\n                mRef2 = FirebaseDatabase.getInstance().getReference(\"users/\");\r\n                mRef2.addValueEventListener(new ValueEventListener() {\r\n                    @Override\r\n                    public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                        for (DataSnapshot snap : snapshot.getChildren()) {\r\n                            String correo = snap.child(\"username\").getValue(String.class);\r\n                            if (correo.equals(correoUserAutenticado)) {\r\n                                //mRef.child(\"nombreConductor\").setValue(snap.child(\"name\").getValue(String.class));\r\n                                mRef.child(IDViaje).child(\"pasajeros\").child(mAuth.getUid()).child(\"nombre\").setValue(snap.child(\"name\").getValue(String.class));\r\n                                mRef.child(IDViaje).child(\"pasajeros\").child(mAuth.getUid()).child(\"cantidadReservas\").setValue(reservas);\r\n                                mRef.child(IDViaje).child(\"pasajeros\").child(mAuth.getUid()).child(\"latitude\").setValue(lati);\r\n                                mRef.child(IDViaje).child(\"pasajeros\").child(mAuth.getUid()).child(\"longitude\").setValue(longi);\r\n                                mRef2.child(mAuth.getUid()).child(\"viajeActivo\").setValue(\"true\");\r\n                                mRef2.child(uidconductor).child(\"viajeActivo\").setValue(\"true\");\r\n                            }\r\n                        }\r\n                    }\r\n\r\n                    @Override\r\n                    public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                    }\r\n                });\r\n            } else {\r\n                Toast.makeText(getBaseContext(), \"No fue posible reservas cupo(s)\", Toast.LENGTH_SHORT).show();\r\n            }\r\n            Intent intent = new Intent( getBaseContext(), Activity_Mi_Viaje_Pasajero.class);\r\n            startActivity(intent);\r\n        }\r\n\r\n\r\n\r\n    }\r\n}
++Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
++<+>UTF-8
++===================================================================
++--- app/src/main/java/com/example/u_vallet/Activity_Reservar_Viaje.java	(revision 1f4a2dee42c4bbe4e95e994030f39de9be7e47d5)
+++++ app/src/main/java/com/example/u_vallet/Activity_Reservar_Viaje.java	(date 1622482770824)
++@@ -177,8 +177,13 @@
++             } else {
++                 Toast.makeText(getBaseContext(), "No fue posible reservas cupo(s)", Toast.LENGTH_SHORT).show();
++             }
++-            Intent intent = new Intent( getBaseContext(), Activity_Mi_Viaje_Pasajero.class);
+++            Intent intent = new Intent( getBaseContext(), Activity_Pago.class);
+++            intent.putExtra("costo", valorTotal.getText().toString());
+++            intent.putExtra("llaveReserva", IDViaje);
+++            intent.putExtra("conductor", uidconductor);
++             startActivity(intent);
+++
+++
++         }
++ 
++ 
+Index: app/src/main/java/com/example/u_vallet/Activity_ExplorarViajes.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.u_vallet;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.BaseAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.ListView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class Activity_ExplorarViajes extends AppCompatActivity {\r\n    //----------------------------------------------\r\n    //----------------  Attributes  ----------------\r\n    //----------------------------------------------\r\n    private ArrayList<Viaje> ActiveTrips = new ArrayList<>();\r\n    private ArrayList<String> idRutas = new ArrayList<>();\r\n    private FirebaseAuth mAuth;\r\n    private FirebaseDatabase mDataBase;\r\n    private DatabaseReference mRef;\r\n    private DatabaseReference mRef2;\r\n    public static final String PathRoute = \"routes/\";\r\n    private String correoUserAutenticado;\r\n\r\n    //----------------------------------------------\r\n    //-----------------  On Create  ----------------\r\n    //----------------------------------------------\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_explorar_viajes);\r\n\r\n        mAuth = FirebaseAuth.getInstance();\r\n        mDataBase = FirebaseDatabase.getInstance();\r\n\r\n        // Get all active trips from DB\r\n        getRoutesFromDB();\r\n\r\n\r\n\r\n        Button botonMiViaje = (Button) findViewById(R.id.buttonCrearViajeMC3);\r\n\r\n        botonMiViaje.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                correoUserAutenticado = mAuth.getCurrentUser().getEmail();\r\n                mRef2 = FirebaseDatabase.getInstance().getReference(\"users/\");\r\n                mRef2.addValueEventListener(new ValueEventListener() {\r\n                    @Override\r\n                    public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                        for(DataSnapshot snap :snapshot.getChildren() ){\r\n                            String correo = snap.child(\"username\").getValue(String.class);\r\n                            if(correo.equals(correoUserAutenticado)){\r\n                                try {\r\n                                    String viajeactivo = snap.child(\"viajeActivo\").getValue(String.class);\r\n                                    if(viajeactivo.equals(\"true\")){\r\n                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero.class);\r\n                                        startActivity(intentMiViaje);\r\n                                    }else{\r\n                                        Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero_Alterantivo.class);\r\n                                        startActivity(intentMiViaje);\r\n                                    }\r\n                                }catch (Exception e){\r\n                                    Intent intentMiViaje = new Intent(v.getContext(), Activity_Mi_Viaje_Pasajero_Alterantivo.class);\r\n                                    startActivity(intentMiViaje);\r\n                                }\r\n\r\n                            }\r\n                        }\r\n                    }\r\n\r\n                    @Override\r\n                    public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                    }\r\n                });\r\n\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    //----------------------------------------------\r\n    //--------- Methods that involves DB -----------\r\n    //----------------------------------------------\r\n\r\n    private void getRoutesFromDB(){\r\n        mRef = mDataBase.getReference(PathRoute);\r\n        mRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                int size = ActiveTrips.size();\r\n                for(DataSnapshot singlesnapshot : snapshot.getChildren() ){\r\n                    Viaje viaje = new Viaje();\r\n                    String status =  singlesnapshot.child(\"status\").getValue(String.class);\r\n                    String uidConductor =  singlesnapshot.child(\"uidConductor\").getValue(String.class);\r\n\r\n\r\n                    String key = singlesnapshot.child(\"key\").getValue(String.class);;\r\n                    if(status.equals(\"active\") && !uidConductor.equals(mAuth.getUid()) && !idRutas.contains(key)){\r\n\r\n                        String origen = singlesnapshot.child(\"originDirection\").getValue(String.class);\r\n                        String nombreConductor = singlesnapshot.child(\"nombreConductor\").getValue(String.class);\r\n                        String destino = singlesnapshot.child(\"destinationDirection\").getValue(String.class);\r\n                        String marca = singlesnapshot.child(\"carro\").child(\"marca\").getValue(String.class);\r\n                        String placa = singlesnapshot.child(\"carro\").child(\"placa\").getValue(String.class);\r\n                        Integer valorCupo = singlesnapshot.child(\"valorViaje\").getValue(Integer.class);\r\n                        Integer capacidad = singlesnapshot.child(\"cuposDisponibles\").getValue(Integer.class);\r\n                        String puntoEncuentro = singlesnapshot.child(\"puntoEncuentro\").getValue(String.class);\r\n                        String hora = singlesnapshot.child(\"horaViaje\").getValue(String.class);\r\n                        if(capacidad > 0) {\r\n                            viaje.setIdConductor(uidConductor);\r\n                            viaje.setIdViaje(key);\r\n                            viaje.setNombreDelConductor(nombreConductor);\r\n                            viaje.setOrigen(origen);\r\n                            viaje.setDestino(destino);\r\n                            viaje.setMarca(marca);\r\n                            viaje.setPlaca(placa);\r\n                            viaje.setValorCupo(valorCupo);\r\n                            viaje.setCapacidad(capacidad);\r\n                            viaje.setPuntoEncuentro(puntoEncuentro);\r\n                            viaje.setHora(hora);\r\n                            ActiveTrips.add(viaje);\r\n                            idRutas.add(key);\r\n                        }\r\n                    }\r\n                }\r\n\r\n                if(size != ActiveTrips.size()){\r\n                    // Create the custom adapter for the trips\r\n                    TripsCustomAdapter tripsAdapter = new TripsCustomAdapter();\r\n                    // Create and bind list view with TripsCustomAdapter\r\n                    ListView tripsListView = (ListView) findViewById(R.id.Trips_ListView);\r\n                    tripsListView.setAdapter(tripsAdapter);\r\n                }\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    //----------------------------------------------\r\n    //------------ Methods for the menu ------------\r\n    //----------------------------------------------\r\n    @Override\r\n    public boolean onCreateOptionsMenu(Menu menu){\r\n        getMenuInflater().inflate(R.menu.activity__navegation, menu);\r\n        return true;\r\n    }\r\n    @Override\r\n    public boolean onOptionsItemSelected(MenuItem item){\r\n        int itemClicked = item.getItemId();\r\n        if(itemClicked == R.id.menuCambiarRol){\r\n            Intent intent = new Intent(this, Activity_Roles.class);\r\n            startActivity(intent);\r\n        }else if (itemClicked == R.id.menuEditarPerfil){\r\n            Intent intent = new Intent( this, Activity_EditarPerfil.class);\r\n            startActivity(intent);\r\n        }else if(itemClicked == R.id.menuLogOut){\r\n            FirebaseAuth.getInstance().signOut();\r\n            Intent intent = new Intent( this, Activity_Login.class);\r\n            startActivity(intent);\r\n        }\r\n        return super.onOptionsItemSelected(item);\r\n    }\r\n\r\n\r\n    //----------------------------------------------\r\n    //--------   Custom adapter for trips  ---------\r\n    //----------------------------------------------\r\n    class TripsCustomAdapter extends BaseAdapter {\r\n\r\n        @Override\r\n        public int getCount() {\r\n            return ActiveTrips.size();\r\n        }\r\n\r\n        @Override\r\n        public Object getItem(int position) {\r\n            return ActiveTrips.get(position);\r\n        }\r\n\r\n        @Override\r\n        public long getItemId(int position) {\r\n            return 0;\r\n        }\r\n\r\n        @Override\r\n        public View getView(int position, View convertView, ViewGroup parent) {\r\n            //\r\n            convertView = getLayoutInflater().inflate(R.layout.listview_viaje, null);\r\n            // Get information fields of the view\r\n            TextView driverName = (TextView) convertView.findViewById(R.id.Driver_Name);\r\n            TextView originDirection = (TextView) convertView.findViewById(R.id.Origin_Direction);\r\n            TextView destinyDirection = (TextView) convertView.findViewById(R.id.Destiny_Direction);\r\n            TextView carBrand = (TextView) convertView.findViewById(R.id.Car_Brand);\r\n            TextView carPlate = (TextView) convertView.findViewById(R.id.Car_Plate);\r\n            TextView cuposDisponibles = (TextView)   convertView.findViewById(R.id.cupos);\r\n            TextView valorCupo = (TextView)   convertView.findViewById(R.id.valorCupo);\r\n            TextView puntoEncuentro = (TextView)   convertView.findViewById(R.id.puntEncuentro);\r\n            TextView hora = (TextView)   convertView.findViewById(R.id.hora);\r\n            // Set information to the view\r\n            driverName.setText(ActiveTrips.get(position).NombreDelConductor);\r\n            originDirection.setText(ActiveTrips.get(position).origen);\r\n            destinyDirection.setText(ActiveTrips.get(position).destino);\r\n            carBrand.setText(ActiveTrips.get(position).marca);\r\n            carPlate.setText(ActiveTrips.get(position).placa);\r\n            cuposDisponibles.setText(String.valueOf(ActiveTrips.get(position).capacidad));\r\n            valorCupo.setText(String.valueOf(ActiveTrips.get(position).valorCupo));\r\n            puntoEncuentro.setText(ActiveTrips.get(position).puntoEncuentro);\r\n            hora.setText(ActiveTrips.get(position).hora);\r\n\r\n            // Set event listeners to the buttons\r\n            Button seeRoute = (Button) convertView.findViewById(R.id.Button_See_Route);\r\n            Button reserveTrip = (Button) convertView.findViewById(R.id.Button_Reserve_Trip);\r\n            seeRoute.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View v) {\r\n                    Intent mapIntent = new Intent(getBaseContext(), Activity_Pasajero_RutaViaje_Maps.class);\r\n                    mapIntent.putExtra(\"PasajeroKey\", ActiveTrips.get(position).getIdViaje());\r\n                    startActivity(mapIntent);\r\n                }\r\n            });\r\n            reserveTrip.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View v) {\r\n                    correoUserAutenticado = mAuth.getCurrentUser().getEmail();\r\n                    mRef2 = FirebaseDatabase.getInstance().getReference(\"users/\");\r\n                    mRef2.addValueEventListener(new ValueEventListener() {\r\n                        @Override\r\n                        public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                            for(DataSnapshot snap :snapshot.getChildren() ){\r\n                                String correo = snap.child(\"username\").getValue(String.class);\r\n                                if(correo.equals(correoUserAutenticado)){\r\n                                    try {\r\n                                        String viajeactivo = snap.child(\"viajeActivo\").getValue(String.class);\r\n                                        if(viajeactivo.equals(\"true\")){\r\n                                            Toast.makeText(getBaseContext(), \"usted ya tiene un viaje reservado\", Toast.LENGTH_SHORT).show();\r\n                                        }else{\r\n                                            Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);\r\n                                            intent.putExtra(\"direccion\", \"\");\r\n                                            intent.putExtra(\"Lat\", \"\");\r\n                                            intent.putExtra(\"Lng\", \"\");\r\n                                            intent.putExtra(\"reserva\",\"\");\r\n                                            intent.putExtra(\"precio\",valorCupo.getText().toString());\r\n                                            intent.putExtra(\"idviaje\", ActiveTrips.get(position).getIdViaje());\r\n                                            intent.putExtra(\"cuposDisponibles\",cuposDisponibles.getText().toString());\r\n                                            intent.putExtra(\"uidconductor\",ActiveTrips.get(position).getIdConductor());\r\n                                            startActivity(intent);\r\n                                        }\r\n                                    }catch (Exception e){\r\n                                        Intent intent = new Intent( getBaseContext(), Activity_Reservar_Viaje.class);\r\n                                        intent.putExtra(\"direccion\", \"\");\r\n                                        intent.putExtra(\"Lat\", \"\");\r\n                                        intent.putExtra(\"Lng\", \"\");\r\n                                        intent.putExtra(\"reserva\",\"\");\r\n                                        intent.putExtra(\"precio\",valorCupo.getText().toString());\r\n                                        intent.putExtra(\"idviaje\", ActiveTrips.get(position).getIdViaje());\r\n                                        intent.putExtra(\"cuposDisponibles\",cuposDisponibles.getText().toString());\r\n                                        intent.putExtra(\"uidconductor\",ActiveTrips.get(position).getIdConductor());\r\n                                        startActivity(intent);\r\n                                    }\r\n\r\n                                }\r\n                            }\r\n                        }\r\n\r\n                        @Override\r\n                        public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                        }\r\n                    });\r\n                }\r\n            });\r\n\r\n            // Return view\r\n            return convertView;\r\n        }\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/u_vallet/Activity_ExplorarViajes.java	(revision a473b62bd3b0d278c985d3808369061d849e5893)
++++ app/src/main/java/com/example/u_vallet/Activity_ExplorarViajes.java	(date 1622482780727)
+@@ -23,6 +23,8 @@
+ import com.google.firebase.database.FirebaseDatabase;
+ import com.google.firebase.database.ValueEventListener;
+ 
++import org.jetbrains.annotations.NotNull;
++
+ import java.util.ArrayList;
+ 
+ public class Activity_ExplorarViajes extends AppCompatActivity {
+@@ -38,6 +40,7 @@
+     public static final String PathRoute = "routes/";
+     private String correoUserAutenticado;
+ 
++
+     //----------------------------------------------
+     //-----------------  On Create  ----------------
+     //----------------------------------------------
+@@ -94,6 +97,7 @@
+             }
+         });
+ 
++
+     }
+ 
+     //----------------------------------------------
+@@ -159,6 +163,8 @@
+         });
+     }
+ 
++
++
+     //----------------------------------------------
+     //------------ Methods for the menu ------------
+     //----------------------------------------------
+Index: app/.project
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/.project	(date 1622490462577)
++++ app/.project	(date 1622490462577)
+@@ -0,0 +1,34 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<projectDescription>
++	<name>app</name>
++	<comment>Project app created by Buildship.</comment>
++	<projects>
++	</projects>
++	<buildSpec>
++		<buildCommand>
++			<name>org.eclipse.jdt.core.javabuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++		<buildCommand>
++			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++	</buildSpec>
++	<natures>
++		<nature>org.eclipse.jdt.core.javanature</nature>
++		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
++	</natures>
++	<filteredResources>
++		<filter>
++			<id>1622490462541</id>
++			<name></name>
++			<type>30</type>
++			<matcher>
++				<id>org.eclipse.core.resources.regexFilterMatcher</id>
++				<arguments>node_modules|.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
++			</matcher>
++		</filter>
++	</filteredResources>
++</projectDescription>
+Index: app/src/main/java/com/example/u_vallet/Activity_ViajeEnCurso_Maps.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.u_vallet;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.RequiresApi;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.core.app.NotificationCompat;\r\nimport androidx.core.app.NotificationManagerCompat;\r\nimport androidx.fragment.app.FragmentActivity;\r\n\r\nimport android.Manifest;\r\nimport android.app.NotificationChannel;\r\nimport android.app.NotificationManager;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.graphics.Color;\r\nimport android.hardware.Sensor;\r\nimport android.hardware.SensorManager;\r\nimport android.hardware.TriggerEvent;\r\nimport android.hardware.TriggerEventListener;\r\nimport android.location.Location;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.provider.ContactsContract;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.android.gms.location.FusedLocationProviderClient;\r\nimport com.google.android.gms.location.LocationServices;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.BitmapDescriptorFactory;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.Marker;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.android.gms.maps.model.PolylineOptions;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\n\r\npublic class Activity_ViajeEnCurso_Maps extends FragmentActivity implements OnMapReadyCallback {\r\n\r\n    //--------------------------------------------------------\r\n    //                         Attributes\r\n    //--------------------------------------------------------\r\n    // Map\r\n    private GoogleMap mMap;\r\n    SupportMapFragment mapFragment;\r\n    private Marker markerOrigin = null;\r\n    ArrayList<LatLng> mMarkerPoints;\r\n    // Firebase\r\n    private FirebaseAuth mAuth;\r\n    private FirebaseDatabase mDatabase;\r\n    private DatabaseReference mRef;\r\n    private DatabaseReference mRefList;\r\n    private DatabaseReference mRefPasajeros;\r\n    // Firebase Path(s)\r\n    public static final String PATH_ROUTES = \"routes/\";\r\n    // Hardware sensor (Accelerometer)\r\n    private SensorManager sensorManager;\r\n    private Sensor sensor;\r\n    private TriggerEventListener triggerEventListener;\r\n    // Location\r\n    private LatLng mOrigin;\r\n    private LatLng mDestination;\r\n    private FusedLocationProviderClient fusedLocationClient;\r\n    // Button(s)\r\n    private Button botonFinalizarViaje;\r\n    // Routes\r\n    private PolylineOptions line;\r\n    String routeUid;\r\n    private static final int NOTIFICATION_CODE = 200;\r\n    private static final String NOTIFICATION_CHANNEL = \"NOTIFICATION\";\r\n    private boolean initialState = true;\r\n\r\n    //--------------------------------------------------------\r\n    //                         On create\r\n    //--------------------------------------------------------\r\n    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity__viaje_en_curso__maps);\r\n        // Obtain the SupportMapFragment and get notified when the map is ready to be used.\r\n        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);\r\n        mapFragment.getMapAsync(this);\r\n        mMarkerPoints = new ArrayList<>();\r\n\r\n        //------------ Firebase ------------\r\n        mAuth = FirebaseAuth.getInstance();\r\n        mDatabase = FirebaseDatabase.getInstance();\r\n\r\n        //------------ User ------------\r\n        routeUid = getIntent().getExtras().getString(\"Trip\");\r\n        setRoute();\r\n\r\n        //------------ Location ------------\r\n        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);\r\n\r\n        //------------ Accelerometer sensor ------------\r\n        sensorManager = (SensorManager) getSystemService(Activity_ViajeEnCurso_Maps.this.SENSOR_SERVICE);\r\n        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);\r\n        triggerEventListener = new TriggerEventListener() {\r\n            @Override\r\n            public void onTrigger(TriggerEvent event) {\r\n                Log.i(\"SENSOR\", \"SE HA DETECTADO CAMBIO EN EL SENSOR\");\r\n                // Get user's last known location\r\n                getUserLocation();\r\n                // Show the user that a change has been detected\r\n                Toast.makeText(Activity_ViajeEnCurso_Maps.this, \"Se ha detectado un cambio en el acelerometro\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        };\r\n        // Bind trigger event with sensor\r\n        sensorManager.requestTriggerSensor(triggerEventListener, sensor);\r\n\r\n        //------------ Buttons ------------\r\n        botonFinalizarViaje = findViewById(R.id.buttonFinalizarViaje);\r\n        botonFinalizarViaje.setOnClickListener(v -> {\r\n            // End the courrent route\r\n            endRoute();\r\n            // Launch new activity with finish route info\r\n            Intent finalizar = new Intent(v.getContext(), Activity_Finalizar_Viaje.class);\r\n            finalizar.putExtra(\"KeyEnd\", routeUid);\r\n            startActivity(finalizar);\r\n        });\r\n\r\n    }\r\n\r\n    //--------------------------------------------------------\r\n    //                         Methods\r\n    //--------------------------------------------------------\r\n    private void getUserLocation() {\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED\r\n                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            Log.i(\"PER\", \"No hay permisos\");\r\n            return;\r\n        }\r\n        fusedLocationClient.getLastLocation()\r\n                .addOnSuccessListener(this, location -> {\r\n                    // Got last known location. In some rare situations this can be null.\r\n                    if (location != null) {\r\n                        Log.i(\"Location\", \"Location is requested\");\r\n                        updateOriginLocationFirebase(location);\r\n                    }\r\n                });\r\n    }\r\n\r\n    private void updateOriginLocationFirebase(Location location) {\r\n        Log.i(\"location\", location.toString());\r\n        // Firebase reference\r\n        mRef = mDatabase.getReference(PATH_ROUTES).child(routeUid).child(\"originLocation\");\r\n        // Create HashMap to store location\r\n        HashMap<String, Double> newLocation = new HashMap<String, Double>();\r\n        newLocation.put(\"latitude\", location.getLatitude());\r\n        newLocation.put(\"longitude\", location.getLongitude());\r\n        // Set new location in firebase\r\n        mRef.setValue(newLocation);\r\n    }\r\n\r\n    //--------------------------------------------------------\r\n    //                          Map\r\n    //--------------------------------------------------------\r\n    @Override\r\n    public void onMapReady(GoogleMap googleMap) {\r\n        mMap = googleMap;\r\n    }\r\n\r\n    //--------------------------------------------------------\r\n    //                          Routes\r\n    //--------------------------------------------------------\r\n    private void endRoute(){\r\n        mRef = mDatabase.getReference(PATH_ROUTES).child(routeUid);\r\n        mRef.child(\"status\").setValue(\"finished\");\r\n        createNotification();\r\n        createNotificationChannel();\r\n    }\r\n\r\n    private void setRoute(){\r\n        //----------------- Listener to origin location changes -----------------\r\n        mRef = mDatabase.getReference(PATH_ROUTES).child(routeUid);\r\n        mRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(DataSnapshot snapshot) {\r\n                Double originLat = snapshot.child(\"originLocation\").child(\"latitude\").getValue(Double.class);\r\n                Double originLong = snapshot.child(\"originLocation\").child(\"longitude\").getValue(Double.class);\r\n                Double destinationLat = snapshot.child(\"destinationLocation\").child(\"latitude\").getValue(Double.class);\r\n                Double destinationLong = snapshot.child(\"destinationLocation\").child(\"longitude\").getValue(Double.class);\r\n\r\n                String keyF = snapshot.child(\"key\").getValue(String.class);\r\n                if (markerOrigin != null) {\r\n                    markerOrigin.remove();\r\n                }\r\n\r\n                mOrigin = new LatLng(originLat,originLong);\r\n                mDestination = new LatLng(destinationLat, destinationLong);\r\n\r\n                markerOrigin = mMap.addMarker(new MarkerOptions().position(mOrigin).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));\r\n                mMap.addMarker(new MarkerOptions().position(mDestination));\r\n                mMap.moveCamera(CameraUpdateFactory.zoomTo(14));\r\n                mMap.moveCamera(CameraUpdateFactory.newLatLng(mOrigin));\r\n            }\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n\r\n        mRefPasajeros = mDatabase.getReference(PATH_ROUTES).child(routeUid);\r\n        mRefPasajeros.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                if(snapshot.child(\"pasajeros\").exists() && routeUid.equals(snapshot.child(\"key\").getValue(String.class))){\r\n                    for(DataSnapshot singleSnapshot : snapshot.child(\"pasajeros\").getChildren()){\r\n                        Double latitude = singleSnapshot.child(\"latitude\").getValue(Double.class);\r\n                        Double longitude = singleSnapshot.child(\"longitude\").getValue(Double.class);\r\n                        String name = singleSnapshot.child(\"nombre\").getValue(String.class);\r\n                        Integer cantidad = singleSnapshot.child(\"cantidadReservas\").getValue(Integer.class);\r\n                        String title = name + \" - \"+String.valueOf(cantidad);\r\n                        LatLng user = new LatLng(latitude,longitude);\r\n\r\n                        mMarkerPoints.add(user);\r\n                        if(mMarkerPoints.size() == 0)\r\n                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));\r\n                        else if (mMarkerPoints.size() == 1)\r\n                           mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));\r\n                        else if (mMarkerPoints.size() == 2)\r\n                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));\r\n                        else if (mMarkerPoints.size() == 3)\r\n                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));\r\n                        else if (mMarkerPoints.size() == 4)\r\n                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));\r\n                        else if (mMarkerPoints.size() >= 5)\r\n                            mMap.addMarker(new MarkerOptions().position(user).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));\r\n                    }\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n\r\n\r\n        //----------------- Draw the routes line -----------------\r\n        mRefList = mDatabase.getReference(PATH_ROUTES).child(routeUid).child(\"route\");\r\n        mRefList.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                int count = 0;\r\n                List<LatLng> aline = new ArrayList<LatLng>();\r\n                for(DataSnapshot singleSnapshot : snapshot.getChildren()){\r\n                    Double lat = snapshot.child(String.valueOf(count)).child(\"latitude\").getValue(Double.class);\r\n                    Double lng = snapshot.child(String.valueOf(count)).child(\"longitude\").getValue(Double.class);\r\n                    LatLng point = new LatLng(lat, lng);\r\n                    aline.add(point);\r\n                    line = new PolylineOptions().width(8).color(mapFragment.getActivity().getResources().getColor(R.color.lightblue));\r\n\r\n                    count++;\r\n                }\r\n                line.addAll(aline);\r\n                mMap.addPolyline(line);\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n            }\r\n        });\r\n    }\r\n    private void createNotification(){\r\n        Log.i(\"SUPERTAG\",\"ENTRO A CREAR LA NOTIFICACION\");\r\n        String notificationMessage = \" Se finalizo el viaje exitosamente\";\r\n        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);\r\n        notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);\r\n        notificationBuilder.setContentTitle(\"NOTIFICACION DE CONDUCTOR\");\r\n        notificationBuilder.setColor(Color.BLUE);\r\n        notificationBuilder.setContentText(notificationMessage);\r\n        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);\r\n        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());\r\n        notificationManager.notify(0,notificationBuilder.build());\r\n    }\r\n    private void createNotificationChannel() {\r\n        // Create the NotificationChannel, but only on API 26+ because\r\n        // the NotificationChannel class is new and not in the support library\r\n        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {\r\n            CharSequence name = \"NOTIFICATION\";\r\n            String description = \"NOTIFICATION\";\r\n            int importance = NotificationManager.IMPORTANCE_DEFAULT;\r\n            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, name, importance);\r\n            channel.setDescription(description);\r\n            // Register the channel with the system; you can't change the importance\r\n            // or other notification behaviors after this\r\n            NotificationManager notificationManager = (NotificationManager)getSystemService(NotificationManager.class);\r\n\r\n            notificationManager.createNotificationChannel(channel);\r\n        }\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/u_vallet/Activity_ViajeEnCurso_Maps.java	(revision a473b62bd3b0d278c985d3808369061d849e5893)
++++ app/src/main/java/com/example/u_vallet/Activity_ViajeEnCurso_Maps.java	(date 1622489649781)
+@@ -10,6 +10,7 @@
+ import android.Manifest;
+ import android.app.NotificationChannel;
+ import android.app.NotificationManager;
++import android.app.PendingIntent;
+ import android.content.Intent;
+ import android.content.pm.PackageManager;
+ import android.graphics.Color;
+@@ -127,6 +128,8 @@
+         //------------ Buttons ------------
+         botonFinalizarViaje = findViewById(R.id.buttonFinalizarViaje);
+         botonFinalizarViaje.setOnClickListener(v -> {
++            createNotificationFinalizar();
++            createNotificationChannelFinalizar();
+             // End the courrent route
+             endRoute();
+             // Launch new activity with finish route info
+@@ -140,6 +143,37 @@
+     //--------------------------------------------------------
+     //                         Methods
+     //--------------------------------------------------------
++    private void createNotificationFinalizar(){
++        Intent reservaPasajero = new Intent(this, Activity_Roles.class);
++        reservaPasajero.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
++        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, reservaPasajero, 0);
++        String notificationMessage = " finalizo el viaje exitosamente";
++        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);
++        notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
++        notificationBuilder.setContentTitle("NOTIFICACION DE CONDUCTOR");
++        notificationBuilder.setColor(Color.BLUE);
++        notificationBuilder.setContentText(notificationMessage);
++        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
++        notificationBuilder.setContentIntent(pendingIntent);
++        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
++        notificationManager.notify(0,notificationBuilder.build());
++    }
++    private void createNotificationChannelFinalizar() {
++        // Create the NotificationChannel, but only on API 26+ because
++        // the NotificationChannel class is new and not in the support library
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
++            CharSequence name = "NOTIFICATION";
++            String description = "NOTIFICATION";
++            int importance = NotificationManager.IMPORTANCE_DEFAULT;
++            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, name, importance);
++            channel.setDescription(description);
++            // Register the channel with the system; you can't change the importance
++            // or other notification behaviors after this
++            NotificationManager notificationManager = (NotificationManager)getSystemService(NotificationManager.class);
++
++            notificationManager.createNotificationChannel(channel);
++        }
++    }
+     private void getUserLocation() {
+         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+Index: .idea/shelf/Uncommitted_changes_before_Update_at_31_05_2021_12_39_p__m___Default_Changelist_.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/shelf/Uncommitted_changes_before_Update_at_31_05_2021_12_39_p__m___Default_Changelist_.xml	(date 1622482835585)
++++ .idea/shelf/Uncommitted_changes_before_Update_at_31_05_2021_12_39_p__m___Default_Changelist_.xml	(date 1622482835585)
+@@ -0,0 +1,4 @@
++<changelist name="Uncommitted_changes_before_Update_at_31_05_2021_12_39_p__m__[Default_Changelist]" date="1622482780860" recycled="true" deleted="true">
++  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_31_05_2021_12_39_p__m__[Default_Changelist]/shelved.patch" />
++  <option name="DESCRIPTION" value="Uncommitted changes before Update at 31/05/2021 12:39 p. m. [Default Changelist]" />
++</changelist>
+\ No newline at end of file
+Index: app/.settings/org.eclipse.buildship.core.prefs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/.settings/org.eclipse.buildship.core.prefs	(date 1622490460748)
++++ app/.settings/org.eclipse.buildship.core.prefs	(date 1622490460748)
+@@ -0,0 +1,2 @@
++connection.project.dir=..
++eclipse.preferences.version=1
+Index: app/.classpath
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/.classpath	(date 1622490460959)
++++ app/.classpath	(date 1622490460959)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<classpath>
++	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-13/"/>
++	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
++	<classpathentry kind="output" path="bin/default"/>
++</classpath>

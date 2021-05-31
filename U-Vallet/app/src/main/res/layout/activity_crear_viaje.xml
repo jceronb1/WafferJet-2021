@@ -49,7 +49,8 @@
             android:layout_marginStart="36dp"
             android:layout_marginLeft="36dp"
             android:layout_marginTop="184dp"
-            android:text="Origen"
+            android:hint="Origen"
+            android:editable="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,7 +61,8 @@
             android:layout_marginStart="36dp"
             android:layout_marginLeft="36dp"
             android:layout_marginTop="244dp"
-            android:text="Destino"
+            android:hint="Destino"
+            android:editable="false"
             android:textColor="#000000"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -73,7 +75,7 @@
             android:layout_marginLeft="198dp"
             android:layout_marginTop="312dp"
             android:ems="10"
-            android:inputType=""
+            android:inputType="number"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -87,23 +89,25 @@
             android:text="Cupos disponibles:"
             android:textColor="#000000"
             android:textSize="16sp"
+            android:imeOptions="actionDone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/editHoraPartida"
-            android:layout_width="170dp"
+            android:layout_width="145dp"
             android:layout_height="41dp"
             android:layout_marginStart="161dp"
             android:layout_marginLeft="161dp"
             android:layout_marginTop="360dp"
             android:layout_marginEnd="40dp"
             android:layout_marginRight="40dp"
+            android:editable="false"
             android:ems="10"
             android:inputType=""
-            android:text="__ : __"
+            android:text=""
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.3"
+            app:layout_constraintHorizontal_bias="0.569"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -115,7 +119,8 @@
             android:layout_marginLeft="40dp"
             android:layout_marginTop="444dp"
             android:ems="10"
-            android:inputType=""
+            android:inputType="text"
+            android:imeOptions="actionDone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -155,7 +160,7 @@
             android:layout_marginLeft="40dp"
             android:layout_marginTop="524dp"
             android:ems="10"
-            android:inputType=""
+            android:inputType="number"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

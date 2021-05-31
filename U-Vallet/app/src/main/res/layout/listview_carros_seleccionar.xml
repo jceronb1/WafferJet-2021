@@ -34,7 +34,7 @@
             android:layout_weight="0" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/fotocarro"
             android:layout_width="116dp"
             android:layout_height="114dp"
             android:layout_alignStart="@+id/viewFondoCarro"
