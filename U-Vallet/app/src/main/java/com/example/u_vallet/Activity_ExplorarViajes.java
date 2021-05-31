@@ -98,6 +98,7 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
                         String puntoEncuentro = singlesnapshot.child("puntoEncuentro").getValue(String.class);
                         String hora = singlesnapshot.child("horaViaje").getValue(String.class);
                         viaje.setIdConductor(uidConductor);
+                        viaje.setIdViaje(key);
                         viaje.setNombreDelConductor(nombreConductor);
                         viaje.setOrigen(origen);
                         viaje.setDestino(destino);
@@ -206,10 +207,8 @@ public class Activity_ExplorarViajes extends AppCompatActivity {
             seeRoute.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("Route   ", v.getContext().toString());
-                    Uri gmmIntentUri = Uri.parse("http://maps.google.com/maps?saddr=4.688549,-74.050789&daddr=4.6259875,-74.0631727");
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
+                    Intent mapIntent = new Intent(getBaseContext(), Activity_Pasajaero_RutaViaje_Maps.class);
+                    mapIntent.putExtra("PasajeroKey", ActiveTrips.get(position).getIdViaje());
                     startActivity(mapIntent);
                 }
             });

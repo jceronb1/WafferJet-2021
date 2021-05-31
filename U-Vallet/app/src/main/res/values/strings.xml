@@ -22,5 +22,6 @@
     <string name="API_KEY">DDd7L9EAAV7fg28CmLMTsrlCeLgGCT07KbYnuTyy</string>
     <string name="title_activity__ruta_viaje__maps">Map</string>
     <string name="title_activity__viaje_en_curso__maps">Map</string>
+    <string name="title_activity__pasajaero__ruta_viaje__maps">Map</string>
 
 </resources>

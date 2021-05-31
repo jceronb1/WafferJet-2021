@@ -14,6 +14,7 @@ public class Viaje {
     int valorCupo;
     String puntoEncuentro;
     String hora;
+    String idViaje;
 
     //----------------------------------------------
     //---------------- Constructors ----------------
@@ -110,5 +111,13 @@ public class Viaje {
 
     public void setHora(String hora) {
         this.hora = hora;
+    }
+
+    public String getIdViaje() {
+        return idViaje;
+    }
+
+    public void setIdViaje(String idViaje) {
+        this.idViaje = idViaje;
     }
 }
