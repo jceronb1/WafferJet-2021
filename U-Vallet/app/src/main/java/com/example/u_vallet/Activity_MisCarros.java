@@ -143,7 +143,7 @@ public class Activity_MisCarros extends AppCompatActivity {
     //funciones para listview------------------------------------
 
     public void getCarrosFromDB() {
-
+        MisCarros.clear();
         myRef = database.getReference("cars/"+mAuth.getCurrentUser().getUid()+"/");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
