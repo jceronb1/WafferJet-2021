@@ -7,6 +7,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -226,7 +227,9 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
         }
     }
     private void createNotification(){
-        Log.i("SUPERTAG","ENTRO A CREAR LA NOTIFICACION");
+        Intent miViajeConductor = new Intent(this, Activity_Mi_Viaje_Conductor.class);
+        miViajeConductor.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, miViajeConductor, 0);
         String notificationMessage = " Se creo el viaje exitosamente";
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),NOTIFICATION_CHANNEL);
         notificationBuilder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
@@ -234,6 +237,7 @@ public class Activity_CrearViaje extends AppCompatActivity implements View.OnCli
         notificationBuilder.setColor(Color.BLUE);
         notificationBuilder.setContentText(notificationMessage);
         notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        notificationBuilder.setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
         notificationManager.notify(0,notificationBuilder.build());
     }
