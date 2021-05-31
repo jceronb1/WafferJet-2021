@@ -110,4 +110,19 @@ public class Ruta {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "Ruta{" +
+                "route=" + route +
+                ", originLocation=" + originLocation +
+                ", destinationLocation=" + destinationLocation +
+                ", origen='" + origen + '\'' +
+                ", destino='" + destino + '\'' +
+                ", key='" + key + '\'' +
+                ", uidConductor='" + uidConductor + '\'' +
+                ", status='" + status + '\'' +
+                ", uidsPasajeros=" + uidsPasajeros +
+                '}';
+    }
 }

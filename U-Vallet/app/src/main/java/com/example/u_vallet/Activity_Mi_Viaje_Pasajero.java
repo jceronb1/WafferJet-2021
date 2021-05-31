@@ -1,33 +1,105 @@
 package com.example.u_vallet;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class Activity_Mi_Viaje_Pasajero extends AppCompatActivity {
+    //------------------------------------------------
+    //                  Attributes
+    //------------------------------------------------
+    // Form fields
+    private TextView idViaje;
+    private TextView origen;
+    private TextView destino;
+    private TextView puntoPartida;
+    private TextView horaPartida;
+    // Firebase
+    private FirebaseAuth userAuth;
+    private String currentUserId;
+    private DatabaseReference mDatabase;
+    // Intent
+    String tripReservationUid;
 
+    //------------------------------------------------
+    //                  On Create
+    //------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__mi__viaje__pasajero);
 
-        Button ExplorarViaje = (Button) findViewById(R.id.buttonMiViajeMV4);
+        //----------------- Intent -----------------
+        tripReservationUid = "-Mb-xsX7tvsQ8AiR6K2c";// getIntent().getStringExtra("llaveReserva");
 
-        ExplorarViaje.setOnClickListener(new View.OnClickListener() {
+        //----------------- Firebase -----------------
+        mDatabase = FirebaseDatabase.getInstance().getReference("routes").child(tripReservationUid);
+
+        //----------------- Form fields -----------------
+        idViaje = findViewById(R.id.miViajeIDText);
+        origen = findViewById(R.id.viajeOrigenText);
+        destino = findViewById(R.id.miViajeDestinoText);
+        puntoPartida = findViewById(R.id.editPuntoPartida);
+        horaPartida = findViewById(R.id.editHoraPartida);
+
+        //----------------- Fill form fields -----------------
+        ValueEventListener routeListener = new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                Intent intentCrearViaje = new Intent(v.getContext(), Activity_ExplorarViajes.class);
-                startActivity(intentCrearViaje);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Reservation details
+                String _origen = dataSnapshot.child("originDirection").getValue( String.class );
+                String _destino = dataSnapshot.child("destinationDirection").getValue( String.class );
+                String _puntoPartida = dataSnapshot.child("puntoEncuentro").getValue( String.class );
+                String _horaPartida = dataSnapshot.child("horaViaje").getValue( String.class );
+                // Set values to form fields
+                idViaje.setText( tripReservationUid );
+                origen.setText( _origen );
+                destino.setText( _destino );
+                puntoPartida.setText( _puntoPartida );
+                horaPartida.setText( _horaPartida );
             }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.i("loadPost:onCancelled", databaseError.toException().toString());
+            }
+        };
+        mDatabase.addValueEventListener(routeListener);
+
+        //----------------- Button -----------------
+        Button ExplorarViaje = findViewById(R.id.buttonMiViajeMV4);
+        ExplorarViaje.setOnClickListener(v -> {
+            Intent intentCrearViaje = new Intent(v.getContext(), Activity_ExplorarViajes.class);
+            startActivity(intentCrearViaje);
         });
     }
+
+    //------------------------------------------------
+    //                  Menu
+    //------------------------------------------------
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.activity__navegation, menu);
